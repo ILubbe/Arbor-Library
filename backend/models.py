@@ -1,4 +1,5 @@
 from sqlalchemy import *
+from sqlalchemy.orm import relationship
 from config import db
 
 class User(db.Model):
@@ -24,12 +25,14 @@ class User(db.Model):
 class Book(db.Model):
     __tablename__ = 'books'
 
-    id = db.Column(db.String(12), primary_key=True) # 12-digit numeric string for barcodes
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255), nullable=False)
     isbn = db.Column(db.String(13), nullable=False)
     publish_date = db.Column(db.Date, nullable=False)
-    condition = db.Column(db.Enum('New', 'Good', 'Fair', 'Poor'), default='Unkown', nullable=False)
+    book_condition = db.Column(db.Enum('unknown', 'new', 'good', 'fair', 'poor'), nullable=False)
+
+    genre = db.relationship('Genre', secondary='books_genres', backref=db.backref('books', lazy=True))
 
     def book_to_json(self):
         return {
@@ -38,7 +41,34 @@ class Book(db.Model):
             "author": self.author,
             "isbn": self.isbn,
             "publishDate": self.publish_date,
-            "condition": self.condition
+            "bookCondition": self.book_condition
+        }
+
+class Genre(db.Model):
+    __tablename__ = 'genres'
+
+    id = db.Column(db.Integer, primary_key=True)
+    genre = db.Column(db.String(255), unique=True, nullable=False)
+
+    book = db.relationship('Book', secondary='books_genres', backref=db.backref('genres', lazy=True))
+
+    def genre_to_json(self):
+        return {
+            "id": self.id,
+            "genre": self.genre
+        }
+
+# Linking table for many-to-many relationship
+class Book_Genre(db.Model):
+    __tablename__ = 'books_genres'
+
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), primary_key=True)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), primary_key=True)
+
+    def books_genres_to_json(self):
+        return {
+            bookID: self.book_id,
+            genreID: self.genre_id
         }
 
 class Reservation(db.Model):
@@ -46,7 +76,7 @@ class Reservation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(db.String(12), db.ForeignKey('books.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     reserved_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
 
@@ -64,7 +94,7 @@ class Checkout(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(db.String(12), db.ForeignKey('books.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     checked_out_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     due_at = db.Column(db.DateTime, nullable=False)
     returned = db.Column(db.Boolean, default=False, nullable=False)
