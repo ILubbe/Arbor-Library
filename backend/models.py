@@ -1,5 +1,6 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression
 from config import db
 
 class User(db.Model):
@@ -65,10 +66,10 @@ class Book_Genre(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), primary_key=True)
     genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), primary_key=True)
 
-    def books_genres_to_json(self):
+    def book_genre_to_json(self):
         return {
-            bookID: self.book_id,
-            genreID: self.genre_id
+            "bookID": self.book_id,
+            "genreID": self.genre_id
         }
 
 class Reservation(db.Model):
@@ -97,7 +98,7 @@ class Checkout(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     checked_out_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     due_at = db.Column(db.DateTime, nullable=False)
-    returned = db.Column(db.Boolean, default=False, nullable=False)
+    returned = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
 
     def checkout_to_json(self):
         return {
