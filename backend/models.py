@@ -1,7 +1,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
-from config import db
+from backend.config import db
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -33,7 +33,7 @@ class Book(db.Model):
     publish_date = db.Column(db.Date, nullable=False)
     book_condition = db.Column(db.Enum('unknown', 'new', 'good', 'fair', 'poor'), nullable=False)
 
-    genre = db.relationship('Genre', secondary='books_genres', backref=db.backref('books', lazy=True))
+    genre = db.relationship('Genre', secondary='books_genres', back_populates='book')
 
     def book_to_json(self):
         return {
@@ -51,7 +51,7 @@ class Genre(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     genre = db.Column(db.String(255), unique=True, nullable=False)
 
-    book = db.relationship('Book', secondary='books_genres', backref=db.backref('genres', lazy=True))
+    book = db.relationship('Book', secondary='books_genres', back_populates='genre')
 
     def genre_to_json(self):
         return {

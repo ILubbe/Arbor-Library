@@ -1,6 +1,6 @@
-from config import app, db
-from models import User, Book, Reservation, Checkout
-from routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp
+from backend.config import app, db
+from backend.models import User, Book, Reservation, Checkout
+from backend.routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp
 
 blueprints = [
     users_bp,

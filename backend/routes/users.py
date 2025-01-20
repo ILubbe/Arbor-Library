@@ -1,21 +1,20 @@
 import re
-
 from flask import Blueprint, request, jsonify
-from models import User, db
-from utils.password_utils import complexity_check, hash_salt_password
+from backend.models import User, db
+from backend.utils.password_utils import complexity_check, hash_salt_password
 
 # define blueprint
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
 # read all users
-@users_bp.route("/", methods=["GET"])
+@users_bp.route("/", methods=["GET"], strict_slashes=False)
 def get_users():
     users = User.query.all()
     json_users = list(map(lambda x: x.user_to_json(), users))
     return jsonify({"users": json_users})
 
 # create a user
-@users_bp.route("/", methods=["POST"])
+@users_bp.route("/", methods=["POST"], strict_slashes=False)
 def create_user():
     required_fields = [
         "role",
