@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.models import Book_Genre, db
+from models import Book_Genre, db
 
 # define blueprint
 books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books_genres')

@@ -1,7 +1,7 @@
 import re
 from flask import Blueprint, request, jsonify
-from backend.models import User, db
-from backend.utils.password_utils import complexity_check, hash_salt_password
+from models import User, db
+from utils.password_utils import complexity_check, hash_salt_password
 
 # define blueprint
 users_bp = Blueprint('users', __name__, url_prefix='/users')

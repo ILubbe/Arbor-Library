@@ -1,5 +1,5 @@
 import pytest, json
-from backend.main import app
+from app import app
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 

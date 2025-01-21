@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.models import Genre, db
+from models import Genre, db
 
 # define blueprint
 genres_bp = Blueprint('genres', __name__, url_prefix='/genres')

@@ -1,7 +1,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
-from backend.config import db
+from config import db
 
 class User(db.Model):
     __tablename__ = 'users'

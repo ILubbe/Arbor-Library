@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.models import Checkout, db
+from models import Checkout, db
 
 # define blueprint
 checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
