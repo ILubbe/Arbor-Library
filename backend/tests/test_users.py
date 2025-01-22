@@ -31,7 +31,7 @@ def cleanup_testusers(test_users_to):
         (
             {
                 "role": "patron",
-                "username": "testuser",
+                "email": "testuser",
                 "password": "StrongP@ssw0rd!",
                 "passwordConfirmation": "StrongP@ssw0rd!",
                 "firstName": "John",
@@ -44,7 +44,7 @@ def cleanup_testusers(test_users_to):
         (
             {
                 "role": "patron",
-                "username": "shortpass",
+                "email": "shortpass",
                 "password": "short",
                 "passwordConfirmation": "short",
                 "firstName": "John",
@@ -57,7 +57,7 @@ def cleanup_testusers(test_users_to):
         (
             {
                 "role": "patron",
-                "username": "nospecialchars",
+                "email": "nospecialchars",
                 "password": "NoSpecial123",
                 "passwordConfirmation": "NoSpecial123",
                 "firstName": "John",
@@ -66,11 +66,11 @@ def cleanup_testusers(test_users_to):
             400
         ),
         
-        # Username already taken
+        # email already taken
         (
             {
                 "role": "patron",
-                "username": "testuser", # depends on 1st payload's success
+                "email": "testuser", # depends on 1st payload's success
                 "password": "ValidP@ssw0rd",
                 "passwordConfirmation": "ValidP@ssw0rd",
                 "firstName": "John",
@@ -83,7 +83,7 @@ def cleanup_testusers(test_users_to):
         (
             {
                 "role": "patron",
-                "username": "missingfield",
+                "email": "missingfield",
                 "password": "ValidP@ssw0rd",
                 "firstName": "John",
                 "lastName": "Doe"
@@ -99,7 +99,7 @@ def test_post(client, payload, expected_status):
 
     # Check the database for successful creation in valid case
     if expected_status == 201:
-        user_in_db = User.query.filter_by(username=payload["username"]).first()
+        user_in_db = User.query.filter_by(email=payload["email"]).first()
         assert user_in_db is not None
-        assert user_in_db.username == payload["username"]
+        assert user_in_db.email == payload["email"]
 """

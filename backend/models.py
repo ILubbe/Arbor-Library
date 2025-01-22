@@ -8,17 +8,17 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.Enum('patron', 'librarian'), nullable=False)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
     def user_to_json(self):
         return {
-            "id": self.id,
+            #"id": self.id,
             "role": self.role,
-            "username": self.username,
-            "passwordHash": self.password_hash,
+            "email": self.email,
+            #"passwordHash": self.password_hash,
             "firstName": self.first_name,
             "lastName": self.last_name
         }

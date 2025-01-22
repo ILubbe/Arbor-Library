@@ -1,27 +1,17 @@
 import bcrypt
 
 def complexity_check(password, min_length):
-    """
-    Check if the given password meets the complexity requirements:
-    - Minimum length of characters
-    - At least one uppercase letter
-    - At least one lowercase letter
-    - At least one digit
-    - At least one special character
-    """
-    # Set of allowed special characters
     special_characters = set("!@#$%^&*()-_+=[]{}|;:,.<>?/")
 
-    # Check the minimum length requirement
-    if len(password) < min_length:
-        return False
-
-    # Flags for conditions
+    message = []
     has_upper = False
     has_lower = False
     has_digit = False
     has_special = False
 
+    if len(password) < min_length:
+        message.append(f"Password must be at least {min_length} characters long.")
+    
     # Iterate through the password and check each character
     for char in password:
         if char.isupper():
@@ -33,8 +23,21 @@ def complexity_check(password, min_length):
         elif char in special_characters:
             has_special = True
 
-    # Ensure all conditions are met
-    return has_upper and has_lower and has_digit and has_special
+    # Collect messages based on unmet password requirements
+    if not has_upper:
+        message.append("Password must include at least one uppercase letter.")
+    if not has_lower:
+        message.append("Password must include at least one lowercase letter.")
+    if not has_digit:
+        message.append("Password must include at least one digit.")
+    if not has_special:
+        message.append("Password must include at least one special character.")
+    
+    # If there are any errors, return False and the message
+    if message:
+        return False, message
+
+    return True, ""
 
 def hash_salt_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
