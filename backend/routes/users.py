@@ -1,4 +1,3 @@
-import re
 from flask import Blueprint, request, jsonify
 from models import User, db
 from utils.general_utils import *

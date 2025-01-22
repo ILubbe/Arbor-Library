@@ -27,10 +27,9 @@ class Book(db.Model):
     __tablename__ = 'books'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    author = db.Column(db.String(255), nullable=False)
-    isbn = db.Column(db.String(13), nullable=False)
-    publish_date = db.Column(db.Date, nullable=False)
+    title = db.Column(db.String(500), nullable=False)
+    author = db.Column(db.String(500), nullable=False)
+    first_publish_year = db.Column(db.Integer)
     book_condition = db.Column(db.Enum('unknown', 'new', 'good', 'fair', 'poor'), nullable=False)
 
     genre = db.relationship('Genre', secondary='books_genres', back_populates='book')
@@ -40,8 +39,7 @@ class Book(db.Model):
             "id": self.id,
             "title": self.title,
             "author": self.author,
-            "isbn": self.isbn,
-            "publishDate": self.publish_date,
+            "firstPublishYear": self.first_publish_year,
             "bookCondition": self.book_condition
         }
 
