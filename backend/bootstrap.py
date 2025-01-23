@@ -1,19 +1,39 @@
 import requests, random
 from config import db
-from models import Book
+from models import User, Book, Genre, Book_Genre
+from utils.password_utils import hash_salt_password
 
-def fetch_and_populate_books():
-    # Check if the database is empty
+def create_default_admin_user():
+    # Check if the users table is empty
+    if User.query.count() == 0:
+        print(f"Bootstrap: users table in database is empty, creating the default admin user")
+        default_admin = User(
+            role = 'librarian',
+            email = 'defaultadmin@arborlibrary.com',
+            password_hash = hash_salt_password('admin'),
+            first_name = 'default',
+            last_name = 'admin',
+        )
+
+        db.session.add(default_admin)
+        db.session.commit()
+
+    else:
+        print("Bootstrap: Users already inside database")
+    return
+
+def fetch_and_populate_books(max_books):
+    # Check if the books table is empty
     if Book.query.count() == 0:
-        print("Database is empty, fetching book data from API (This might take a minute)")
+        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)")
 
         subject = "fiction"
         base_url = "https://openlibrary.org"
         subject_url = f"{base_url}/subjects/{subject}.json"
         conditions = ["new", "good", "fair", "poor", "unknown"]
         
-        max_books = 5341
         added_books = 0
+        # openlibrary.org has a limit of 1000 books per request.
         limit = 1000
         offset = 0
         while added_books < max_books:
@@ -37,7 +57,7 @@ def fetch_and_populate_books():
                     first_publish_year = item.get('first_publish_year', -1)
                     book_condition = random.choice(conditions)
 
-                    # Add the book to the database
+                    # Add the book to the database session
                     book = Book(
                     title = title,
                     author = author,
@@ -47,14 +67,20 @@ def fetch_and_populate_books():
 
                     db.session.add(book)
                     added_books += 1
+
+                    # write books in batches to limit i/o operations.
                     if added_books % 100 == 0:
                         db.session.commit()
                         print(f"{added_books} of {max_books} added")
+
                 except Exception as e:
                     continue
+
         db.session.commit()
         print(f"{added_books} of {max_books} added")
+
     else:
-        print("Books already inside database")
+        print("Bootstrap: Books already inside database")
+
     return
 
