@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import Book, db
-from utils.general_utils import *
+from utils.general_utils import check_required_fields, field_length_ok
 
 # define blueprint
 books_bp = Blueprint('books', __name__, url_prefix='/books')
@@ -12,6 +12,17 @@ def get_books():
     json_books = list(map(lambda x: x.book_to_json(), books))
     return jsonify({"books": json_books})
 
+# get one book
+@books_bp.route("/<int:book_id>", methods=["GET"])
+def get_one_book(book_id):
+    book = Book.query.get(book_id)
+
+    if book is None:
+        return jsonify({"message": "Book not found"}), 404
+    
+    return jsonify({"book": book.book_to_json()})
+
+# create a book
 @books_bp.route("/", methods=["POST"], strict_slashes=False)
 def create_user():
     required_fields = [

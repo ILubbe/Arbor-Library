@@ -16,7 +16,14 @@ def get_users():
     return jsonify({"users": json_users})
 
 # get one user
-#@users_bp.route(/)
+@users_bp.route("/<int:user_id>", methods=["GET"])
+def get_one_user(user_id):
+    user = User.query.get(user_id)
+
+    if user is None:
+        return jsonify({"message": "User not found"}), 404
+    
+    return jsonify({"user": user.user_to_json()})
 
 # create a user
 @users_bp.route("/", methods=["POST"], strict_slashes=False)
@@ -30,7 +37,7 @@ def create_user():
         "lastName"
     ]
 
-    # validations
+    # validation for required fields
     has_all_fields, msg = check_required_fields(required_fields)
     if not has_all_fields:
         return jsonify({

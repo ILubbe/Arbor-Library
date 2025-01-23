@@ -6,7 +6,7 @@ from utils.password_utils import hash_salt_password
 def create_default_admin_user():
     # Check if the users table is empty
     if User.query.count() == 0:
-        print(f"Bootstrap: users table in database is empty, creating the default admin user")
+        print(f"Bootstrap: users table in database is empty, creating the default admin user\n")
         default_admin = User(
             role = 'librarian',
             email = 'defaultadmin@arborlibrary.com',
@@ -19,36 +19,72 @@ def create_default_admin_user():
         db.session.commit()
 
     else:
-        print("Bootstrap: Users already inside database")
+        print("Bootstrap: User(s) already inside database")
     return
 
 def fetch_and_populate_books(max_books):
     # Check if the books table is empty
     if Book.query.count() == 0:
-        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)")
+        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)\n")
 
-        subject = "fiction"
+        seed_subjects = [
+            "horror",
+            "history",
+            "cooking",
+            "science",
+            "sports",
+            "romance",
+            "love",
+            "politics",
+            "mystery",
+            "fantasy",
+            "poetry",
+            "travel",
+            "comedy",
+            "religion",
+            "art",
+            "youth",
+            "philosophy"
+        ]
+
         base_url = "https://openlibrary.org"
-        subject_url = f"{base_url}/subjects/{subject}.json"
         conditions = ["new", "good", "fair", "poor", "unknown"]
         
-        added_books = 0
         # openlibrary.org has a limit of 1000 books per request.
-        limit = 1000
+        limit = max_books // len(seed_subjects)
+        if limit > 1000:
+            limit = 1000
+
+        added_books = 0
+        added_books_current = added_books
+        count = 0
+        laps = 0
         offset = 0
+        print(f"requesting book data from {base_url}...\n")
         while added_books < max_books:
+            if count == len(seed_subjects):
+                count = 0
+                laps += 1
+
             if (max_books - added_books) < limit:
                 limit = max_books - added_books
-                offset += limit
-            elif added_books != 0 and added_books % limit == 0:
+
+            if added_books != 0 and added_books % limit == 0 and laps > 0:
                 offset += limit
 
+            subject_url = f"{base_url}/subjects/{seed_subjects[count]}.json"
             url = f"{subject_url}?limit={limit}&offset={offset}"
-                
-            print(f"requesting book data from {base_url}...")
-            response = requests.get(url)
-            data = response.json()
-            print("data received!")
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                data = response.json()
+            
+            except requests.exceptions.RequestException as e:
+                print(f"cannot connect to {url} moving on...")
+                continue
+
+            except ValueError as e:
+                continue
 
             for item in data['works']:
                 try:
@@ -56,31 +92,59 @@ def fetch_and_populate_books(max_books):
                     author = item['authors'][0]['name'] if item.get('authors') else 'Unknown Author'
                     first_publish_year = item.get('first_publish_year', -1)
                     book_condition = random.choice(conditions)
+                    book_id = added_books + 1
 
                     # Add the book to the database session
-                    book = Book(
+                    book_object = Book(
+                    id = book_id,
                     title = title,
                     author = author,
                     first_publish_year = first_publish_year,
                     book_condition = book_condition
                     )
 
-                    db.session.add(book)
+                    db.session.add(book_object)
                     added_books += 1
 
-                    # write books in batches to limit i/o operations.
+                    # add books in batches so the commits aren't too large.
                     if added_books % 100 == 0:
                         db.session.commit()
-                        print(f"{added_books} of {max_books} added")
 
                 except Exception as e:
-                    continue
+                    print(f"{str, e}")
 
-        db.session.commit()
-        print(f"{added_books} of {max_books} added")
+            # Add primary genre from every book to the database session
+            # if it loops back around to the first genre in the seed_subject array, ensure we don't add them again (has to be unique).
+            if laps < 1 and added_books_current < added_books:
+                genre = seed_subjects[count]
+
+                genre_object = Genre(
+                    id = count + 1,
+                    genre = genre
+                )
+
+                db.session.add(genre_object)
+                db.session.commit()
+
+            
+            if added_books_current < added_books:
+                # add genre ids and book ids to books_genres linking table
+                for i in range(added_books_current + 1, added_books + 1, 1):
+                    books_genres_object = Book_Genre(
+                        book_id = i,
+                        genre_id = count + 1
+                    )
+                    db.session.add(books_genres_object)
+
+                print(f"{added_books - added_books_current} {seed_subjects[count]} book(s) added")
+                db.session.commit()
+                added_books_current = added_books
+                print(f"{added_books} book(s) of {max_books} added\n")
+
+            count += 1
 
     else:
-        print("Bootstrap: Books already inside database")
+        print("Bootstrap: Book(s) already inside database")
 
     return
 

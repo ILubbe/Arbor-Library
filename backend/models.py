@@ -27,8 +27,8 @@ class Book(db.Model):
     __tablename__ = 'books'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(500), nullable=False)
-    author = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(2000), nullable=False)
+    author = db.Column(db.String(2000), nullable=False)
     first_publish_year = db.Column(db.Integer)
     book_condition = db.Column(db.Enum('unknown', 'new', 'good', 'fair', 'poor'), nullable=False)
 
@@ -36,7 +36,7 @@ class Book(db.Model):
 
     def book_to_json(self):
         return {
-            "id": self.id,
+            #"id": self.id,
             "title": self.title,
             "author": self.author,
             "firstPublishYear": self.first_publish_year,
