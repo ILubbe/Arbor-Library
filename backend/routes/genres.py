@@ -24,7 +24,7 @@ def get_one_genre(genre_id):
 
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)
-def create_user():
+def create_genre():
     required_fields = [
         "genre"
     ]
