@@ -1,6 +1,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
+from datetime import timedelta
 from config import db
 
 class User(db.Model):
@@ -76,8 +77,8 @@ class Reservation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    reserved_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    expires_at = db.Column(db.DateTime, nullable=False)
+    reserved_at = db.Column(db.DateTime, server_default=func.now(), nullable=False) # default - reservation starts now
+    expires_at = db.Column(db.DateTime, nullable=False, default=text("DATE_ADD(NOW(), INTERVAL 96 HOUR)")) # default - reservation ends 4 days later
 
     def reservation_to_json(self):
         return {

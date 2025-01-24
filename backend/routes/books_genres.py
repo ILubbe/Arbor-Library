@@ -17,16 +17,13 @@ def get_books_genres():
 @books_genres_bp.route("/books-by-genre/<int:genre_id>", methods=["GET"], strict_slashes=False)
 def get_books_by_genre(genre_id):
     # ensure the genre exists
-    url = f"http://localhost:5000/genres/{genre_id}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.exceptions.RequestException:
-        return response.json(), response.status_code
+    genre = Genre.query.get(genre_id)
+    if not genre:
+        return jsonify({"message": "Genre not found"}), 404
 
     books_by_genre = Book_Genre.query.filter_by(genre_id=genre_id).all()
     if not books_by_genre:
-        return jsonify({"message": "No books associated with this genre"}), 200
+        return jsonify({"message": "No books associated with this genre"}), 404
 
     book_ids = [book.book_id for book in books_by_genre]
     
@@ -36,16 +33,13 @@ def get_books_by_genre(genre_id):
 @books_genres_bp.route("/genres-by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
 def get_genres_by_book(book_id):
     # ensure the book exists
-    url = f"http://localhost:5000/books/{book_id}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.exceptions.RequestException:
-        return response.json(), response.status_code
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
 
     genres_by_book = Book_Genre.query.filter_by(book_id=book_id).all()
     if not genres_by_book:
-        return jsonify({"message": "No genres associated with this book"}), 200
+        return jsonify({"message": "No genres associated with this book"}), 404
 
     genre_ids = [genre.genre_id for genre in genres_by_book]
 
@@ -70,25 +64,18 @@ def associate_book_to_genre():
     book_id = request.json.get("bookId")
     genre_id = request.json.get("genreId")
 
-    # ensure book and genre actually exist
-    url = f"http://localhost:5000/books/{book_id}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
+    # ensure book and genre actually exist, and book isn't already associated to the genre
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": f"Book not found"}), 404
 
-        url = f"http://localhost:5000/genres/{genre_id}"
-        response = requests.get(url)
-        response.raise_for_status()
+    genre = Genre.query.get(genre_id)
+    if not genre:
+        return jsonify({"message": f"Genre not found"}), 404
 
-        # ensure the book isnt already associated to the genre
-        url = f"http://localhost:5000/books-genres/genres-by-book/{book_id}"
-        response = requests.get(url)
-        response.raise_for_status()
-
-    except requests.exceptions.RequestException:
-        return response.json(), response.status_code
-        
-    if genre_id in response.json().get("GenresByBook", []):
+    # Check if the book is already associated with the genre
+    existing_association = Book_Genre.query.filter_by(book_id=book_id, genre_id=genre_id).first()
+    if existing_association:
         return jsonify({"message": "Book is already associated with this genre"}), 400
 
 
