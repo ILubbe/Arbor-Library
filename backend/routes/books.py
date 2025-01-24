@@ -12,9 +12,9 @@ def get_books():
     json_books = list(map(lambda x: x.book_to_json(), books))
     return jsonify({"books": json_books})
 
-# get one book
+# get a book by id
 @books_bp.route("/<int:book_id>", methods=["GET"])
-def get_one_book(book_id):
+def get_book_by_id(book_id):
     book = Book.query.get(book_id)
 
     if book is None:

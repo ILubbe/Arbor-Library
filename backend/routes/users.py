@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import User, db
 from utils.general_utils import *
-from utils.create_user_utils import *
 from utils.password_utils import *
 
 
@@ -15,9 +14,9 @@ def get_users():
     json_users = list(map(lambda x: x.user_to_json(), users))
     return jsonify({"users": json_users})
 
-# get one user
+# get user by id
 @users_bp.route("/<int:user_id>", methods=["GET"])
-def get_one_user(user_id):
+def get_user_by_id(user_id):
     user = User.query.get(user_id)
 
     if user is None:
@@ -68,7 +67,7 @@ def create_user():
         }), 400
 
     valid_roles = ["patron", "librarian"]
-    if not is_role_valid(role, valid_roles):
+    if role not in valid_roles:
         return jsonify({
             "message": f"Invalid role. A role can be one of the following: {', '.join(valid_roles)}"
         }), 400

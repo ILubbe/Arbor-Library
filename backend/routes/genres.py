@@ -12,9 +12,9 @@ def get_genres():
     json_genres = list(map(lambda x: x.genre_to_json(), genres))
     return jsonify({"genres": json_genres})
 
-# get one genre
+# get a genre by id
 @genres_bp.route("/<int:genre_id>", methods=["GET"])
-def get_one_genre(genre_id):
+def get_genre_by_id(genre_id):
     genre = Genre.query.get(genre_id)
 
     if genre is None:

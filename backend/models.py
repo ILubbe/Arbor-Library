@@ -54,7 +54,7 @@ class Genre(db.Model):
 
     def genre_to_json(self):
         return {
-            "id": self.id,
+            #"id": self.id,
             "genre": self.genre
         }
 
@@ -77,14 +77,16 @@ class Reservation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    reserved_at = db.Column(db.DateTime, server_default=func.now(), nullable=False) # default - reservation starts now
-    expires_at = db.Column(db.DateTime, nullable=False, default=text("DATE_ADD(NOW(), INTERVAL 96 HOUR)")) # default - reservation ends 4 days later
+    status = db.Column(db.Enum('active', 'fulfilled', 'expired', 'waiting', 'canceled'), nullable=False)
+    reserved_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - reservation starts now
+    expires_at = db.Column(db.DateTime, default=text("DATE_ADD(NOW(), INTERVAL 4 DAY)")) # default - reservation ends 4 days later
 
     def reservation_to_json(self):
         return {
-            "id": self.id,
+            #"id": self.id,
             "userID": self.user_id,
             "bookID": self.book_id,
+            "status": self.status,
             "reservedAt": self.reserved_at,
             "expiresAt": self.expires_at
         }
@@ -95,13 +97,13 @@ class Checkout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    checked_out_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
-    due_at = db.Column(db.DateTime, nullable=False)
-    returned = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
+    checked_out_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - checkout starts now
+    due_at = db.Column(db.DateTime, nullable=False, default=text("DATE_ADD(NOW(), INTERVAL 3 WEEK)")) # default - due after 3 weeks later)
+    returned = db.Column(db.Boolean, nullable=False, server_default=expression.false())
 
     def checkout_to_json(self):
         return {
-            "id": self.id,
+            #"id": self.id,
             "userID": self.user_id,
             "bookID": self.book_id,
             "checkoutOutAt": self.checked_out_at,

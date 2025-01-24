@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy import func
-from models import Reservation, User, Book, db
+from models import Reservation, User, Book, Checkout, db
 from utils.general_utils import *
 
 # define blueprint
@@ -13,8 +13,18 @@ def get_reservations():
     json_reservations = list(map(lambda x: x.reservation_to_json(), reservations))
     return jsonify({"reservations": json_reservations})
 
+# get reservation by id
+@reservations_bp.route("/<int:reservation_id>", methods=["GET"])
+def get_reservation_by_id(reservation_id):
+    reservation = Reservation.query.get(reservation_id)
+
+    if reservation is None:
+        return jsonify({"message": "Reservation not found"}), 404
+    
+    return jsonify({"reservation": reservation.reservation_to_json()})
+
 # get all reservation(s) that one user has made
-@reservations_bp.route("/reservations-by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
+@reservations_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
 def get_reservations_by_user(user_id):
     # ensure user exists
     user = User.query.get(user_id)
@@ -30,7 +40,7 @@ def get_reservations_by_user(user_id):
     return jsonify({"reservationsIdByUser": reservation_ids}), 200
 
 # get all reservation(s) made for one book
-@reservations_bp.route("/reservations-by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
+@reservations_bp.route("/by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
 def get_reservations_by_book(book_id):
     # ensure book exists
     book = Book.query.get(book_id)
@@ -44,6 +54,38 @@ def get_reservations_by_book(book_id):
     reservation_ids = [reservation.id for reservation in reservations_by_book]
     
     return jsonify({"reservationsIdByBook": reservation_ids}), 200
+
+# get active reservation(s) by user
+@reservations_bp.route("/by-user/active/<int:user_id>", methods=["GET"], strict_slashes=False)
+def get_active_reservations_by_user(user_id):
+    # ensure user exists
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    active_reservations_by_user = Reservation.query.filter_by(user_id=user_id).filter(Reservation.expires_at > func.now()).all()
+    if not active_reservations_by_user:
+        return jsonify({"message": "No active reservations associated with this user"}), 404
+
+    active_reservations_by_user_ids = [reservation.id for reservation in active_reservations_by_user]
+    
+    return jsonify({"activeReservationsIdByUser": active_reservations_by_user_ids}), 200
+
+# get active reservation(s) by book
+@reservations_bp.route("/by-book/active/<int:book_id>", methods=["GET"], strict_slashes=False)
+def get_active_reservations_by_book(book_id):
+    # ensure book exists
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+
+    active_reservations_by_book = Reservation.query.filter_by(book_id=book_id).filter(Reservation.expires_at > func.now()).all()
+    if not active_reservations_by_book:
+        return jsonify({"message": "No active reservations associated with this book"}), 404
+
+    active_reservation_by_book_ids = [reservation.id for reservation in active_reservations_by_book]
+    
+    return jsonify({"activeReservationsIdByBook": active_reservations_by_book_ids}), 200
 
 # get all reservation(s) that one user has made for one book
 @reservations_bp.route("/<int:user_id>/<int:book_id>", methods=["GET"], strict_slashes=False)
@@ -63,7 +105,7 @@ def get_reservations_by_book_and_user(user_id, book_id):
 
     return jsonify({"reservationsIdByUserAndBook": reservation_ids}), 200
 
-
+# create a reservation that goes into effect immediately
 @reservations_bp.route("/", methods=["POST"], strict_slashes=False)
 def create_immediate_reservation():
     required_fields = [
@@ -91,21 +133,41 @@ def create_immediate_reservation():
     if not book:
         return jsonify({"message": f"Book not found"}), 404
 
-    active_reservation = Reservation.query.filter_by(user_id=user_id, book_id=book_id).filter(Reservation.expires_at > func.now()).first()
+    active_reservation = Reservation.query.filter_by(book_id=book_id).filter(Reservation.expires_at > func.now()).first()
     if active_reservation:
-        return jsonify({"message": "You have already made an active reservation for this book"}), 400
+        return jsonify({"message": "This book is already reserved"}), 400
 
+
+    active_checkout = Checkout.query.filter_by(book_id=book_id, returned=False)
+    if active_checkout:
+        new_reservation = Reservation(
+        user_id = user_id,
+        book_id = book_id,
+        status = "waiting",
+        expires_at = None
+        )
+
+        try:
+            db.session.add(new_reservation)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({"message": f"Something went wrong, please try again"}), 400
+
+        return jsonify(
+            {"message": "This book is currently checked out. You will be notified when the book is returned. Your reservation has been created, however, if other patrons have this book also reserved, it is first come first serve."}
+        ), 400
 
     # create the new reservation
     new_reservation = Reservation(
         user_id = user_id,
-        book_id = book_id
+        book_id = book_id,
+        status = 'active'
     )
 
     try:
         db.session.add(new_reservation)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again{str,e }"}), 400
+        return jsonify({"message": f"Something went wrong, please try again"}), 400
 
     return jsonify({"message": f"Reservation created!"}), 201
