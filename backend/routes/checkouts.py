@@ -31,7 +31,7 @@ def get_checkouts_by_user(user_id):
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    checkouts_by_user = Checkout.query.filter_by(user_id=user_id).all()
+    checkouts_by_user = Checkout.query.filter_by(user_id=user_id)
     if not checkouts_by_user:
         return jsonify({"message": "No checkouts associated with this user"}), 404
 
@@ -47,7 +47,7 @@ def get_checkouts_by_book(book_id):
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
-    checkouts_by_book = Checkout.query.filter_by(book_id=book_id).all()
+    checkouts_by_book = Checkout.query.filter_by(book_id=book_id)
     if not checkouts_by_book:
         return jsonify({"message": "No checkouts associated with this book"}), 404
 
@@ -138,6 +138,7 @@ def create_immediate_checkout():
         return jsonify({"message": "This book is already checked out"}), 400
 
     actively_reserved = Reservation.query.filter_by(book_id=book_id, status='active').first()
+    print(actively_reserved)
     if actively_reserved:
         if actively_reserved.user_id != user_id:
             return jsonify({"message": "This book is actively reserved by someone else"}), 400
@@ -145,11 +146,9 @@ def create_immediate_checkout():
         try:
             actively_reserved.status = 'fulfilled'
             db.session.commit()
+            print("status updated")
         except Exception as e:
-            return jsonify({"message": f"Something went wrong, please try again"}), 400
-        
-        return jsonify({"message": f"Checkout created! Active reservation status changed to 'fulfilled'"}), 201
-    
+            return jsonify({"message": f"Something went wrong, please try again"}), 500
 
     # create the new checkout
     new_checkout = Checkout(
@@ -161,6 +160,6 @@ def create_immediate_checkout():
         db.session.add(new_checkout)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again"}), 400
+        return jsonify({"message": f"Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Checkout created!"}), 201

@@ -79,7 +79,8 @@ class Reservation(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     status = db.Column(db.Enum('active', 'fulfilled', 'expired', 'waiting', 'canceled'), nullable=False)
     reserved_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - reservation starts now
-    expires_at = db.Column(db.DateTime, default=text("DATE_ADD(NOW(), INTERVAL 4 DAY)")) # default - reservation ends 4 days later
+    expires_at = db.Column(db.DateTime)
+
 
     def reservation_to_json(self):
         return {

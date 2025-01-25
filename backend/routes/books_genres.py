@@ -97,8 +97,31 @@ def associate_book_to_genre():
         db.session.add(new_association)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": "Something went wrong, please try again"}), 400
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Book-to-Genre association created!"}), 201
+
+# unassociate a book to a genre by book & genre ids
+@books_genres_bp.route("/<int:book_id>/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
+def delete_book_genre_association(book_id, genre_id):
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": f"Book not found"}), 404
+
+    genre = Genre.query.get(genre_id)
+    if not genre:
+        return jsonify({"message": f"Genre not found"}), 404
+
+    book_genre = Book_Genre.query.filter_by(book_id=book_id, genre_id=genre_id).first()
+    if not book_genre:
+        return jsonify({"message": "Book-Genre association not found"}), 404
+
+    try:
+        db.session.delete(book_genre)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": "Book-Genre association deleted successfully"}), 200
 
 

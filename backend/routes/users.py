@@ -93,7 +93,21 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": "Something went wrong, please try again"}), 400
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"User {email} created!"}), 201
     
+# delete a user by id
+@users_bp.route("/<int:user_id>", methods=["DELETE"], strict_slashes=False)
+def delete_user(user_id):
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": "User deleted successfully"}), 200

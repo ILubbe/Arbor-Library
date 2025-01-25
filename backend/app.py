@@ -5,6 +5,7 @@ from config import app, db
 from models import User, Book, Genre, Book_Genre, Reservation, Checkout
 from routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp
 from bootstrap import create_default_admin_user, fetch_and_populate_books
+from tasks import scheduler
 
 blueprints = [
     users_bp,

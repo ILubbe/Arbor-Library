@@ -24,7 +24,7 @@ def get_book_by_id(book_id):
 
 # create a book
 @books_bp.route("/", methods=["POST"], strict_slashes=False)
-def create_user():
+def create_book():
     required_fields = [
         "title",
         "author",
@@ -67,6 +67,21 @@ def create_user():
         db.session.add(new_book)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": "Something went wrong, please try again"}), 400
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Book {title} added!"}), 201
+
+# delete a book by id
+@books_bp.route("/<int:book_id>", methods=["DELETE"], strict_slashes=False)
+def delete_book(book_id):
+    book = Book.query.get(book_id)
+
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+    try:
+        db.session.delete(book)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": "Book deleted successfully"}), 200

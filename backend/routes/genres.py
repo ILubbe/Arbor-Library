@@ -60,6 +60,21 @@ def create_genre():
         db.session.add(new_genre)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again {str, e}"}), 400
+        return jsonify({"message": f"Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Genre {genre} added!"}), 201
+
+# delete a genre by id
+@genres_bp.route("/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
+def delete_genre(genre_id):
+    genre = Genre.query.get(genre_id)
+
+    if not genre:
+        return jsonify({"message": "Genre not found"}), 404
+    try:
+        db.session.delete(genre)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": "Genre deleted successfully"}), 200
