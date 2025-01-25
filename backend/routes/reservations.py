@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy import func
+from sqlalchemy import func, text
 from models import Reservation, User, Book, Checkout, db
 from utils.general_utils import *
 

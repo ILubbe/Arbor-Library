@@ -107,7 +107,7 @@ def get_checkouts_by_book_and_user(user_id, book_id):
 
 # create a checkout that goes into effect immediately
 @checkouts_bp.route("/", methods=["POST"], strict_slashes=False)
-def create_immediate_checkout():
+def create_checkout():
     required_fields = [
         "userId",
         "bookId"
@@ -145,8 +145,8 @@ def create_immediate_checkout():
     
         try:
             actively_reserved.status = 'fulfilled'
+            actively_reserved.expires_at = None
             db.session.commit()
-            print("status updated")
         except Exception as e:
             return jsonify({"message": f"Something went wrong, please try again"}), 500
 
@@ -163,3 +163,18 @@ def create_immediate_checkout():
         return jsonify({"message": f"Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Checkout created!"}), 201
+
+# check a book in
+@checkouts_bp.route("/<int:checkout_id>", methods=["PATCH"], strict_slashes=False)
+def check_in_book(checkout_id):
+    checkout = Checkout.query.get(checkout_id)
+    if not checkout:
+        return jsonify({"message": "Checkout record not found"}), 404
+
+    try:
+        checkout.returned = True
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": f"Something went wrong, please try again"}), 500
+
+    return jsonify({"message": f"Book checked in"}), 201

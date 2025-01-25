@@ -85,3 +85,59 @@ def delete_book(book_id):
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": "Book deleted successfully"}), 200
+
+# update a book's info
+@books_bp.route("/<int:book_id>", methods=["PUT"], strict_slashes=False)
+def change_book_info(book_id):
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+
+    required_fields = [
+        "title",
+        "author",
+        "bookCondition"
+    ]
+
+    # validatione required fields
+    has_all_fields, msg = check_required_fields(required_fields)
+    if not has_all_fields:
+        return jsonify({
+            "message": f"Please fill all required fields: {', '.join(msg)}"
+        }), 400
+
+    # convert json keys to valid db columns
+    title = request.json.get("title")
+    author = request.json.get("author")
+    # this one is optional
+    if request.json.get("firstPublishYear"):
+        first_publish_year = request.json.get("firstPublishYear")
+    else:
+        first_publish_year = None
+    book_condition = request.json.get("bookCondition").lower()
+
+    updated_book = Book(
+        title = title,
+        author = author,
+        first_publish_year = first_publish_year,
+        book_condition = book_condition
+    )
+
+    # validate length
+    length_ok, field = field_length_ok(Book, updated_book)
+    if not length_ok:
+        field = field.replace("_", " ").title()
+        return jsonify({
+            "message": f"The following field is too long: {field}"
+        }), 400
+
+    try:
+        book.title = updated_book.title
+        book.author = updated_book.author
+        book.first_publish_year = updated_book.first_publish_year
+        book.book_condition = updated_book.book_condition
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": f"Book details updated!"}), 201

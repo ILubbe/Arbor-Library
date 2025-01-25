@@ -77,7 +77,7 @@ class Reservation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    status = db.Column(db.Enum('active', 'fulfilled', 'expired', 'waiting', 'canceled'), nullable=False)
+    status = db.Column(db.Enum('active', 'fulfilled', 'expired', 'waiting'), nullable=False)
     reserved_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - reservation starts now
     expires_at = db.Column(db.DateTime)
 

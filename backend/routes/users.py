@@ -111,3 +111,91 @@ def delete_user(user_id):
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": "User deleted successfully"}), 200
+
+# update a user's role, change from patron to librarian or librarian to patron (toggle)
+@users_bp.route("/<int:user_id>", methods=["PATCH"], strict_slashes=False)
+def change_user_role(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    old_role = user.role
+    new_role = 'librarian' if user.role == 'patron' else 'patron' if user.role == 'librarian' else None
+
+    if new_role is None:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    try:
+        user.role = new_role
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": f"User's role updated from {old_role} to {new_role}"}), 201
+
+# update a user's info - password, firstname, and lastname only
+@users_bp.route("/<int:user_id>", methods=["PUT"], strict_slashes=False)
+def change_user_info(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    required_fields = [
+        "password",
+        "passwordConfirmation",
+        "firstName",
+        "lastName"
+    ]
+
+    # validation for required fields
+    has_all_fields, msg = check_required_fields(required_fields)
+    if not has_all_fields:
+        return jsonify({
+            "message": f"Please fill all required fields: {', '.join(msg)}"
+        }), 400
+
+    # convert json keys to valid db columns
+    password = request.json.get("password") # plain text
+    password_confirmation = request.json.get("passwordConfirmation")  # plain text password confirmation
+    first_name = request.json.get("firstName")
+    last_name = request.json.get("lastName")
+
+    if password != password_confirmation:
+        return jsonify({"message": "Passwords do not match"})
+
+    password_min_length = 12
+    is_valid, message = complexity_check(password, password_min_length)
+    if not is_valid:
+        return jsonify({
+            "message": message
+        }), 400
+
+    updated_user = User(
+        role = user.role, # not updating this
+        email = user.email, # not updating this
+        password_hash = hash_salt_password(password), # store salted hash as a string
+        first_name = first_name,
+        last_name = last_name
+    )
+
+    # validate length
+    length_ok, field = field_length_ok(User, updated_user)
+    if not length_ok:
+        field = field.replace("_", " ").title()
+        return jsonify({
+            "message": f"The following field is too long: {field}"
+        }), 400
+
+    # only updating the password and name here
+    try:
+        user.role = updated_user.role # not updating this
+        user.email = updated_user.email # not updating this
+        user.password_hash = updated_user.password_hash
+        user.first_name = updated_user.first_name
+        user.last_name = updated_user.last_name
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": f"Something went wrong, please try again"}), 500
+
+    return jsonify({"message": f"User udpated"}), 201
+
