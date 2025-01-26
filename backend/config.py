@@ -1,8 +1,11 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 CORS(app)
@@ -17,5 +20,10 @@ db_uri = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 
 db = SQLAlchemy(app)
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)

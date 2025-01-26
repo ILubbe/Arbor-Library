@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from sqlalchemy import func
 from models import Checkout, User, Book, Reservation, db
 from utils.general_utils import *
@@ -8,6 +9,7 @@ checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
 
 # get all checkouts
 @checkouts_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_checkouts():
     checkouts = Checkout.query.all()
     json_checkouts = list(map(lambda x: x.checkout_to_json(), checkouts))
@@ -15,6 +17,7 @@ def get_checkouts():
 
 # get a checkout by id
 @checkouts_bp.route("/<int:checkout_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_checkout_by_id(checkout_id):
     checkout = Checkout.query.get(checkout_id)
 
@@ -25,6 +28,7 @@ def get_checkout_by_id(checkout_id):
 
 # get checkout(s) by user
 @checkouts_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_checkouts_by_user(user_id):
     # ensure user exists
     user = User.query.get(user_id)
@@ -41,6 +45,7 @@ def get_checkouts_by_user(user_id):
 
 # get all checkout(s) made for one book
 @checkouts_bp.route("/by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_checkouts_by_book(book_id):
     # ensure book exists
     book = Book.query.get(book_id)
@@ -57,6 +62,7 @@ def get_checkouts_by_book(book_id):
 
 # get active checkout(s) by user (not yet returned)
 @checkouts_bp.route("/by-user/active/<int:user_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_active_checkouts_by_user(user_id):
     # ensure user exists
     user = User.query.get(user_id)
@@ -73,6 +79,7 @@ def get_active_checkouts_by_user(user_id):
 
 # get active checkout(s) by book (not yet returned)
 @checkouts_bp.route("/by-book/active/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_active_checkouts_by_book(book_id):
     # ensure book exists
     book = Book.query.get(book_id)
@@ -89,15 +96,16 @@ def get_active_checkouts_by_book(book_id):
 
 # get all checkout(s) that one user has made for one book
 @checkouts_bp.route("/<int:user_id>/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_checkouts_by_book_and_user(user_id, book_id):
     #ensure user and book exist
     user = User.query.get(user_id)
     if not user:
-        return jsonify({"message": f"User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     book = Book.query.get(book_id)
     if not book:
-        return jsonify({"message": f"Book not found"}), 404
+        return jsonify({"message": "Book not found"}), 404
 
     checkouts_by_book_and_user = Checkout.query.filter_by(user_id=user_id, book_id=book_id)
 
@@ -107,6 +115,7 @@ def get_checkouts_by_book_and_user(user_id, book_id):
 
 # create a checkout that goes into effect immediately
 @checkouts_bp.route("/", methods=["POST"], strict_slashes=False)
+@jwt_required()
 def create_checkout():
     required_fields = [
         "userId",
@@ -127,11 +136,11 @@ def create_checkout():
     # ensure an active checkout doesn't already exist for this user & book, ensure the book and user exists
     user = User.query.get(user_id)
     if not user:
-        return jsonify({"message": f"User not found"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     book = Book.query.get(book_id)
     if not book:
-        return jsonify({"message": f"Book not found"}), 404
+        return jsonify({"message": "Book not found"}), 404
 
     active_checkout = Checkout.query.filter_by(book_id=book_id, returned=False).first()
     if active_checkout:
@@ -148,7 +157,7 @@ def create_checkout():
             actively_reserved.expires_at = None
             db.session.commit()
         except Exception as e:
-            return jsonify({"message": f"Something went wrong, please try again"}), 500
+            return jsonify({"message": "Something went wrong, please try again"}), 500
 
     # create the new checkout
     new_checkout = Checkout(
@@ -160,12 +169,13 @@ def create_checkout():
         db.session.add(new_checkout)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again"}), 500
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Checkout created!"}), 201
 
 # check a book in
 @checkouts_bp.route("/<int:checkout_id>", methods=["PATCH"], strict_slashes=False)
+@jwt_required()
 def check_in_book(checkout_id):
     checkout = Checkout.query.get(checkout_id)
     if not checkout:
@@ -175,6 +185,6 @@ def check_in_book(checkout_id):
         checkout.returned = True
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again"}), 500
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": f"Book checked in"}), 201
+    return jsonify({"message": "Book checked in"}), 201

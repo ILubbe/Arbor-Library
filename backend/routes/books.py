@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from models import Book, db
 from utils.general_utils import check_required_fields, field_length_ok
 
@@ -7,6 +8,7 @@ books_bp = Blueprint('books', __name__, url_prefix='/books')
 
 # get all books
 @books_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_books():
     books = Book.query.all()
     json_books = list(map(lambda x: x.book_to_json(), books))
@@ -14,6 +16,7 @@ def get_books():
 
 # get a book by id
 @books_bp.route("/<int:book_id>", methods=["GET"])
+@jwt_required()
 def get_book_by_id(book_id):
     book = Book.query.get(book_id)
 
@@ -24,6 +27,7 @@ def get_book_by_id(book_id):
 
 # create a book
 @books_bp.route("/", methods=["POST"], strict_slashes=False)
+@jwt_required()
 def create_book():
     required_fields = [
         "title",
@@ -73,6 +77,7 @@ def create_book():
 
 # delete a book by id
 @books_bp.route("/<int:book_id>", methods=["DELETE"], strict_slashes=False)
+@jwt_required()
 def delete_book(book_id):
     book = Book.query.get(book_id)
 
@@ -88,6 +93,7 @@ def delete_book(book_id):
 
 # update a book's info
 @books_bp.route("/<int:book_id>", methods=["PUT"], strict_slashes=False)
+@jwt_required()
 def change_book_info(book_id):
     book = Book.query.get(book_id)
     if not book:
@@ -140,4 +146,4 @@ def change_book_info(book_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": f"Book details updated!"}), 201
+    return jsonify({"message": "Book details updated!"}), 201

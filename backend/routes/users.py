@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from models import User, db
 from utils.general_utils import *
 from utils.password_utils import *
@@ -9,6 +10,7 @@ users_bp = Blueprint('users', __name__, url_prefix='/users')
 
 # get all users
 @users_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_users():
     users = User.query.all()
     json_users = list(map(lambda x: x.user_to_json(), users))
@@ -16,6 +18,7 @@ def get_users():
 
 # get user by id
 @users_bp.route("/<int:user_id>", methods=["GET"])
+@jwt_required()
 def get_user_by_id(user_id):
     user = User.query.get(user_id)
 
@@ -24,7 +27,7 @@ def get_user_by_id(user_id):
     
     return jsonify({"user": user.user_to_json()})
 
-# create a user
+# create a user UNPROTECTED
 @users_bp.route("/", methods=["POST"], strict_slashes=False)
 def create_user():
     required_fields = [
@@ -99,6 +102,7 @@ def create_user():
     
 # delete a user by id
 @users_bp.route("/<int:user_id>", methods=["DELETE"], strict_slashes=False)
+@jwt_required()
 def delete_user(user_id):
     user = User.query.get(user_id)
 
@@ -114,6 +118,7 @@ def delete_user(user_id):
 
 # update a user's role, change from patron to librarian or librarian to patron (toggle)
 @users_bp.route("/<int:user_id>", methods=["PATCH"], strict_slashes=False)
+@jwt_required()
 def change_user_role(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -135,6 +140,7 @@ def change_user_role(user_id):
 
 # update a user's info - password, firstname, and lastname only
 @users_bp.route("/<int:user_id>", methods=["PUT"], strict_slashes=False)
+@jwt_required()
 def change_user_info(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -195,7 +201,8 @@ def change_user_info(user_id):
         user.last_name = updated_user.last_name
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again"}), 500
 
-    return jsonify({"message": f"User udpated"}), 201
+        return jsonify({"message": "Something went wrong, please try again"}), 500
+
+    return jsonify({"message": "User udpated"}), 201
 

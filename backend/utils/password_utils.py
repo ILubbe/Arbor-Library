@@ -1,4 +1,4 @@
-import bcrypt
+from flask_bcrypt import Bcrypt
 
 def complexity_check(password, min_length):
     special_characters = set("!@#$%^&*()-_+=[]{}|;:,.<>?/")

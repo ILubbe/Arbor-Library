@@ -3,7 +3,7 @@ import os
 from sqlalchemy.exc import OperationalError
 from config import app, db
 from models import User, Book, Genre, Book_Genre, Reservation, Checkout
-from routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp
+from routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp, login_bp
 from bootstrap import create_default_admin_user, fetch_and_populate_books
 from tasks import scheduler
 
@@ -13,7 +13,8 @@ blueprints = [
     genres_bp,
     books_genres_bp,
     reservations_bp,
-    checkouts_bp
+    checkouts_bp,
+    login_bp
 ]
 
 for bp in blueprints:

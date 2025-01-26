@@ -1,5 +1,5 @@
-import requests
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from models import Book_Genre, Book, Genre, db
 from utils.general_utils import *
 
@@ -8,6 +8,7 @@ books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres'
 
 # read all books_genres
 @books_genres_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_books_genres():
     books_genres = Book_Genre.query.all()
     json_books_genres = list(map(lambda x: x.book_genre_to_json(), books_genres))
@@ -15,6 +16,7 @@ def get_books_genres():
 
 # read book id(s) by genre-id
 @books_genres_bp.route("/books-by-genre/<int:genre_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_books_by_genre(genre_id):
     # ensure the genre exists
     genre = Genre.query.get(genre_id)
@@ -31,6 +33,7 @@ def get_books_by_genre(genre_id):
 
 # read genre id(s) by book-id
 @books_genres_bp.route("/genres-by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_genres_by_book(book_id):
     # ensure the book exists
     book = Book.query.get(book_id)
@@ -47,6 +50,7 @@ def get_genres_by_book(book_id):
 
 # associate a book with a genre
 @books_genres_bp.route("/associate-book-to-genre", methods=["POST"], strict_slashes=False)
+@jwt_required()
 def associate_book_to_genre():
     required_fields = [
         "bookId",
@@ -67,11 +71,11 @@ def associate_book_to_genre():
     # ensure book and genre actually exist, and book isn't already associated to the genre
     book = Book.query.get(book_id)
     if not book:
-        return jsonify({"message": f"Book not found"}), 404
+        return jsonify({"message": "Book not found"}), 404
 
     genre = Genre.query.get(genre_id)
     if not genre:
-        return jsonify({"message": f"Genre not found"}), 404
+        return jsonify({"message": "Genre not found"}), 404
 
     # Check if the book is already associated with the genre
     existing_association = Book_Genre.query.filter_by(book_id=book_id, genre_id=genre_id).first()
@@ -99,18 +103,19 @@ def associate_book_to_genre():
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": f"Book-to-Genre association created!"}), 201
+    return jsonify({"message": "Book-to-Genre association created!"}), 201
 
 # unassociate a book to a genre by book & genre ids
 @books_genres_bp.route("/<int:book_id>/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
+@jwt_required()
 def delete_book_genre_association(book_id, genre_id):
     book = Book.query.get(book_id)
     if not book:
-        return jsonify({"message": f"Book not found"}), 404
+        return jsonify({"message": "Book not found"}), 404
 
     genre = Genre.query.get(genre_id)
     if not genre:
-        return jsonify({"message": f"Genre not found"}), 404
+        return jsonify({"message": "Genre not found"}), 404
 
     book_genre = Book_Genre.query.filter_by(book_id=book_id, genre_id=genre_id).first()
     if not book_genre:

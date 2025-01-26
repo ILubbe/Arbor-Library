@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from models import Genre, db
 from utils.general_utils import *
 
@@ -7,6 +8,7 @@ genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
 
 # read all genres
 @genres_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
 def get_genres():
     genres = Genre.query.all()
     json_genres = list(map(lambda x: x.genre_to_json(), genres))
@@ -14,6 +16,7 @@ def get_genres():
 
 # get a genre by id
 @genres_bp.route("/<int:genre_id>", methods=["GET"])
+@jwt_required()
 def get_genre_by_id(genre_id):
     genre = Genre.query.get(genre_id)
 
@@ -24,6 +27,7 @@ def get_genre_by_id(genre_id):
 
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)
+@jwt_required()
 def create_genre():
     required_fields = [
         "genre"
@@ -60,12 +64,13 @@ def create_genre():
         db.session.add(new_genre)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again"}), 500
+        return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Genre {genre} added!"}), 201
 
 # delete a genre by id
 @genres_bp.route("/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
+@jwt_required()
 def delete_genre(genre_id):
     genre = Genre.query.get(genre_id)
 
