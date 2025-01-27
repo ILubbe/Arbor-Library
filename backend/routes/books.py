@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Book, db
-from utils.general_utils import check_required_fields, field_length_ok
+from utils.general_utils import *
+from utils.rbac_decorators import *
 
 # define blueprint
 books_bp = Blueprint('books', __name__, url_prefix='/books')
@@ -28,6 +29,7 @@ def get_book_by_id(book_id):
 # create a book
 @books_bp.route("/", methods=["POST"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def create_book():
     required_fields = [
         "title",
@@ -78,6 +80,7 @@ def create_book():
 # delete a book by id
 @books_bp.route("/<int:book_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def delete_book(book_id):
     book = Book.query.get(book_id)
 
@@ -94,6 +97,7 @@ def delete_book(book_id):
 # update a book's info
 @books_bp.route("/<int:book_id>", methods=["PUT"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def change_book_info(book_id):
     book = Book.query.get(book_id)
     if not book:

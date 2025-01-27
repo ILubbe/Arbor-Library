@@ -1,4 +1,5 @@
-from flask_bcrypt import Bcrypt
+#from flask_bcrypt import Bcrypt
+from config import bcrypt
 
 def complexity_check(password, min_length):
     special_characters = set("!@#$%^&*()-_+=[]{}|;:,.<>?/")
@@ -40,4 +41,4 @@ def complexity_check(password, min_length):
     return True, ""
 
 def hash_salt_password(password):
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    return bcrypt.generate_password_hash(password).decode('utf-8')

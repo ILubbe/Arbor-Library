@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Book_Genre, Book, Genre, db
 from utils.general_utils import *
+from utils.rbac_decorators import *
 
 # define blueprint
 books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres')
@@ -51,6 +52,7 @@ def get_genres_by_book(book_id):
 # associate a book with a genre
 @books_genres_bp.route("/associate-book-to-genre", methods=["POST"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def associate_book_to_genre():
     required_fields = [
         "bookId",
@@ -108,6 +110,7 @@ def associate_book_to_genre():
 # unassociate a book to a genre by book & genre ids
 @books_genres_bp.route("/<int:book_id>/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def delete_book_genre_association(book_id, genre_id):
     book = Book.query.get(book_id)
     if not book:

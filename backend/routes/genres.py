@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Genre, db
 from utils.general_utils import *
+from utils.rbac_decorators import *
 
 # define blueprint
 genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
@@ -28,6 +29,7 @@ def get_genre_by_id(genre_id):
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def create_genre():
     required_fields = [
         "genre"
@@ -71,6 +73,7 @@ def create_genre():
 # delete a genre by id
 @genres_bp.route("/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def delete_genre(genre_id):
     genre = Genre.query.get(genre_id)
 

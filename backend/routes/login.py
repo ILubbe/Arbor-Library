@@ -30,9 +30,11 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password_hash, password):
         return jsonify({"message": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=str(user.id))
+    access_token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
 
     refresh_token = create_refresh_token(identity=str(user.id))
+
+    print(f"{email} (id: {user.id}) has logged in")
 
     return jsonify(accessToken=access_token, refreshToken=refresh_token), 200
 
@@ -57,7 +59,8 @@ def refresh():
     current_refresh_token_jti = get_jwt()['jti']
     r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
 
-    new_access_token = create_access_token(identity=current_user)
+    user = User.query.get(current_user)
+    new_access_token = create_access_token(identity=current_user, additional_claims={"role": user.role})
     new_refresh_token = create_refresh_token(identity=current_user)
 
     return jsonify(accessToken=new_access_token, refreshToken=new_refresh_token), 200
@@ -71,5 +74,9 @@ def logout():
 
     # set token as revoked with ttl of 30 days in redis
     r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
+
+    current_user = get_jwt_identity()
+    user = User.query.get(current_user)
+    print(f"{user.email} (id: {user.id}) has logged out")
 
     return jsonify({"message": "Successfully logged out, please close your browser"}), 200
