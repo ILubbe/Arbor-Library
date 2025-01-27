@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt, get_jwt_identity
 from flask_bcrypt import Bcrypt
 from models import User
-from config import bcrypt
+from config import bcrypt, r, jwt
 from utils.general_utils import check_required_fields
 
 # define blueprint
-login_bp = Blueprint('login', __name__, url_prefix='/login')
+login_bp = Blueprint('login', __name__, url_prefix='/')
 
-@login_bp.route('/', methods=["POST"], strict_slashes=False)
+@login_bp.route('/login', methods=["POST"], strict_slashes=False)
 def login():
     required_fields = [
         "email",
@@ -36,17 +36,40 @@ def login():
 
     return jsonify(accessToken=access_token, refreshToken=refresh_token), 200
 
-@login_bp.route('/refresh', methods=["POST"], strict_slashes=False)
-@jwt_required(refresh=True)
-def refresh():
-    current_user = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user)
-
-    return jsonify(accessToken=new_access_token), 200
-
-@login_bp.route('/', methods=["GET"], strict_slashes=False)
+@login_bp.route('/login', methods=["GET"], strict_slashes=False)
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
 
     return jsonify(loggedInAs=current_user), 200
+
+@jwt.token_in_blocklist_loader
+def check_if_refresh_token_is_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload['jti']
+    if r.get(jti):
+        return True
+    return False
+
+@login_bp.route('/refresh', methods=["POST"], strict_slashes=False)
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    current_refresh_token_jti = get_jwt()['jti']
+    r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
+
+    new_access_token = create_access_token(identity=current_user)
+    new_refresh_token = create_refresh_token(identity=current_user)
+
+    return jsonify(accessToken=new_access_token, refreshToken=new_refresh_token), 200
+
+# revokes a refresh token
+@login_bp.route('/logout', methods=["POST"], strict_slashes=False)
+@jwt_required(refresh=True)
+def logout():
+    # get refresh token's identifier
+    current_refresh_token_jti = get_jwt()['jti']
+
+    # set token as revoked with ttl of 30 days in redis
+    r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
+
+    return jsonify({"message": "Successfully logged out, please close your browser"}), 200

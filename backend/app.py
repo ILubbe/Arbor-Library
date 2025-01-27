@@ -1,7 +1,7 @@
 import time
 import os
 from sqlalchemy.exc import OperationalError
-from config import app, db
+from config import app, db, r
 from models import User, Book, Genre, Book_Genre, Reservation, Checkout
 from routes import users_bp, books_bp, genres_bp, books_genres_bp, reservations_bp, checkouts_bp, login_bp
 from bootstrap import create_default_admin_user, fetch_and_populate_books
@@ -29,6 +29,9 @@ if __name__ == '__main__':
         try:
             with app.app_context():
                 db.create_all()
+                print('MariaDB Schema exists!')
+                r.ping()
+                print('Connected to Redis!')
                 # can toggle off bootstrapping by setting DB_BOOTSTRAP env var to FALSE
                 db_bootstrap = os.getenv('DB_BOOTSTRAP', 'TRUE').upper() in ['TRUE', '1']
                 if db_bootstrap:
@@ -39,7 +42,7 @@ if __name__ == '__main__':
                 break
         except OperationalError as e:
             retries += 1
-            print(f"Waiting for database to come up. Attmept {retries} of {max_retries}.")
+            print(f"Waiting for database and redis connections. Attmept {retries} of {max_retries}.")
             if retries < max_retries:
                 time.sleep(delay)
             else:
