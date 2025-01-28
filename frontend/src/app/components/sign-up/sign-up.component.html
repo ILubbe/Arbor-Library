@@ -1,0 +1,39 @@
+<div class="sign-up-container">
+    <h2>Create An Account</h2>
+
+    <!-- Display error message if signup fails -->
+    <div NgIf="errorMessage" class="error-message" style="color: red; font-size: 14px;">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Display success message -->
+    <div NgIf="successMessage" class="success" style="color: green; font-size: 14px;">
+        {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+        <div>
+            <label for="email">Email</label>
+            <input type="text" id="email" [(ngModel)]="email" name="email" required />
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" [(ngModel)]="password" name="password" required>
+        </div>
+        <div>
+            <label for="passwordConfirmation">Password Confirmation</label>
+            <input type="password" id="passwordConfirmation" [(ngModel)]="passwordConfirmation" name="passwordConfirmation" required>
+        </div>
+        <div>
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" required />
+        </div>
+        <div>
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" required />
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <p>Already have an account?</p>
+    <button (click)="goToLogin()">Login</button>
+</div>

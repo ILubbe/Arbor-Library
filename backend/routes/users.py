@@ -46,7 +46,6 @@ def get_profile():
 @users_bp.route("/", methods=["POST"], strict_slashes=False)
 def create_user():
     required_fields = [
-        "role",
         "email",
         "password",
         "passwordConfirmation",
@@ -62,7 +61,7 @@ def create_user():
         }), 400
 
     # convert json keys to valid db columns
-    role = request.json.get("role").lower()
+    role = "patron"
     email = request.json.get("email").lower()
     password = request.json.get("password") # plain text
     password_confirmation = request.json.get("passwordConfirmation")  # plain text password confirmation
@@ -82,12 +81,6 @@ def create_user():
     if not is_valid:
         return jsonify({
             "message": message
-        }), 400
-
-    valid_roles = ["patron", "librarian"]
-    if role not in valid_roles:
-        return jsonify({
-            "message": f"Invalid role. A role can be one of the following: {', '.join(valid_roles)}"
         }), 400
 
     # create user

@@ -1,0 +1,23 @@
+<div class="login-container">
+    <h2>Login</h2>
+  
+    <!-- Display error message if login fails -->
+    <div NgIf="errorMessage" class="error-message" style="color: red; font-size: 14px;">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Login form -->
+    <form (ngSubmit)="onSubmit()">
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" id="email" [(ngModel)]="email" name="email" required />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" [(ngModel)]="password" name="password" required />
+        </div>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account?</p>
+    <button (click)="goToSignUp()">Sign Up</button>
+</div>
