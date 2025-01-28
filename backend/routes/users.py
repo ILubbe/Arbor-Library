@@ -74,7 +74,7 @@ def create_user():
         return jsonify({"message": "That email is unavailable"}), 400
 
     if password != password_confirmation:
-        return jsonify({"message": "Passwords do not match"})
+        return jsonify({"message": "Passwords do not match"}), 400
 
     password_min_length = 12
     is_valid, message = complexity_check(password, password_min_length)

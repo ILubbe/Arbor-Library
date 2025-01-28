@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
+
 export class SignUpComponent {
   private apiUrl = 'http://localhost:5000/users'; // TODO variablize this later
   email: string = '';
@@ -32,11 +33,9 @@ export class SignUpComponent {
     this.http.post<any>(this.apiUrl, signUpData).subscribe({
       next: (response) => {
         // clear an old error message
-        this.errorMessage = '';
         this.successMessage = response.message;
-        setTimeout(() => {
-          this.router.navigate(['login']);
-        }, 2000);
+        alert(this.successMessage);
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         // clear an old success message
@@ -45,8 +44,8 @@ export class SignUpComponent {
       }
     });
   }
+  
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
 }
-
