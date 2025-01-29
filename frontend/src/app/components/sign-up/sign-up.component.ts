@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../../environments/enironment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-sign-up',
