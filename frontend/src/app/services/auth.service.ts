@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { throwError, catchError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private apiEndpoint = environment.backendUrl + '/login';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(email: string, password: string): Observable<any> {
     const body = { email, password };
@@ -20,23 +21,20 @@ export class AuthService {
     );
   }
 
-  refreshToken(refreshToken: string): Observable<any> {
-    const apiEndpoint = environment.backendUrl + '/refresh';
-    return this.http.post<any>(apiEndpoint, { refreshToken: refreshToken });
-  }
-
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
-
 
   getRefreshToken(): string | null {
     return localStorage.getItem('refreshToken');
   }
 
-  // Utility method to clear tokens (e.g., on logout)
-  clearTokens(): void {
+  logout(): boolean {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    alert('You have been logged out.')
+    this.router.navigate(['/login']);
+    return true;
+    
   }
 }

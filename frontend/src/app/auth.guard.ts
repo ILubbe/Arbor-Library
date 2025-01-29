@@ -3,16 +3,18 @@ import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../environments/environment';
+import { AuthService } from './services/auth.service';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
   const http = inject(HttpClient);
+  const authService = inject(AuthService);
   const apiEndpoint = environment.backendUrl + '/refresh';
-  const accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
+  const accessToken = authService.getAccessToken();
+  const refreshToken = authService.getRefreshToken();
 
-  if(!accessToken) {
-    return router.navigate(['/login']);
+  if(!accessToken || !refreshToken) {
+    return router.createUrlTree(['/login']);
   }
 
   try {
@@ -39,27 +41,15 @@ export const authGuard: CanActivateFn = async (route, state) => {
           return true;
 
         } catch (error) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          
-
-          return router.createUrlTree(['/login']);
+          return authService.logout();
 
         }
       } else {
-        localStorage.removeItem('accessToken');
-
-        return router.createUrlTree(['/login']);
-
+        return authService.logout();
       }
     }
-
     return true;
-
   } catch (error) {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-
-    return router.createUrlTree(['/login']);
+    return authService.logout();
   }
 };

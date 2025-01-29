@@ -2,14 +2,16 @@ import { CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 export const librarianGuard: CanActivateFn = (route, state) => {
-  const accessToken = localStorage.getItem('accessToken');
   const router = inject(Router);
+  const authService = inject(AuthService);
+  const accessToken = authService.getAccessToken();
+  const refreshToken = authService.getRefreshToken();
 
-  if (!accessToken) {
-    router.navigate(['/login']);
-    return false;
+  if (!accessToken || !refreshToken) {
+    return router.createUrlTree(['/login'])
   }
 
   // make sure user has the librarian role in access token
@@ -19,13 +21,8 @@ export const librarianGuard: CanActivateFn = (route, state) => {
       router.navigate(['/home']);
       return false;
     }
-
     return true;
-
   } catch (error) {
-    router.navigate(['/login']);
-
-    return false;
-
+    return authService.logout();
   }
 };
