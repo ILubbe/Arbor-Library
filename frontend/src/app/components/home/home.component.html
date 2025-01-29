@@ -1,8 +1,8 @@
 <div class="home-container">
-    <h2>Welcome, {{ userRole }} {{ userFirstName }} {{ userLastName }}</h2>
-  
-    <!-- Display Librarian Dashboard link only if the user is a librarian -->
-     @if (isLibrarian) {
-        <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
-     }
-  </div>
+   <h2>Welcome, {{ userRole }} {{ userFirstName }} {{ userLastName }}</h2>
+      <button (click)="logout()">Logout</button>
+   <!-- Display Librarian Dashboard link only if the user is a librarian -->
+   @if (isLibrarian) {
+      <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
+   }
+</div>
