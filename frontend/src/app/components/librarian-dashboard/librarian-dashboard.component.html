@@ -1,2 +1,12 @@
 <p>librarian-dashboard works!</p>
 <button [routerLink]="['/home']">Return Home</button>
+<!-- Display Librarian Dashboard links only if the user is a librarian -->
+@if (isLibrarian) {
+    <button [routerLink]="['checkin-checkout']">Checkin/Checkout</button>
+    <button [routerLink]="['manage-inventory']">Manage Invetory</button>
+    <button [routerLink]="['manage-users']">Manage Users</button>
+    <button [routerLink]="['manage-reservations']">Manage Reservations</button>
+    <button [routerLink]="['reports']">Reports</button>
+}
+
+<router-outlet></router-outlet>

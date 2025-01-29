@@ -36,7 +36,7 @@ export class SignUpComponent {
         // clear an old error message
         this.successMessage = response.message;
         alert(this.successMessage);
-        this.router.navigate(['/login']);
+        this.router.navigateByUrl('/login');
       },
       error: (error) => {
         // clear an old success message

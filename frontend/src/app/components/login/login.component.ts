@@ -22,7 +22,7 @@ export class LoginComponent {
       next: (response) => {
         localStorage.setItem('accessToken', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
-        this.router.navigate(['/home']);
+        this.router.navigateByUrl('/home');
       },
       error: (error) => {
         console.error(error);

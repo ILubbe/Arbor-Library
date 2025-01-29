@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { jwtDecode } from 'jwt-decode';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -16,26 +16,15 @@ export class HomeComponent implements OnInit {
   userRole: string = '';
   isLibrarian: boolean = false;
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
 
   ngOnInit(): void {
-    this.checkUserRole();
-    this.fetchUserProfile();
-  }
-
-  checkUserRole() {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      try {
-        const decodedToken: any = jwtDecode(accessToken);
-        // Check if the token contains the 'role' property and it's 'librarian'
-        if (decodedToken.role === 'librarian') {
-          this.isLibrarian = true;
-        }
-      } catch (error) {
-        console.error('Error decoding token', error);
-      }
+    const required_role = 'librarian';
+    const userRole = this.authService.getUserRole();
+    if(userRole === required_role){
+      this.isLibrarian = true;
     }
+    this.fetchUserProfile();
   }
 
   fetchUserProfile(): void {

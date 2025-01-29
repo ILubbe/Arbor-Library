@@ -1,24 +1,28 @@
-import { CanActivateFn } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
-import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
 
-export const librarianGuard: CanActivateFn = (route, state) => {
+export const roleGuard: CanActivateFn = (
+  next: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  
   const router = inject(Router);
   const authService = inject(AuthService);
   const accessToken = authService.getAccessToken();
   const refreshToken = authService.getRefreshToken();
 
   if (!accessToken || !refreshToken) {
-    return router.createUrlTree(['/login'])
+    return router.navigateByUrl('/login')
   }
 
-  // make sure user has the librarian role in access token
+  // make sure user has the proper role in access token
   try {
-    const decodedToken: any = jwtDecode(accessToken);
-    if (decodedToken.role !== 'librarian') {
-      router.navigate(['/home']);
+    const required_role = 'librarian';
+    const userRole = authService.getUserRole();
+    if (userRole !== required_role) {
+      window.history.back();
       return false;
     }
     return true;
