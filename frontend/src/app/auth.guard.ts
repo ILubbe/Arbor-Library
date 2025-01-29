@@ -2,10 +2,12 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../environments/enironment';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
   const http = inject(HttpClient);
+  const apiEndpoint = environment.backendUrl + '/refresh';
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
 
@@ -28,7 +30,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
           }
 
           const response = await http
-            .post<any>('http://localhost:5000/refresh', {}, { headers })
+            .post<any>(apiEndpoint, {}, { headers })
             .toPromise();
 
           localStorage.setItem('accessToken', response.accessToken);
@@ -39,6 +41,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
         } catch (error) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          
 
           return router.createUrlTree(['/login']);
 
@@ -56,6 +59,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   } catch (error) {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+
     return router.createUrlTree(['/login']);
   }
 };

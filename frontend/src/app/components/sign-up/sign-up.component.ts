@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/enironment';
 
 @Component({
   selector: 'app-sign-up',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
 
 export class SignUpComponent {
-  private apiUrl = 'http://localhost:5000/users'; // TODO variablize this later
+  private apiEndpoint = environment.backendUrl + 'users';
   email: string = '';
   password: string = '';
   passwordConfirmation: string = '';
@@ -30,7 +31,7 @@ export class SignUpComponent {
       lastName: this.lastName
     };
 
-    this.http.post<any>(this.apiUrl, signUpData).subscribe({
+    this.http.post<any>(this.apiEndpoint, signUpData).subscribe({
       next: (response) => {
         // clear an old error message
         this.successMessage = response.message;
@@ -43,9 +44,5 @@ export class SignUpComponent {
         this.errorMessage = error.error?.message || "Something went wrong";
       }
     });
-  }
-  
-  goToLogin(): void {
-    this.router.navigate(['/login']);
   }
 }

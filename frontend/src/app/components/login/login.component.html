@@ -2,9 +2,12 @@
     <h2>Login</h2>
   
     <!-- Display error message if login fails -->
-    <div NgIf="errorMessage" class="error-message" style="color: red; font-size: 14px;">
-      {{ errorMessage }}
-    </div>
+    @if (errorMessage) {
+        <div class="error-message" style="color: red; font-size: 14px;">
+            {{ errorMessage }}
+        </div>
+    }
+    
   
     <!-- Login form -->
     <form (ngSubmit)="onSubmit()">
@@ -19,5 +22,5 @@
         <button type="submit">Login</button>
     </form>
     <p>Don't have an account?</p>
-    <button (click)="goToSignUp()">Sign Up</button>
+    <button [routerLink]="['/sign-up']">Sign Up</button>
 </div>
