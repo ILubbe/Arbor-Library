@@ -102,6 +102,7 @@ def get_reservations_by_book(book_id):
     
     return jsonify({"reservationsIdByBook": reservation_ids}), 200
 
+'''
 # get active reservation(s) by user
 @reservations_bp.route("/by-user/active/<int:user_id>", methods=["GET"], strict_slashes=False)
 @jwt_required()
@@ -137,6 +138,7 @@ def get_active_reservations_by_book(book_id):
     active_reservations_by_book_ids = [reservation.id for reservation in active_reservations_by_book]
     
     return jsonify({"activeReservationsIdByBook": active_reservations_by_book_ids}), 200
+'''
 
 # get all reservation(s) that one user has made for one book
 @reservations_bp.route("/<int:user_id>/<int:book_id>", methods=["GET"], strict_slashes=False)

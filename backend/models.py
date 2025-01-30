@@ -14,8 +14,28 @@ class SearchableMixin(object):
         when = {}
         for i in range(len(ids)):
             when[ids[i]] = i
+
+        query = cls.query.filter(cls.id.in_(ids)).order_by(db.case(when, value=cls.id))
+        if hasattr(cls, 'genre'):
+            query = query.join(Book_Genre, Book_Genre.book_id == cls.id).join(Genre, Genre.id == Book_Genre.genre_id)
+
         return cls.query.filter(cls.id.in_(ids)).order_by(
             db.case(when, value=cls.id)), total
+
+    @classmethod
+    def search_books_by_genre(cls, genre_name, page, per_page):
+        query = db.session.query(cls).join(
+            Book_Genre, Book_Genre.book_id == cls.id
+        ).join(
+            Genre, Genre.id == Book_Genre.genre_id
+        ).filter(
+            Genre.genre.ilike(f"%{genre_name}")
+        )
+
+        query = query.offset((page - 1) * per_page).limit(per_page)
+        total = query.count()
+
+        return query.all(), total
 
     @classmethod
     def before_commit(cls, session):
@@ -85,12 +105,12 @@ class Book(SearchableMixin, db.Model):
             "title": self.title,
             "author": self.author,
             "firstPublishYear": self.first_publish_year,
-            "bookCondition": self.book_condition
+            "bookCondition": self.book_condition,
+            "genres": [genre.genre for genre in self.genre]
         }
 
-class Genre(SearchableMixin, db.Model):
+class Genre(db.Model):
     __tablename__ = 'genres'
-    __searchable__ = ['genre']
 
     id = db.Column(db.Integer, primary_key=True)
     genre = db.Column(db.String(255), unique=True, nullable=False)
@@ -112,8 +132,8 @@ class Book_Genre(db.Model):
 
     def serialize(self):
         return {
-            "bookID": self.book_id,
-            "genreID": self.genre_id
+            "bookId": self.book_id,
+            "genreId": self.genre_id
         }
 
 class Reservation(SearchableMixin, db.Model):
@@ -131,8 +151,8 @@ class Reservation(SearchableMixin, db.Model):
     def serialize(self):
         return {
             #"id": self.id,
-            "userID": self.user_id,
-            "bookID": self.book_id,
+            "userId": self.user_id,
+            "bookId": self.book_id,
             "status": self.status,
             "reservedAt": self.reserved_at,
             "expiresAt": self.expires_at
@@ -140,7 +160,7 @@ class Reservation(SearchableMixin, db.Model):
 
 class Checkout(SearchableMixin, db.Model):
     __tablename__ = 'checkouts'
-    __searchable__ = ['returned']
+    __searchable__ = ['returned', 'user_id', 'book_id']
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -152,8 +172,8 @@ class Checkout(SearchableMixin, db.Model):
     def serialize(self):
         return {
             #"id": self.id,
-            "userID": self.user_id,
-            "bookID": self.book_id,
+            "userId": self.user_id,
+            "bookId": self.book_id,
             "checkoutOutAt": self.checked_out_at,
             "dueAt": self.due_at,
             "returned": self.returned
