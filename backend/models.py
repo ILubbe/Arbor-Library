@@ -3,9 +3,52 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
 from datetime import timedelta
 from config import db
+from search import *
 
-class User(db.Model):
+class SearchableMixin(object):
+    @classmethod
+    def search(cls, expression, page, per_page, field=None):
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        when = {}
+        for i in range(len(ids)):
+            when[ids[i]] = i
+        return cls.query.filter(cls.id.in_(ids)).order_by(
+            db.case(when, value=cls.id)), total
+
+    @classmethod
+    def before_commit(cls, session):
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+    
+    @classmethod
+    def after_commit(cls, session):
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        for obj in cls.query:
+            add_to_index(cls.__tablename__, obj)
+            
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
+
+class User(SearchableMixin, db.Model):
     __tablename__ = 'users'
+    __searchable__ = ['role', 'email', 'first_name', 'last_name']
 
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.Enum('patron', 'librarian'), nullable=False)
@@ -14,7 +57,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
-    def user_to_json(self):
+    def serialize(self):
         return {
             #"id": self.id,
             "role": self.role,
@@ -24,8 +67,9 @@ class User(db.Model):
             "lastName": self.last_name
         }
 
-class Book(db.Model):
+class Book(SearchableMixin, db.Model):
     __tablename__ = 'books'
+    __searchable__ = ['title', 'author', 'first_publish_year', 'book_condition']
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(2000), nullable=False)
@@ -35,7 +79,7 @@ class Book(db.Model):
 
     genre = db.relationship('Genre', secondary='books_genres', back_populates='book')
 
-    def book_to_json(self):
+    def serialize(self):
         return {
             #"id": self.id,
             "title": self.title,
@@ -44,15 +88,16 @@ class Book(db.Model):
             "bookCondition": self.book_condition
         }
 
-class Genre(db.Model):
+class Genre(SearchableMixin, db.Model):
     __tablename__ = 'genres'
+    __searchable__ = ['genre']
 
     id = db.Column(db.Integer, primary_key=True)
     genre = db.Column(db.String(255), unique=True, nullable=False)
 
     book = db.relationship('Book', secondary='books_genres', back_populates='genre')
 
-    def genre_to_json(self):
+    def serialize(self):
         return {
             #"id": self.id,
             "genre": self.genre
@@ -65,14 +110,15 @@ class Book_Genre(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), primary_key=True)
     genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), primary_key=True)
 
-    def book_genre_to_json(self):
+    def serialize(self):
         return {
             "bookID": self.book_id,
             "genreID": self.genre_id
         }
 
-class Reservation(db.Model):
+class Reservation(SearchableMixin, db.Model):
     __tablename__ = 'reservations'
+    __searchable__ = ['status']
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -82,7 +128,7 @@ class Reservation(db.Model):
     expires_at = db.Column(db.DateTime)
 
 
-    def reservation_to_json(self):
+    def serialize(self):
         return {
             #"id": self.id,
             "userID": self.user_id,
@@ -92,8 +138,9 @@ class Reservation(db.Model):
             "expiresAt": self.expires_at
         }
 
-class Checkout(db.Model):
+class Checkout(SearchableMixin, db.Model):
     __tablename__ = 'checkouts'
+    __searchable__ = ['returned']
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -102,7 +149,7 @@ class Checkout(db.Model):
     due_at = db.Column(db.DateTime, nullable=False, default=text("DATE_ADD(NOW(), INTERVAL 3 WEEK)")) # default - due after 3 weeks later)
     returned = db.Column(db.Boolean, nullable=False, server_default=expression.false())
 
-    def checkout_to_json(self):
+    def serialize(self):
         return {
             #"id": self.id,
             "userID": self.user_id,
@@ -111,4 +158,3 @@ class Checkout(db.Model):
             "dueAt": self.due_at,
             "returned": self.returned
         }
-        

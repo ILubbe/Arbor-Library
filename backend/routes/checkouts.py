@@ -12,7 +12,7 @@ checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
 @jwt_required()
 def get_checkouts():
     checkouts = Checkout.query.all()
-    json_checkouts = list(map(lambda x: x.checkout_to_json(), checkouts))
+    json_checkouts = list(map(lambda x: x.serialize(), checkouts))
     return jsonify({"checkouts": json_checkouts})
 
 # get a checkout by id
@@ -24,7 +24,7 @@ def get_checkout_by_id(checkout_id):
     if checkout is None:
         return jsonify({"message": "Checkout not found"}), 404
     
-    return jsonify({"checkout": checkout.checkout_to_json()})
+    return jsonify({"checkout": checkout.serialize()})
 
 # get checkout(s) by user
 @checkouts_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
@@ -147,7 +147,6 @@ def create_checkout():
         return jsonify({"message": "This book is already checked out"}), 400
 
     actively_reserved = Reservation.query.filter_by(book_id=book_id, status='active').first()
-    print(actively_reserved)
     if actively_reserved:
         if actively_reserved.user_id != user_id:
             return jsonify({"message": "This book is actively reserved by someone else"}), 400

@@ -12,7 +12,7 @@ books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres'
 @jwt_required()
 def get_books_genres():
     books_genres = Book_Genre.query.all()
-    json_books_genres = list(map(lambda x: x.book_genre_to_json(), books_genres))
+    json_books_genres = list(map(lambda x: x.serialize(), books_genres))
     return jsonify({"booksGenres": json_books_genres}), 200
 
 # read book id(s) by genre-id

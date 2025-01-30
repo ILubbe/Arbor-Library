@@ -4,6 +4,8 @@ blinker==1.9.0
 certifi==2024.12.14
 charset-normalizer==3.4.1
 click==8.1.8
+elastic-transport==8.17.0
+elasticsearch==8.17.1
 Flask==3.1.0
 Flask-Bcrypt==1.0.1
 Flask-Cors==5.0.0

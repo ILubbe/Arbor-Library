@@ -14,7 +14,7 @@ reservations_bp = Blueprint('reservations', __name__, url_prefix='/reservations'
 #@role_required('librarian')
 def get_reservations():
     reservations = Reservation.query.all()
-    json_reservations = list(map(lambda x: x.reservation_to_json(), reservations))
+    json_reservations = list(map(lambda x: x.serialize(), reservations))
     return jsonify({"reservations": json_reservations})
 
 # get reservation by id
@@ -27,7 +27,7 @@ def get_reservation_by_id(reservation_id):
     if reservation is None:
         return jsonify({"message": "Reservation not found"}), 404
     
-    return jsonify({"reservation": reservation.reservation_to_json()})
+    return jsonify({"reservation": reservation.serialize()})
 
 # get all reservation(s) that one user has made
 @reservations_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
@@ -61,7 +61,7 @@ def get_my_reservations():
     if not reservations_by_user:
         return jsonify({"message": "You have no reservations"}), 404
 
-    json_reservations = list(map(lambda x: x.reservation_to_json(), reservations_by_user))
+    json_reservations = list(map(lambda x: x.serialize(), reservations_by_user))
     
     return jsonify({"reservations": json_reservations}), 200
 '''
@@ -79,7 +79,7 @@ def get_my_reservation_by_id(reservation_id):
     if not reservation_by_id:
         return jsonify({"message": "Reservation not found"}), 404
 
-    json_reservation = reservation_by_id.reservation_to_json()
+    json_reservation = reservation_by_id.serialize()
     
     return jsonify({"reservations": json_reservation}), 200
 '''

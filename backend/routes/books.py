@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from models import Book, db
 from utils.general_utils import *
 from utils.rbac_decorators import *
+from config import app
 
 # define blueprint
 books_bp = Blueprint('books', __name__, url_prefix='/books')
@@ -12,7 +13,7 @@ books_bp = Blueprint('books', __name__, url_prefix='/books')
 @jwt_required()
 def get_books():
     books = Book.query.all()
-    json_books = list(map(lambda x: x.book_to_json(), books))
+    json_books = list(map(lambda x: x.serialize(), books))
     return jsonify({"books": json_books})
 
 # get a book by id
@@ -24,7 +25,7 @@ def get_book_by_id(book_id):
     if book is None:
         return jsonify({"message": "Book not found"}), 404
     
-    return jsonify({"book": book.book_to_json()})
+    return jsonify({"book": book.serialize()})
 
 # create a book
 @books_bp.route("/", methods=["POST"], strict_slashes=False)
@@ -73,7 +74,7 @@ def create_book():
         db.session.add(new_book)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": "Something went wrong, please try again"}), 500
+        return jsonify({"message": f"Something went wrong, please try again {str,e}"}), 500
 
     return jsonify({"message": f"Book {title} added!"}), 201
 

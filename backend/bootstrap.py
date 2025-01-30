@@ -1,12 +1,13 @@
 import requests, random
-from config import db
+from config import app, db
 from models import User, Book, Genre, Book_Genre
 from utils.password_utils import hash_salt_password
 
 def create_default_admin_user():
     # Check if the users table is empty
-    if User.query.count() == 0:
-        print(f"Bootstrap: users table in database is empty, creating the default admin user\n")
+    user_count = User.query.count()
+    if user_count == 0:
+        print(f"Bootstrap: users table in database is empty, creating the default admin user")
         default_admin = User(
             role = 'librarian',
             email = 'defaultadmin@arborlibrary.com',
@@ -17,15 +18,25 @@ def create_default_admin_user():
 
         db.session.add(default_admin)
         db.session.commit()
-
+        print('Bootstrap: Reindexing Users in ElasticSearch...')
+        User.reindex()
+        print('Bootstrap: Users in ElasticSearch indexed!')
     else:
         print("Bootstrap: User(s) already inside database")
+        # make sure db count and elasticsearch index count match up
+        es_response = app.es.search(index="users", body={"query": {"match_all":{}}})
+        es_index_count = es_response['hits']['total']['value']
+        if user_count != es_index_count:
+            print('Bootstrap: Reindexing Users in ElasticSearch...')
+            User.reindex()
+        print('Bootstrap: Users in ElasticSearch indexed!')
     return
 
 def fetch_and_populate_books(max_books):
     # Check if the books table is empty
-    if Book.query.count() == 0:
-        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)\n")
+    book_count = Book.query.count()
+    if book_count == 0:
+        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)")
 
         seed_subjects = [
             "horror",
@@ -60,7 +71,7 @@ def fetch_and_populate_books(max_books):
         count = 0
         laps = 0
         offset = 0
-        print(f"requesting book data from {base_url}...\n")
+        print(f"Bootstrap: requesting book data from {base_url}...")
         while added_books < max_books:
             if count == len(seed_subjects):
                 count = 0
@@ -79,11 +90,8 @@ def fetch_and_populate_books(max_books):
                 response.raise_for_status()
                 data = response.json()
             
-            except requests.exceptions.RequestException as e:
-                print(f"cannot connect to {url} moving on...")
-                continue
-
-            except ValueError as e:
+            except:
+                print(f"Bootstrap: cannot connect to {url} moving on...")
                 continue
 
             for item in data['works']:
@@ -111,7 +119,7 @@ def fetch_and_populate_books(max_books):
                         db.session.commit()
 
                 except Exception as e:
-                    print(f"{str, e}")
+                    continue
 
             # Add primary genre from every book to the database session
             # if it loops back around to the first genre in the seed_subject array, ensure we don't add them again (has to be unique).
@@ -136,15 +144,26 @@ def fetch_and_populate_books(max_books):
                     )
                     db.session.add(books_genres_object)
 
-                print(f"{added_books - added_books_current} {seed_subjects[count]} book(s) added")
+                print(f"Bootstrap: {added_books - added_books_current} {seed_subjects[count]} book(s) added")
                 db.session.commit()
                 added_books_current = added_books
-                print(f"{added_books} book(s) of {max_books} added\n")
+                print(f"Bootstrap: {added_books} book(s) of {max_books} added")
 
             count += 1
 
+        # since a lot of books were just added to database, need to reindex elasticsearch
+        print('Bootstrap: Reindexing Books in ElasticSearch...')
+        Book.reindex()
+        print('Bootstrap: Books in ElasticSearch indexed!')
+
     else:
         print("Bootstrap: Book(s) already inside database")
-
+        # make sure db count and elasticsearch index count match up
+        es_response = app.es.search(index="books", body={"query": {"match_all":{}}})
+        es_index_count = es_response['hits']['total']['value']
+        if book_count != es_index_count:
+            print('Bootstrap: Reindexing Books in ElasticSearch...')
+            Book.reindex()
+        print('Bootstrap: Books in ElasticSearch indexed!')
     return
 

@@ -12,7 +12,7 @@ import { environment } from '../../../environments/environment';
 })
 
 export class SignUpComponent {
-  private apiEndpoint = environment.backendUrl + 'users';
+  private apiEndpoint = environment.backendUrl + '/users';
   email: string = '';
   password: string = '';
   passwordConfirmation: string = '';

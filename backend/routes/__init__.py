@@ -5,3 +5,4 @@ from .books_genres import books_genres_bp
 from .reservations import reservations_bp
 from .checkouts import checkouts_bp
 from .login import login_bp
+from .search import search_bp

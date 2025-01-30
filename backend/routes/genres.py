@@ -12,7 +12,7 @@ genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
 @jwt_required()
 def get_genres():
     genres = Genre.query.all()
-    json_genres = list(map(lambda x: x.genre_to_json(), genres))
+    json_genres = list(map(lambda x: x.serialize(), genres))
     return jsonify({"genres": json_genres})
 
 # get a genre by id
@@ -24,7 +24,7 @@ def get_genre_by_id(genre_id):
     if genre is None:
         return jsonify({"message": "Genre not found"}), 404
     
-    return jsonify({"genre": genre.genre_to_json()})
+    return jsonify({"genre": genre.serialize()})
 
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)

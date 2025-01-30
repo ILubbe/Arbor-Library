@@ -15,7 +15,7 @@ users_bp = Blueprint('users', __name__, url_prefix='/users')
 @role_required('librarian')
 def get_users():
     users = User.query.all()
-    json_users = list(map(lambda x: x.user_to_json(), users))
+    json_users = list(map(lambda x: x.serialize(), users))
     return jsonify({"users": json_users})
 
 # get user by id
@@ -28,7 +28,7 @@ def get_user_by_id(user_id):
     if not user:
         return jsonify({"message": "User not found"}), 404
     
-    return jsonify({"user": user.user_to_json()}), 200
+    return jsonify({"user": user.serialize()}), 200
 
 # get only your own user info
 @users_bp.route("/profile", methods=["GET"], strict_slashes=False)
@@ -39,7 +39,7 @@ def get_profile():
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    return jsonify({"user": user.user_to_json()}), 200
+    return jsonify({"user": user.serialize()}), 200
 
 
 # create a user UNPROTECTED

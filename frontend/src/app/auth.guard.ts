@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { environment } from '../environments/environment';
 import { AuthService } from './services/auth.service';
 
-export const authGuard: CanActivateFn = async (route, state) => {
+export const authGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const http = inject(HttpClient);
   const authService = inject(AuthService);
