@@ -5,4 +5,12 @@
    @if (isLibrarian) {
       <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
    }
+   <div class="home-page">
+      <app-search-bar
+         [fieldOptions]="fieldOptions"
+         [selectedField]="selectedField"
+         (searchQuery)="onSearchQueryEmitted($event)"
+         (fieldChange)="onFieldChange($event)"
+      ></app-search-bar>
+   </div>
 </div>

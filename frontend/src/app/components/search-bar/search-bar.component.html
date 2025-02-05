@@ -1,0 +1,50 @@
+<div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange($event)"
+      placeholder="Search..."
+      class="search-input"
+    />
+  
+    @if (fieldOptions.length > 0) {
+        <select [(ngModel)]="selectedField" (change)="onFieldChange(selectedField)" class="field-select">
+        <option value="">-- Select Filter --</option>
+        @for (field of fieldOptions; track field) {
+            <option [value]="field">{{ field }}</option>
+        } @empty {
+            <option>No fields available</option>
+        }
+        </select>
+    }
+
+    <div class="results-info">
+        <p>Showing {{ total }} results</p>
+        @if (total != 0) {
+            <p>Page {{ page }} of {{ totalPages }}</p>
+        }
+    </div>
+    @if (selectedModel == 'Book' && total > 0) {
+        <div>
+            <div class="pagination">
+                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
+            </div>
+        </div>  
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <li><b>{{ result.title }}</b></li>
+                        <li>Author: {{ result.author }}, First Published: {{ result.firstPublishYear }}, Genres: {{ result.genres }}</li>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="pagination">
+            <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+            <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
+        </div>
+    }
+  

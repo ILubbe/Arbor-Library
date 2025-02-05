@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import db, SearchableMixin, User, Book, Genre, Reservation, Checkout
@@ -62,15 +63,15 @@ def privileged_search(query, page, per_page, field, model):
 def search():
     model = request.args.get('model')
     query = request.args.get('query')
-    page = int(request.args.get('page', 1))
-    per_page = int(request.args.get('limit', 20))
+    page = int(request.args.get('page', 1)) # optional
+    per_page = int(request.args.get('limit', 20)) # optional
     field = request.args.get('field') # optional
 
     if field:
         field = field.replace("-", "_") # change field from URL friendly to DB friendly
 
-    if not model or not query:
-        return jsonify({"message": "Query and Model is required in search"}), 400
+    if not model:
+        return jsonify({"message": "Model is required in search"}), 400
 
     model = model.lower().capitalize()
 
@@ -91,9 +92,12 @@ def search():
 
     # if the index doesn't exist, just give a response like it does.
     # This means that the db table is empty for that model, so elasticsearch never made an index.
-    if not check_index_exists(model):
+    # OR if the query is empty or innappropriate, elasticsearch will throw error.
+    # this if statement is to avoid both of those.
+    if not check_index_exists(model) or not query or (field and model == Book and re.search(r'[a-zA-Z]', field) and field == 'first_publish_year'):
         results = []
         total = 0
+        page = 1
         return jsonify({
             "total": total,
             "page": page,
@@ -105,7 +109,7 @@ def search():
         if not is_valid_field(model, field.lower()):
             return({"message": f"field {field} is not valid for this model"}), 400
         # use a different search method if field is genre
-        if model == Book and field.lower() == 'genre':
+        if model == Book and field.lower() == 'genre' and query:
             query_result, total = model.search_books_by_genre(query, page, per_page)
         else:
             query_result, total = model.search(query, page, per_page, field)

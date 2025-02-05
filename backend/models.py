@@ -8,17 +8,17 @@ from search import *
 class SearchableMixin(object):
     @classmethod
     def search(cls, expression, page, per_page, field=None):
-        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        ids, total = query_index(cls.__tablename__, expression, page, per_page, field)
         if total == 0:
             return cls.query.filter_by(id=0), 0
         when = {}
         for i in range(len(ids)):
             when[ids[i]] = i
-
+        
         query = cls.query.filter(cls.id.in_(ids)).order_by(db.case(when, value=cls.id))
         if hasattr(cls, 'genre'):
             query = query.join(Book_Genre, Book_Genre.book_id == cls.id).join(Genre, Genre.id == Book_Genre.genre_id)
-
+            
         return cls.query.filter(cls.id.in_(ids)).order_by(
             db.case(when, value=cls.id)), total
 
