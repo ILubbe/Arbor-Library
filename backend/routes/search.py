@@ -86,7 +86,7 @@ def search():
 
     model = globals().get(model) # change model from string to class
 
-    if model == User or model == Reservation or model == Checkout:
+    if model == User or model == Reservation or model == Checkout or (model == Book and field == 'book_condition'):
         return privileged_search(query, page, per_page, field, model)
 
     # if the index doesn't exist, just give a response like it does.
@@ -105,7 +105,7 @@ def search():
         if not is_valid_field(model, field.lower()):
             return({"message": f"field {field} is not valid for this model"}), 400
         # use a different search method if field is genre
-        if field.lower() == 'genre':
+        if model == Book and field.lower() == 'genre':
             query_result, total = model.search_books_by_genre(query, page, per_page)
         else:
             query_result, total = model.search(query, page, per_page, field)
