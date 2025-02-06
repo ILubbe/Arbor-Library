@@ -17,6 +17,7 @@ import { ModalComponent } from '../modal/modal.component';
 export class HomeComponent implements OnInit {
   isHomePage: boolean = true;
   isBookDetailsModal: boolean = false;
+  isMyReservationsModal: boolean = false;
   selectedModel: string = 'Book'
   userFirstName: string = '';
   userLastName: string = '';
@@ -81,6 +82,7 @@ export class HomeComponent implements OnInit {
 
   viewReservations() {
     this.isBookDetailsModal = false;
+    this.isMyReservationsModal = true;
     this.reservationService.getMyReservations().subscribe({
       next: (response) => {
         this.reservations = response.reservations

@@ -12,6 +12,7 @@ export class ModalComponent {
   // discover what page is using the modal
   @Input() isHomePage: boolean = false;
   @Input() isBookDetailsModal: boolean = false;
+  @Input() isMyReservationsModal: boolean = false;
 
   @Input() showModal: boolean = false;
   @Input() modalTitle: string = '';

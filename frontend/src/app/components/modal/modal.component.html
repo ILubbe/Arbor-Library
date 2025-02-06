@@ -2,13 +2,14 @@
     <div class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-btn" (click)="close()">X</button>
-    
+
             <h2>{{ modalTitle }}</h2>
             @if (isHomePage && isBookDetailsModal) {
-                <div class="modal-body" [innerHTML]="modalContent"></div>
-                <button class="reserve-btn" (click)="createMyReservation()">Reserve Now!</button>
+                <div class="modal-body" [innerHTML]="modalContent">
+                    <button class="reserve-btn" (click)="createMyReservation()">Reserve Now!</button>
+                </div>
             } 
-            @if (isHomePage && !isBookDetailsModal) {
+            @if (isHomePage && isMyReservationsModal) {
                 <div class="modal-body">
                     <ul>
                     @for (reservation of reservations; track reservation) {

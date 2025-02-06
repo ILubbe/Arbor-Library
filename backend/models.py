@@ -79,7 +79,7 @@ class User(SearchableMixin, db.Model):
 
     def serialize(self):
         return {
-            #"id": self.id,
+            "id": self.id,
             "role": self.role,
             "email": self.email,
             #"passwordHash": self.password_hash,
