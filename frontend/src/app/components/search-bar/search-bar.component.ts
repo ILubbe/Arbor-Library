@@ -56,7 +56,7 @@ export class SearchBarComponent {
   search(query: string) {
     let apiSearchEndpoint = environment.backendUrl + `/search?model=${this.selectedModel}&query=${this.query}&page=${this.page}&limit=${this.perPage}`;
     if (this.selectedField) {
-      apiSearchEndpoint += `&field=${this.selectedField}`;
+      apiSearchEndpoint += `&field=${this.selectedField.replace(/ /g,'-')}`;
     }
 
     const accessToken = this.authService.getAccessToken();

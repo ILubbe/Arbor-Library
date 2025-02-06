@@ -1,4 +1,3 @@
-/* overlay to cover the entire screen */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -6,43 +5,39 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
   
 .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
+    position: relative;
+    background-color: #fff;
     border-radius: 8px;
+    width: 80%;
     max-width: 600px;
-    width: 100%;
-    z-index: 1001;
-    white-space: pre-line;
+    max-height: 80vh;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
   
 .modal-close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    border: none;
     background-color: transparent;
+    border: none;
     font-size: 20px;
     cursor: pointer;
 }
-
-.reserve-btn {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
+  
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
 }
   
-.reserve-btn:hover {
-    background-color: #0056b3;
+.reserve-btn {
+    margin-top: 10px;
 }

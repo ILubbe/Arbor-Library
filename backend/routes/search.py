@@ -68,7 +68,7 @@ def search():
     field = request.args.get('field') # optional
 
     if field:
-        field = field.replace("-", "_") # change field from URL friendly to DB friendly
+        field = field.replace("-", "_").lower() # change field from URL friendly to DB friendly
 
     if not model:
         return jsonify({"message": "Model is required in search"}), 400
@@ -94,7 +94,7 @@ def search():
     # This means that the db table is empty for that model, so elasticsearch never made an index.
     # OR if the query is empty or innappropriate, elasticsearch will throw error.
     # this if statement is to avoid both of those.
-    if not check_index_exists(model) or not query or (field and model == Book and re.search(r'[a-zA-Z]', field) and field == 'first_publish_year'):
+    if not check_index_exists(model) or not query or (field and model == Book and re.search(r'[a-zA-Z]', query) and field == 'first_publish_year'):
         results = []
         total = 0
         page = 1

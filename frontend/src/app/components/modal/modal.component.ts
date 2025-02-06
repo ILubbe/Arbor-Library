@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
-import { environment } from '../../../environments/environment';
+import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-modal',
@@ -11,44 +11,49 @@ import { environment } from '../../../environments/environment';
 export class ModalComponent {
   // discover what page is using the modal
   @Input() isHomePage: boolean = false;
+  @Input() isBookDetailsModal: boolean = false;
 
   @Input() showModal: boolean = false;
   @Input() modalTitle: string = '';
   @Input() modalContent: string = '';
+  @Input() reservations: any = '';
   @Input() bookId: string = '';
   @Output() closeModal = new EventEmitter<void>();
 
-  private apiReservationEndpoint = environment.backendUrl + '/reservations/my';
+  constructor(private http: HttpClient, private authService: AuthService, private reservationService: ReservationService) {}
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
-
-  onReserveBook() {
+  createMyReservation() {
     if (!this.bookId) {
       console.log('Book ID is missing!');
       return;
     }
 
-    const reservationData = {
-      bookId: this.bookId
-    };
+    this.reservationService.createMyReservation(this.bookId).subscribe({
+      next: (response) => {
+        alert(response.message);
+      },
+      error: (error) => {
+        alert(error);
+      }
+    });
+    this.close();
+  }
 
-    const accessToken = this.authService.getAccessToken();
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    };
-
-    this.http.post(this.apiReservationEndpoint, reservationData, { headers })
-      .subscribe(
-        (response) => {
-          alert("Reservation Created!");
-          this.closeModal.emit();
-        },
-        (error) => {
-          alert(error.error.message);
-        }
-      );
+  cancelMyReservation(reservationId: string) {
+    if (!reservationId) {
+      console.log('Reservation ID is missing!');
+      return;
     }
+    this.reservationService.cancelMyReservation(reservationId).subscribe({
+      next: (response) => {
+        alert(response.message);
+      },
+      error: (error) => {
+        alert(error);
+      }
+    });
+    this.close();
+  }
 
   close() {
     this.closeModal.emit();

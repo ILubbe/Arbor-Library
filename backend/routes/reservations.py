@@ -47,7 +47,7 @@ def get_reservations_by_user(user_id):
     
     return jsonify({"reservationsIdByUser": reservation_ids}), 200
 
-'''
+
 # get your own reservation info
 @reservations_bp.route("/my", methods=["GET"], strict_slashes=False)
 @jwt_required()
@@ -64,7 +64,7 @@ def get_my_reservations():
     json_reservations = list(map(lambda x: x.serialize(), reservations_by_user))
     
     return jsonify({"reservations": json_reservations}), 200
-'''
+
 '''
 # get your own reservation info by id
 @reservations_bp.route("/my/<int:reservation_id>", methods=["GET"], strict_slashes=False)
@@ -192,7 +192,7 @@ def create_reservation():
 
     active_reservation = Reservation.query.filter_by(book_id=book_id, status='active').first()
     if active_reservation:
-        return jsonify({"message": "This book is already reserved"}), 400
+        return jsonify({"message": "This book is already reserved"}), 409
     
     user_already_made_reservation = Reservation.query.filter_by(book_id=book_id, user_id=user_id, status='waiting').first()
     if user_already_made_reservation:
@@ -262,11 +262,11 @@ def create_my_reservation():
 
     active_reservation = Reservation.query.filter_by(book_id=book_id, status='active').first()
     if active_reservation:
-        return jsonify({"message": "This book is already reserved"}), 400
+        return jsonify({"message": "This book is already reserved"}), 409
     
     user_already_made_reservation = Reservation.query.filter_by(book_id=book_id, user_id=user.id, status='waiting').first()
     if user_already_made_reservation:
-        return jsonify({"message": "You already have a reservation for this book. You will be notified when the book is returned. If other patrons have this book also reserved, it is first come first serve."}), 400
+        return jsonify({"message": "You already have a reservation for this book. You will be notified when the book is returned. If other patrons have this book also reserved, it is first come first serve."}), 409
 
     active_checkout = Checkout.query.filter_by(book_id=book_id, returned=False).first()
     if active_checkout:
@@ -320,7 +320,7 @@ def delete_reservation(reservation_id):
 
     return jsonify({"message": "Reservation deleted successfully"}), 200
 
-'''
+
 # delete (cancel) your own reservation
 @reservations_bp.route("/my/<int:reservation_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
@@ -341,7 +341,7 @@ def cancel_my_reservation(reservation_id):
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": "Your reservation was deleted successfully"}), 200
-'''
+
 
 
     

@@ -5,6 +5,8 @@
    @if (isLibrarian) {
       <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
    }
+   <button (click)="viewAccount()">My Account</button>
+   <button (click)="viewReservations()">My Reservations</button>
    <div class="home-page">
       <app-search-bar
          [isHomePage]="isHomePage"
@@ -20,9 +22,11 @@
       <div class="home-modal">
          <app-modal
             [isHomePage]="isHomePage"
+            [isBookDetailsModal]="isBookDetailsModal"
             [showModal]="showModal" 
             [modalTitle]="modalTitle"
-            [modalContent]="modalContent" 
+            [modalContent]="modalContent"
+            [reservations]="reservations"
             [bookId]="selectedItem?.id"
             (closeModal)="closeModal()">
          </app-modal>

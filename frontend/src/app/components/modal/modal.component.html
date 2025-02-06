@@ -4,9 +4,26 @@
             <button class="modal-close-btn" (click)="close()">X</button>
     
             <h2>{{ modalTitle }}</h2>
-            <div class="modal-body" [innerHTML]="modalContent"></div>
-            @if (isHomePage) {
-                <button class="reserve-btn" (click)="onReserveBook()">Reserve Now!</button>
+            @if (isHomePage && isBookDetailsModal) {
+                <div class="modal-body" [innerHTML]="modalContent"></div>
+                <button class="reserve-btn" (click)="createMyReservation()">Reserve Now!</button>
+            } 
+            @if (isHomePage && !isBookDetailsModal) {
+                <div class="modal-body">
+                    <ul>
+                    @for (reservation of reservations; track reservation) {
+                        <li>
+                            <p><b>Title:</b> {{ reservation.bookTitle }}</p>
+                            <p><b>Author:</b> {{ reservation.bookAuthor }}</p>
+                            <p><b>Status:</b> {{ reservation.status }}</p>
+                            <p><b>Reserved At:</b> {{ reservation.reservedAt }}</p>
+                            <p><b>Expires At:</b> {{ reservation.expiresAt }}</p>
+                            <button (click)="cancelMyReservation(reservation.id)">Cancel Reservation</button>
+                            <br>
+                        </li>
+                    }
+                    </ul>
+                </div>
             }
         </div>
     </div>

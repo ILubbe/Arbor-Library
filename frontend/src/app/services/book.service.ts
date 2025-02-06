@@ -7,20 +7,20 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
-  private apiUserProfileEndpoint = environment.backendUrl + '/users/profile';
+export class BookService {
+  private apiBooksEndpoint = environment.backendUrl + '/books';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  getUserProfile(): Observable<any> {
+  getBookById(id: string): Observable<any> {
     const accessToken = this.authService.getAccessToken();
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     }
-    return this.http.get<any>(this.apiUserProfileEndpoint, { headers }).pipe(
+    return this.http.get<any>(this.apiBooksEndpoint + '/' + id, { headers }).pipe(
       catchError((error) => {
-        return throwError(() => error.error.message || 'Could not fetch user profile');
+        return throwError(() => error.error.message || 'Could not book details');
       })
     );
   }

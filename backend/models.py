@@ -150,7 +150,7 @@ class Reservation(SearchableMixin, db.Model):
 
     def serialize(self):
         return {
-            #"id": self.id,
+            "id": self.id,
             "userId": self.user_id,
             "bookId": self.book_id,
             "status": self.status,

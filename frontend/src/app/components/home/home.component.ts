@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { BookService } from '../../services/book.service';
+import { ReservationService } from '../../services/reservation.service';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -14,20 +16,28 @@ import { ModalComponent } from '../modal/modal.component';
 
 export class HomeComponent implements OnInit {
   isHomePage: boolean = true;
+  isBookDetailsModal: boolean = false;
   selectedModel: string = 'Book'
   userFirstName: string = '';
   userLastName: string = '';
   userRole: string = '';
   isLibrarian: boolean = false;
   selectedField: string = '';
-  fieldOptions: string[] = ['author', 'title', 'genre', 'first_publish_year'];
+  fieldOptions: string[] = ['Author', 'Title', 'Genre', 'First Publish Year'];
   showModal: boolean = false;
-  modalTitle: string = 'Book Details';
+  modalTitle: string = '';
   modalContent: string = '';
   bookId: string = '';
   selectedItem: any = null;
+  reservations: any[] = [];
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private bookService: BookService,
+    private reservationService: ReservationService
+  ) {}
 
   ngOnInit(): void {
     const required_role = 'librarian';
@@ -58,14 +68,44 @@ export class HomeComponent implements OnInit {
   }
 
   onItemSelected(item: any) {
+    this.isBookDetailsModal = true;
     this.selectedItem = item;
     this.modalContent = `
       <b>Title:</b> ${item.title}<br>
       <b>Author:</b> ${item.author}<br>
-      <b>Published:</b> ${item.firstPublishYear}<br>
+      <b>First Publish Year:</b> ${item.firstPublishYear}<br>
       <b>Genres:</b> ${item.genres.join(', ')}<br><br>`;
     this.bookId = item.id;
     this.showModal = true;
+  }
+
+  viewReservations() {
+    this.isBookDetailsModal = false;
+    this.reservationService.getMyReservations().subscribe({
+      next: (response) => {
+        this.reservations = response.reservations
+        this.generateReservationsContent();
+        this.showModal = true;
+      },
+      error: (error) => {
+        alert(error);
+      }
+    });
+  }
+
+  generateReservationsContent(): void {
+    const promises = this.reservations.map((reservation) => {
+      return this.bookService.getBookById(reservation.bookId).toPromise().then((response) => {
+        reservation.bookTitle = response.book.title;
+        reservation.bookAuthor = response.book.author;
+      }).catch((error) => {
+        console.error('Error fetching book details:', error);
+      });
+    });
+  }
+
+  viewAccount() {
+
   }
 
   closeModal() {
