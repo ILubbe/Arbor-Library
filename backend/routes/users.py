@@ -263,7 +263,7 @@ def change_profile_info():
     last_name = request.json.get("lastName")
 
     if password != password_confirmation:
-        return jsonify({"message": "Passwords do not match"})
+        return jsonify({"message": "Passwords do not match"}), 400
 
     password_min_length = 12
     is_valid, message = complexity_check(password, password_min_length)

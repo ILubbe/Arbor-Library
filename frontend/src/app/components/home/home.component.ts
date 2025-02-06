@@ -15,22 +15,37 @@ import { ModalComponent } from '../modal/modal.component';
 })
 
 export class HomeComponent implements OnInit {
+  // for giving modal component context
   isHomePage: boolean = true;
   isBookDetailsModal: boolean = false;
   isMyReservationsModal: boolean = false;
+  isMyAccountModal: boolean = false;
+
+  // for search
   selectedModel: string = 'Book'
+  selectedField: string = '';
+  fieldOptions: string[] = ['Author', 'Title', 'Genre', 'First Publish Year'];
+
+  // general modal stuff
+  showModal: boolean = false;
+  modalTitle: string = '';
+  modalContent: string = '';
+
+  // for greeting & library dashboard button
   userFirstName: string = '';
   userLastName: string = '';
   userRole: string = '';
   isLibrarian: boolean = false;
-  selectedField: string = '';
-  fieldOptions: string[] = ['Author', 'Title', 'Genre', 'First Publish Year'];
-  showModal: boolean = false;
-  modalTitle: string = '';
-  modalContent: string = '';
-  bookId: string = '';
+
+  // for book Details modal with search results
   selectedItem: any = null;
+  bookDetails: any = '';
+
+  // for My Reservations modal
   reservations: any[] = [];
+
+  // for My Account modal
+  userDetails: any = '';
 
   constructor(
     private router: Router,
@@ -50,7 +65,7 @@ export class HomeComponent implements OnInit {
   }
 
   fetchUserProfile(): void {
-    this.userService.getUserProfile().subscribe({
+    this.userService.getMyProfile().subscribe({
       next: (response) => { // make first char uppercase for home page greeting
         this.userFirstName = response.user.firstName.charAt(0).toUpperCase() + response.user.firstName.slice(1);
         this.userLastName = response.user.lastName.charAt(0).toUpperCase() + response.user.lastName.slice(1);
@@ -69,19 +84,25 @@ export class HomeComponent implements OnInit {
   }
 
   onItemSelected(item: any) {
+    this.isMyReservationsModal = false;
+    this.isMyAccountModal = false;
     this.isBookDetailsModal = true;
     this.selectedItem = item;
-    this.modalContent = `
-      <b>Title:</b> ${item.title}<br>
-      <b>Author:</b> ${item.author}<br>
-      <b>First Publish Year:</b> ${item.firstPublishYear}<br>
-      <b>Genres:</b> ${item.genres.join(', ')}<br><br>`;
-    this.bookId = item.id;
+    this.bookService.getBookById(this.selectedItem.id).subscribe({
+      next: (response) => {
+        this.bookDetails = response.book;
+      },
+      error: (error) => {
+        alert(error || 'Failed to load book details');
+      }
+    });
+    console.log(this.bookDetails);
     this.showModal = true;
   }
 
   viewReservations() {
     this.isBookDetailsModal = false;
+    this.isMyAccountModal = false;
     this.isMyReservationsModal = true;
     this.reservationService.getMyReservations().subscribe({
       next: (response) => {
@@ -101,13 +122,25 @@ export class HomeComponent implements OnInit {
         reservation.bookTitle = response.book.title;
         reservation.bookAuthor = response.book.author;
       }).catch((error) => {
-        console.error('Error fetching book details:', error);
+        console.error('Error fetching book details for reservations:', error);
       });
     });
   }
 
   viewAccount() {
-
+    this.isMyReservationsModal = false;
+    this.isBookDetailsModal = false;
+    this.isMyAccountModal = true;
+    this.userService.getMyProfile().subscribe({
+      next: (response) => {
+        this.userDetails = response.user;
+        console.log(this.userDetails.email)
+      },
+      error: (error) => {
+        alert(error || 'Failed to load user details');
+      }
+    });
+    this.showModal = true;
   }
 
   closeModal() {

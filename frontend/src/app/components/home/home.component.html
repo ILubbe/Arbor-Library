@@ -23,11 +23,13 @@
          <app-modal
             [isHomePage]="isHomePage"
             [isBookDetailsModal]="isBookDetailsModal"
-            [showModal]="showModal" 
+            [isMyReservationsModal]="isMyReservationsModal"
+            [isMyAccountModal]="isMyAccountModal"
+            [showModal]="showModal"
             [modalTitle]="modalTitle"
-            [modalContent]="modalContent"
+            [bookDetails]="bookDetails"
             [reservations]="reservations"
-            [bookId]="selectedItem?.id"
+            [userDetails]="userDetails"
             (closeModal)="closeModal()">
          </app-modal>
       </div>

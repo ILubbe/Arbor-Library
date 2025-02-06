@@ -12,7 +12,7 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  getUserProfile(): Observable<any> {
+  getMyProfile(): Observable<any> {
     const accessToken = this.authService.getAccessToken();
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
@@ -21,6 +21,33 @@ export class UserService {
     return this.http.get<any>(this.apiUserProfileEndpoint, { headers }).pipe(
       catchError((error) => {
         return throwError(() => error.error.message || 'Could not fetch user profile');
+      })
+    );
+  }
+
+  updateMyProfile(updatedUserDetails: any): Observable<any> {
+    const accessToken = this.authService.getAccessToken();
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+    return this.http.put<any>(this.apiUserProfileEndpoint, updatedUserDetails, { headers }).pipe(
+      catchError((error) => {
+        console.log(error, error.error, error.message)
+        return throwError(() => error.error.message);
+      })
+    );
+  }
+
+  deleteMyProfile(): Observable<any> {
+    const accessToken = this.authService.getAccessToken();
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+    return this.http.delete<any>(this.apiUserProfileEndpoint, { headers }).pipe(
+      catchError((error) => {
+        return throwError(() => error.error.message || 'Could not delete user profile');
       })
     );
   }

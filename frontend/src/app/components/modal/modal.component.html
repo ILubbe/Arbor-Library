@@ -5,10 +5,53 @@
 
             <h2>{{ modalTitle }}</h2>
             @if (isHomePage && isBookDetailsModal) {
-                <div class="modal-body" [innerHTML]="modalContent">
-                    <button class="reserve-btn" (click)="createMyReservation()">Reserve Now!</button>
+                <div class="modal-body">
+                    <p><b>Title:</b> {{ bookDetails.title }}</p>
+                    <p><b>Author:</b> {{ bookDetails.author }}</p>
+                    <p><b>First Publish Year:</b> {{ bookDetails.firstPublishYear }}</p>
+                    <p><b>Genres:</b> {{ bookDetails.genres.join(',',', ')}}</p>
+                    <button (click)="createMyReservation(bookDetails.id)">Reserve Now!</button>
+                </div>
+            }
+            @if (isHomePage && isMyAccountModal && !isEditMode) {
+                <div class="modal-body">
+                    <p><b>Email:</b> {{ userDetails.email }}</p>
+                    <p><b>Role:</b> {{ userDetails.role }}</p>
+                    <p><b>First Name:</b> {{ userDetails.firstName }}</p>
+                    <p><b>Last Name:</b> {{ userDetails.lastName}}</p>
+                    <span>
+                        <button (click)="editMyAccount()">Edit Account</button>
+                        <button (click)="deleteMyAccount()">Delete Account</button>
+                    </span>
                 </div>
             } 
+            @if (isHomePage && isMyAccountModal && isEditMode){
+                <p><b>Email:</b> {{ userDetails.email }}</p>
+                <p><b>Role:</b> {{ userDetails.role }}</p>
+                <form>
+                    <p>
+                        <label for="firstName"><b>First Name:</b></label>
+                        <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName">
+                    </p>
+                    <p>
+                        <label for="lastName"><b>Last Name:</b></label>
+                        <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName">
+                    </p>
+                    <p>
+                        <label for="password"><b>Password:</b></label>
+                        <input type="password" id="password" [(ngModel)]="password" name="password">
+                    </p>
+                    <p>
+                        <label for="passwordConfirmation"><b>Confirm Password:</b></label>
+                        <input type="password" id="password" [(ngModel)]="passwordConfirmation" name="passwordConfirmation">
+                    </p>
+              
+                    <div class="button-group">
+                        <button type="button" (click)="saveMyAccount()">Save</button>
+                        <button type="button" (click)="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            }
             @if (isHomePage && isMyReservationsModal) {
                 <div class="modal-body">
                     <ul>
