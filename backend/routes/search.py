@@ -64,7 +64,7 @@ def search():
     model = request.args.get('model')
     query = request.args.get('query')
     page = int(request.args.get('page', 1)) # optional
-    per_page = int(request.args.get('limit', 20)) # optional
+    per_page = int(request.args.get('limit', 25)) # optional
     field = request.args.get('field') # optional
 
     if field:

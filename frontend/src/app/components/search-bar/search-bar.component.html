@@ -24,8 +24,9 @@
             <p>Page {{ page }} of {{ totalPages }}</p>
         }
     </div>
-    @if (selectedModel == 'Book' && total > 0) {
+    @if (isHomePage && total > 0) {
         <div>
+            {{ isHomePage }}
             <div class="pagination">
                 <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
                 <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
@@ -35,8 +36,9 @@
             <div class="results">
                 <div class="result-item">
                     <div>
-                        <li><b>{{ result.title }}</b></li>
-                        <li>Author: {{ result.author }}, First Published: {{ result.firstPublishYear }}, Genres: {{ result.genres }}</li>
+                        <li><b>{{ result.title }}</b> by {{ result.author }} 
+                            <button (click)="onViewDetailsClick(result)">View Details</button>
+                        </li>
                         <br>
                     </div>
                 </div>

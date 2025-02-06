@@ -1,0 +1,13 @@
+@if (showModal) {
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" (click)="close()">X</button>
+    
+            <h2>{{ modalTitle }}</h2>
+            <div class="modal-body" [innerHTML]="modalContent"></div>
+            @if (isHomePage) {
+                <button class="reserve-btn" (click)="onReserveBook()">Reserve Now!</button>
+            }
+        </div>
+    </div>
+}

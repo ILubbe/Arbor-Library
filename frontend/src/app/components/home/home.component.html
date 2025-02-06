@@ -7,10 +7,25 @@
    }
    <div class="home-page">
       <app-search-bar
+         [isHomePage]="isHomePage"
+         [selectedModel]="selectedModel"
          [fieldOptions]="fieldOptions"
          [selectedField]="selectedField"
          (searchQuery)="onSearchQueryEmitted($event)"
          (fieldChange)="onFieldChange($event)"
+         (itemSelected)="onItemSelected($event)"
       ></app-search-bar>
    </div>
+   @if (showModal) {
+      <div class="home-modal">
+         <app-modal
+            [isHomePage]="isHomePage"
+            [showModal]="showModal" 
+            [modalTitle]="modalTitle"
+            [modalContent]="modalContent" 
+            [bookId]="selectedItem?.id"
+            (closeModal)="closeModal()">
+         </app-modal>
+      </div>
+   }
 </div>

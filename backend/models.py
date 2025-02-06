@@ -24,7 +24,7 @@ class SearchableMixin(object):
 
     @classmethod
     def search_books_by_genre(cls, genre_name, page, per_page):
-        query = db.session.query(cls).join(
+        total_query = db.session.query(cls).join(
             Book_Genre, Book_Genre.book_id == cls.id
         ).join(
             Genre, Genre.id == Book_Genre.genre_id
@@ -32,8 +32,8 @@ class SearchableMixin(object):
             Genre.genre.ilike(f"%{genre_name}")
         )
 
-        query = query.offset((page - 1) * per_page).limit(per_page)
-        total = query.count()
+        query = total_query.offset((page - 1) * per_page).limit(per_page)
+        total = total_query.count()
 
         return query.all(), total
 
@@ -101,7 +101,7 @@ class Book(SearchableMixin, db.Model):
 
     def serialize(self):
         return {
-            #"id": self.id,
+            "id": self.id,
             "title": self.title,
             "author": self.author,
             "firstPublishYear": self.first_publish_year,

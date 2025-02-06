@@ -20,11 +20,15 @@ interface SearchResult {
   styleUrl: './search-bar.component.scss'
 })
 export class SearchBarComponent {
+  // discover what page is using the search bar
+  @Input() isHomePage: boolean = false;
+  
   @Input() fieldOptions: string[] = [];
-  @Input() selectedModel: string = 'Book'; // Default to 'Book'
+  @Input() selectedModel: string = '';
   @Input() selectedField: string = '';
   @Input() perPage: number = 25
   @Output() searchQuery = new EventEmitter<any>();
+  @Output() itemSelected = new EventEmitter<any>();
 
   query: string = '';
   page: number = 1;
@@ -96,5 +100,9 @@ export class SearchBarComponent {
 
   get totalPages(): number {
     return Math.ceil(this.total / this.perPage);
+  }
+
+  onViewDetailsClick(item: any) {
+    this.itemSelected.emit(item);
   }
 }

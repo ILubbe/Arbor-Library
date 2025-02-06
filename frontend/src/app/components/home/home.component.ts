@@ -3,23 +3,29 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  imports: [RouterModule, SearchBarComponent],
+  imports: [RouterModule, SearchBarComponent, ModalComponent],
   styleUrls: ['./home.component.scss']
 })
 
 export class HomeComponent implements OnInit {
+  isHomePage: boolean = true;
+  selectedModel: string = 'Book'
   userFirstName: string = '';
   userLastName: string = '';
   userRole: string = '';
   isLibrarian: boolean = false;
-  
-  selectedModel: string = 'Book';
   selectedField: string = '';
   fieldOptions: string[] = ['author', 'title', 'genre', 'first_publish_year'];
+  showModal: boolean = false;
+  modalTitle: string = 'Book Details';
+  modalContent: string = '';
+  bookId: string = '';
+  selectedItem: any = null;
 
   constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
 
@@ -45,13 +51,30 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  logout() {
-    this.authService.logout();
-  }
-
   onSearchQueryEmitted(queryData: any) {
   }
 
   onFieldChange(field: any) {
+  }
+
+  onItemSelected(item: any) {
+    this.selectedItem = item;
+    this.modalContent = `
+      <b>Title:</b> ${item.title}<br>
+      <b>Author:</b> ${item.author}<br>
+      <b>Published:</b> ${item.firstPublishYear}<br>
+      <b>Genres:</b> ${item.genres.join(', ')}<br><br>`;
+    this.bookId = item.id;
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.selectedItem = null;
+    this.modalContent = '';
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

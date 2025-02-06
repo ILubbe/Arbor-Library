@@ -232,7 +232,7 @@ def create_reservation():
 
     return jsonify({"message": "Reservation created!"}), 201
 
-'''
+
 # create a reservation for yourself
 @reservations_bp.route("/my", methods=["POST"], strict_slashes=False)
 @jwt_required()
@@ -301,7 +301,7 @@ def create_my_reservation():
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": "Reservation created!"}), 201
-'''
+
 
 # delete (cancel) a reservation by id
 @reservations_bp.route("/<int:reservation_id>", methods=["DELETE"], strict_slashes=False)
