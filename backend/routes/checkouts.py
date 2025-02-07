@@ -182,6 +182,9 @@ def check_in_book(checkout_id):
     checkout = Checkout.query.get(checkout_id)
     if not checkout:
         return jsonify({"message": "Checkout record not found"}), 404
+    
+    if checkout.returned == True:
+        return jsonify({"message": "Book already checked in"}), 400
 
     try:
         checkout.returned = True

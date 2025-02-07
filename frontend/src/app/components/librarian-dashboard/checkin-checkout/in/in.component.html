@@ -6,7 +6,7 @@
     <div class="form-container">
         <div class="input-section">
             <label for="checkoutId">Enter A Check Out ID:</label>
-            <input type="text" id="checkoutId" [value]="checkoutId" placeholder="Enter Checkout ID" required>
+            <input type="text" id="checkoutId" [value]="checkoutId" [(ngModel)]="checkoutId" placeholder="Enter Checkout ID" required>
         @if (!checkoutId) {
             <p>OR</p>
             <p>Search for a User or Book</p>

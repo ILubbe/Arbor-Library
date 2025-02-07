@@ -53,6 +53,10 @@ export class InComponent {
     }
   }
 
+  onCheckoutIdInput(item: any) {
+    this.checkoutId = item;
+  }
+
   toggleSearchType() {
     this.clear();
     this.isUserSearchVisible = !this.isUserSearchVisible;
