@@ -1,37 +1,40 @@
 <div class="search-bar">
-    <input
-      type="text"
-      [(ngModel)]="query"
-      (ngModelChange)="onQueryChange($event)"
-      placeholder="Search..."
-      class="search-input"
-    />
-  
-    @if (fieldOptions.length > 0) {
-        <select [(ngModel)]="selectedField" (change)="onFieldChange(selectedField)" class="field-select">
-        <option value="">-- Select Filter --</option>
-        @for (field of fieldOptions; track field) {
-            <option [value]="field">{{ field }}</option>
-        } @empty {
-            <option>No fields available</option>
+    @if (!isCheckoutSearch) {
+        <input
+        type="text"
+        [(ngModel)]="query"
+        (ngModelChange)="onQueryChange($event)"
+        placeholder="Search..."
+        class="search-input"
+        />
+    
+        @if (fieldOptions.length > 0) {
+            <select [(ngModel)]="selectedField" (change)="onFieldChange(selectedField)" class="field-select">
+            <option value="">-- Select Filter --</option>
+            @for (field of fieldOptions; track field) {
+                <option [value]="field">{{ field }}</option>
+            } @empty {
+                <option>No fields available</option>
+            }
+            </select>
         }
-        </select>
+        @if (total > 0) {
+            <div>
+                <div class="pagination">
+                    <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                    <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
+                </div>
+            </div> 
+        }
     }
-
     <div class="results-info">
-        <p>Showing {{ total }} results</p>
-        @if (total != 0) {
+        @if (query) {
+            <p>Showing {{ total }} result(s)</p>
+        }
+        @if (total != 0 && !isCheckoutSearch) {
             <p>Page {{ page }} of {{ totalPages }}</p>
         }
     </div>
-    @if (total > 0) {
-        <div>
-            <div class="pagination">
-                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
-                <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
-            </div>
-        </div>  
-    }
     @if (isHomePage && isBookSearch) {
         @for (result of results; track result) {
             <div class="results">
@@ -46,7 +49,7 @@
             </div>
         }
     }
-    @if (isCheckoutPage && isUserSearch) {
+    @if ((isCheckoutPage || isCheckinPage) && isUserSearch && !isCheckoutSearch) {
         @for (result of results; track result) {
             <div class="results">
                 <div class="result-item">
@@ -62,7 +65,7 @@
             </div>
         }
     }
-    @if (isCheckoutPage && isBookSearch) {
+    @if ((isCheckoutPage || isCheckinPage) && isBookSearch && !isCheckoutSearch) {
         @for (result of results; track result) {
             <div class="results">
                 <div class="result-item">
@@ -77,7 +80,25 @@
             </div>
         }
     }
-    @if (total > 0) {
+    @if (isCheckinPage && isCheckoutSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Returned: </b>{{ result.returned }}</span><br>
+                        <span><b>Checked Out at: </b>{{ result.checkoutOutAt }}</span><br>
+                        <span><b>Due at: </b>{{ result.dueAt }}</span><br>
+                        <span><b>User ID: </b>{{ result.userId }}</span><br>
+                        <span><b>Book ID: </b>{{ result.bookId }}</span><br>
+                        <span><b>Checkout ID: </b>{{ result.id }}</span><br>
+                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    @if (total > 0 && !isCheckoutSearch) {
         <div>
             <div class="pagination">
                 <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>

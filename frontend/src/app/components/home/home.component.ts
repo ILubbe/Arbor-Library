@@ -128,7 +128,6 @@ export class HomeComponent implements OnInit {
     this.userService.getMyProfile().subscribe({
       next: (response) => {
         this.userDetails = response.user;
-        console.log(this.userDetails.email)
       },
       error: (error) => {
         alert(error || 'Failed to load user details');

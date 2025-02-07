@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckinCheckoutService } from '../../../../services/checkin-checkout.service';
 import { SearchBarComponent } from '../../../search-bar/search-bar.component';
@@ -24,11 +24,7 @@ export class OutComponent {
   userId: string = '';
   bookId: string = '';
 
-  @ViewChild(SearchBarComponent) searchBar: SearchBarComponent | undefined;
-
-  constructor(
-    private ciCoService: CheckinCheckoutService
-  ) {}
+  constructor(private ciCoService: CheckinCheckoutService) {}
 
   onUserItemSelected(item: any) {
     this.userId = item.id;

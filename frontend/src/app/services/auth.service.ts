@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   logout(): boolean {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = this.getRefreshToken();
   
     if (!refreshToken) {
       // If no refresh token is found, logout can't be completed

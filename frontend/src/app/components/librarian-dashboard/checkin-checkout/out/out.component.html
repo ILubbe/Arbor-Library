@@ -1,38 +1,41 @@
 <div class="checkout-container">
     <h3>Check Out Books</h3>
-  
     <div class="form-container">
         <div class="input-section">
             <p>Enter a User ID, or search for a User</p>
             <label for="userId">User ID:</label>
             <input type="text" id="userId" [(ngModel)]="userId" [value]="userId" placeholder="Enter User ID" required>
-    
-            <app-search-bar
-                [isCheckoutPage]="isCheckoutPage"
-                [isUserSearch]="isUserSearch"
-                [perPage]="perPage"
-                [selectedModel]="selectedUserModel"
-                [fieldOptions]="fieldUserOptions"
-                [selectedField]="selectedUserField"
-                (itemSelected)="onUserItemSelected($event)"
-            ></app-search-bar>
+            @if (!userId) {
+                <app-search-bar
+                    [isCheckoutPage]="isCheckoutPage"
+                    [isUserSearch]="isUserSearch"
+                    [perPage]="perPage"
+                    [selectedModel]="selectedUserModel"
+                    [fieldOptions]="fieldUserOptions"
+                    [selectedField]="selectedUserField"
+                    (itemSelected)="onUserItemSelected($event)"
+                ></app-search-bar>
+            }
         </div>
   
         <div class="input-section">
             <p>Enter a Book ID, or search for a Book</p>
             <label for="bookId">Book ID:</label>
             <input type="text" id="bookId" [(ngModel)]="bookId" [value]="bookId" placeholder="Enter Book ID" required>
-    
-            <app-search-bar
-                [isCheckoutPage]="isCheckoutPage"
-                [isBookSearch]="isBookSearch"
-                [perPage]="perPage"
-                [selectedModel]="selectedBookModel"
-                [fieldOptions]="fieldBookOptions"
-                [selectedField]="selectedBookField"
-                (itemSelected)="onBookItemSelected($event)"
-            ></app-search-bar>
+            @if (!bookId) {
+                <app-search-bar
+                    [isCheckoutPage]="isCheckoutPage"
+                    [isBookSearch]="isBookSearch"
+                    [perPage]="perPage"
+                    [selectedModel]="selectedBookModel"
+                    [fieldOptions]="fieldBookOptions"
+                    [selectedField]="selectedBookField"
+                    (itemSelected)="onBookItemSelected($event)"
+                ></app-search-bar>
+            }
         </div>
     </div>
-    <button (click)="checkoutBook()">Check Out</button>
+    @if (userId && bookId) {
+        <button (click)="checkoutBook()">Check Out</button>
+    }
 </div>

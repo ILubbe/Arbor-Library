@@ -44,7 +44,7 @@ export class ModalComponent {
 
   createMyReservation(bookId: string) {
     if (!bookId) {
-      console.log('Book ID is missing!');
+      alert('Book ID is missing!');
       return;
     }
 
@@ -61,7 +61,7 @@ export class ModalComponent {
 
   cancelMyReservation(reservationId: string) {
     if (!reservationId) {
-      console.log('Reservation ID is missing!');
+      alert('Reservation ID is missing!');
       return;
     }
     this.reservationService.cancelMyReservation(reservationId).subscribe({

@@ -24,7 +24,20 @@ export class CheckinCheckoutService {
     }
     return this.http.post<any>(this.apiCheckoutEndpoint, checkoutBody, { headers }).pipe(
       catchError((error) => {
-        return throwError(() => error.error.message || 'Could not book details');
+        return throwError(() => error.error.message || 'Could not check out book');
+      })
+    );
+  }
+
+  checkin(checkoutId: string): Observable<any> {
+    const accessToken = this.authService.getAccessToken();
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+    return this.http.patch<any>(`${this.apiCheckoutEndpoint}/${ checkoutId }`, {}, { headers }).pipe(
+      catchError((error) => {
+        return throwError(() => error.error.message || 'Could not check in book');
       })
     );
   }

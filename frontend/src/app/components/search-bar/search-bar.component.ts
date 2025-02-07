@@ -22,13 +22,14 @@ interface SearchResult {
 export class SearchBarComponent {
   // discover what page is using the search bar
   @Input() isHomePage: boolean = false;
-  @Input() isCheckinPage: boolean = false;
   @Input() isCheckoutPage: boolean = false;
+  @Input() isCheckinPage: boolean = false;
 
   // discover how this page will use the search bar
   @Input() isBookSearch: boolean = false;
   @Input() isUserSearch: boolean = false;
-  
+  @Input() isCheckoutSearch: boolean = false;
+
   // general searchbar inputs
   @Input() fieldOptions: string[] = [];
   @Input() selectedModel: string = '';
@@ -51,6 +52,9 @@ export class SearchBarComponent {
   // book specific search
   bookId: string = '';
 
+  // checkout specific search
+  checkoutId: string = '';
+
   private searchSubject = new Subject<string>;
 
   constructor(private http: HttpClient, private authService: AuthService) {
@@ -60,23 +64,28 @@ export class SearchBarComponent {
     ).subscribe((response: SearchResult) => {
       this.results = response.results;
       this.total = response.total;
+      if (this.isCheckoutSearch) {
+        this.results = this.results.filter(result => result.returned === false);
+        this.total = this.results.length;
+      }
       this.page = response.page;
       this.perPage = response.per_page;
     });
   }
 
   search(query: string) {
+    if (this.isCheckoutSearch) {
+      this.perPage = 10000; // set this as there will be no pagination on checkout searches due to filtering in template
+    }
     let apiSearchEndpoint = environment.backendUrl + `/search?model=${this.selectedModel}&query=${this.query}&page=${this.page}&limit=${this.perPage}`;
     if (this.selectedField) {
       apiSearchEndpoint += `&field=${this.selectedField.replace(/ /g,'-')}`;
     }
-
     const accessToken = this.authService.getAccessToken();
     const headers = {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     }
-
     return this.http.get<SearchResult>(apiSearchEndpoint, { headers });
   }
 
@@ -122,9 +131,43 @@ export class SearchBarComponent {
     if (this.isUserSearch) {
       this.userId = item.id;
       this.itemSelected.emit(item);
+
+      // send userId to checkout search if on check in page
+      if (this.isCheckinPage) {
+        this.isUserSearch = false;
+        this.isCheckoutSearch = true;
+        this.selectedModel = 'Checkout';
+        this.selectedField = 'user-id';
+        this.query = this.userId;
+        this.onQueryChange(this.query);
+      }
+      
     } else if (this.isBookSearch) {
       this.bookId = item.id;
       this.itemSelected.emit(item);
+
+      // send bookId to checkout search if on check in page
+      if (this.isCheckinPage) {
+        this.isBookSearch = false;
+        this.isCheckoutSearch = true;
+        this.selectedModel = 'Checkout';
+        this.selectedField = 'book-id';
+        this.query = this.bookId;
+        this.onQueryChange(this.query);
+      }
+
+    } else if (this.isCheckoutSearch) {
+      this.checkoutId = item.id;
+      this.itemSelected.emit(item);
+      this.isCheckoutSearch = false;
+      this.clearResults();
     }
+  }
+
+  clearResults() {
+    this.results = [];
+    this.total = 0;
+    this.page = 1;
+    this.query = '';
   }
 }

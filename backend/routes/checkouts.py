@@ -177,6 +177,7 @@ def create_checkout():
 # check a book in
 @checkouts_bp.route("/<int:checkout_id>", methods=["PATCH"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def check_in_book(checkout_id):
     checkout = Checkout.query.get(checkout_id)
     if not checkout:

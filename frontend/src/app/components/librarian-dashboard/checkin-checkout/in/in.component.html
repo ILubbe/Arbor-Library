@@ -1,1 +1,48 @@
-<p>checkin works!</p>
+<div class="checkin-container">
+    <h3>Check In Books</h3>
+    @if (checkoutId) {
+        <button (click)="clear()">Reset</button>
+    }
+    <div class="form-container">
+        <div class="input-section">
+            <label for="checkoutId">Enter A Check Out ID:</label>
+            <input type="text" id="checkoutId" [value]="checkoutId" placeholder="Enter Checkout ID" required>
+        @if (!checkoutId) {
+            <p>OR</p>
+            <p>Search for a User or Book</p>
+            <div class="toggle-section">
+                <button (click)="toggleSearchType()">
+                    {{ isUserSearchVisible ? 'Switch to Book Search' : 'Switch to User Search' }}
+                </button>
+            </div>
+            @if (isUserSearchVisible) {
+                <p>{{ userId == '' ? 'User Search' : 'Check Out Results' }}</p>
+                <app-search-bar
+                    [isCheckinPage]="isCheckinPage"
+                    [isUserSearch]="isUserSearch"
+                    [perPage]="perPage"
+                    [selectedModel]="selectedUserModel"
+                    [fieldOptions]="fieldUserOptions"
+                    [selectedField]="selectedUserField"
+                    (itemSelected)="onUserItemSelected($event)"
+                ></app-search-bar>
+            }
+            @if (!isUserSearchVisible) {
+                <p>{{ bookId == '' ? 'Book Search' : 'Check Out Results' }}</p>
+                <app-search-bar
+                    [isCheckinPage]="isCheckinPage"
+                    [isBookSearch]="isBookSearch"
+                    [perPage]="perPage"
+                    [selectedModel]="selectedBookModel"
+                    [fieldOptions]="fieldBookOptions"
+                    [selectedField]="selectedBookField"
+                    (itemSelected)="onBookItemSelected($event)"
+                ></app-search-bar>
+            }
+        }
+        </div>
+    </div>
+    @if (checkoutId) {
+        <button (click)="checkinBook()">Check In</button>
+    }
+</div>

@@ -33,7 +33,6 @@ export class UserService {
     }
     return this.http.put<any>(this.apiUserProfileEndpoint, updatedUserDetails, { headers }).pipe(
       catchError((error) => {
-        console.log(error, error.error, error.message)
         return throwError(() => error.error.message);
       })
     );
