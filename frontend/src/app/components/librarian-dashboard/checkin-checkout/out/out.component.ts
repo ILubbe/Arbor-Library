@@ -4,13 +4,13 @@ import { CheckinCheckoutService } from '../../../../services/checkin-checkout.se
 import { SearchBarComponent } from '../../../search-bar/search-bar.component';
 
 @Component({
-  selector: 'app-checkin',
+  selector: 'app-out',
   imports: [FormsModule, SearchBarComponent],
-  templateUrl: './checkin.component.html',
-  styleUrl: './checkin.component.scss'
+  templateUrl: './out.component.html',
+  styleUrl: './out.component.scss'
 })
 
-export class CheckinComponent {
+export class OutComponent {
   isCheckoutPage: boolean = true;
   isUserSearch: boolean = true;
   isBookSearch: boolean = true;

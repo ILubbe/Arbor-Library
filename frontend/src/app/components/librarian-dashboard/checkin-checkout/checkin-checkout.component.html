@@ -1,13 +1,13 @@
 
 <div class="checkin-checkout-container">
   
-    <button (click)="showCheckout = false; showCheckin = true">Checkout Book</button>
-    <button (click)="showCheckin = false; showCheckout = true">Checkin Book</button>
+    <button (click)="showCheckout = false; showCheckin = true">Check In Book</button>
+    <button (click)="showCheckin = false; showCheckout = true">Check Out Book</button>
   
     @if (showCheckin) {
-        <app-checkin></app-checkin>
+        <app-in></app-in>
     }
     @if (showCheckout) {
-        <app-checkout></app-checkout>
+        <app-out></app-out>
     }
   </div>

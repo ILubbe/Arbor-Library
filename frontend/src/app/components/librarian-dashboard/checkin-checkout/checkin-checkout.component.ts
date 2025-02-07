@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { CheckinComponent } from './checkin/checkin.component';
-import { CheckoutComponent } from './checkout/checkout.component';
+import { OutComponent } from './out/out.component';
+import { InComponent } from './in/in.component';
 
 @Component({
   selector: 'app-checkin-checkout',
-  imports: [CheckinComponent, CheckoutComponent],
+  imports: [InComponent, OutComponent],
   templateUrl: './checkin-checkout.component.html',
   styleUrl: './checkin-checkout.component.scss'
 })
