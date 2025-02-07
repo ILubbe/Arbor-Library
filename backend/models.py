@@ -119,7 +119,7 @@ class Genre(db.Model):
 
     def serialize(self):
         return {
-            #"id": self.id,
+            "id": self.id,
             "genre": self.genre
         }
 
@@ -141,8 +141,8 @@ class Reservation(SearchableMixin, db.Model):
     __searchable__ = ['status']
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id', ondelete='SET NULL'))
     status = db.Column(db.Enum('active', 'fulfilled', 'expired', 'waiting'), nullable=False)
     reserved_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - reservation starts now
     expires_at = db.Column(db.DateTime)
@@ -163,15 +163,15 @@ class Checkout(SearchableMixin, db.Model):
     __searchable__ = ['returned', 'user_id', 'book_id']
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id', ondelete='SET NULL'))
     checked_out_at = db.Column(db.DateTime, nullable=False, server_default=func.now()) # default - checkout starts now
     due_at = db.Column(db.DateTime, nullable=False, default=text("DATE_ADD(NOW(), INTERVAL 3 WEEK)")) # default - due after 3 weeks later)
     returned = db.Column(db.Boolean, nullable=False, server_default=expression.false())
 
     def serialize(self):
         return {
-            #"id": self.id,
+            "id": self.id,
             "userId": self.user_id,
             "bookId": self.book_id,
             "checkoutOutAt": self.checked_out_at,

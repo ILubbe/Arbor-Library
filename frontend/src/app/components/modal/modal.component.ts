@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
@@ -27,7 +28,7 @@ export class ModalComponent {
   @Input() bookDetails: any = '';
   @Input() userDetails: any = '';
 
-  // for updating user details in My Account Modal
+  // for updating user details in My Account
   isEditMode: boolean = false;
   firstName: string = '';
   lastName: string = '';
@@ -37,7 +38,8 @@ export class ModalComponent {
   constructor(
     private reservationService: ReservationService,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   createMyReservation(bookId: string) {
@@ -120,7 +122,11 @@ export class ModalComponent {
           alert(error || 'Failed to delete account');
         }
       });
-      this.authService.logout();
+      // cant call this function because backend doesn't like to log out a user who doesn't exist anymore.
+      // this.authService.logout();
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      this.router.navigateByUrl('/login');
     }
   }
 
