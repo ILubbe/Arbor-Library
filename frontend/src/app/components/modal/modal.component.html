@@ -31,19 +31,19 @@
                 <form>
                     <p>
                         <label for="firstName"><b>First Name:</b></label>
-                        <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName">
+                        <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" placeholder="John" required>
                     </p>
                     <p>
                         <label for="lastName"><b>Last Name:</b></label>
-                        <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName">
+                        <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" placeholder="Doe" required>
                     </p>
                     <p>
                         <label for="password"><b>Password:</b></label>
-                        <input type="password" id="password" [(ngModel)]="password" name="password">
+                        <input type="password" id="password" [(ngModel)]="password" name="password" required>
                     </p>
                     <p>
                         <label for="passwordConfirmation"><b>Confirm Password:</b></label>
-                        <input type="password" id="password" [(ngModel)]="passwordConfirmation" name="passwordConfirmation">
+                        <input type="password" id="password" [(ngModel)]="passwordConfirmation" name="passwordConfirmation" required>
                     </p>
               
                     <div class="button-group">

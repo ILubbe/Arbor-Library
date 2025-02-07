@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from sqlalchemy import func
 from models import Checkout, User, Book, Reservation, db
 from utils.general_utils import *
+from utils.rbac_decorators import *
 
 # define blueprint
 checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
@@ -116,6 +117,7 @@ def get_checkouts_by_book_and_user(user_id, book_id):
 # create a checkout that goes into effect immediately
 @checkouts_bp.route("/", methods=["POST"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def create_checkout():
     required_fields = [
         "userId",

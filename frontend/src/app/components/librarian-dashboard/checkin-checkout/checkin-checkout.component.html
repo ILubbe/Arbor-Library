@@ -1,1 +1,13 @@
-<p>checkin-checkout works!</p>
+
+<div class="checkin-checkout-container">
+  
+    <button (click)="showCheckout = false; showCheckin = true">Checkout Book</button>
+    <button (click)="showCheckin = false; showCheckout = true">Checkin Book</button>
+  
+    @if (showCheckin) {
+        <app-checkin></app-checkin>
+    }
+    @if (showCheckout) {
+        <app-checkout></app-checkout>
+    }
+  </div>

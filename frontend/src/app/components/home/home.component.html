@@ -10,11 +10,10 @@
    <div class="home-page">
       <app-search-bar
          [isHomePage]="isHomePage"
+         [isBookSearch]="isBookSearch"
          [selectedModel]="selectedModel"
          [fieldOptions]="fieldOptions"
          [selectedField]="selectedField"
-         (searchQuery)="onSearchQueryEmitted($event)"
-         (fieldChange)="onFieldChange($event)"
          (itemSelected)="onItemSelected($event)"
       ></app-search-bar>
    </div>

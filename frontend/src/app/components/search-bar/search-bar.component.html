@@ -24,14 +24,15 @@
             <p>Page {{ page }} of {{ totalPages }}</p>
         }
     </div>
-    @if (isHomePage && total > 0) {
+    @if (total > 0) {
         <div>
-            {{ isHomePage }}
             <div class="pagination">
                 <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
                 <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
             </div>
         </div>  
+    }
+    @if (isHomePage && isBookSearch) {
         @for (result of results; track result) {
             <div class="results">
                 <div class="result-item">
@@ -44,9 +45,45 @@
                 </div>
             </div>
         }
-        <div class="pagination">
-            <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
-            <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
-        </div>
     }
+    @if (isCheckoutPage && isUserSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Email: </b>{{ result.email }}</span><br>
+                        <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
+                        <span><b>Role: </b>{{ result.role }}</span><br>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
+                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    @if (isCheckoutPage && isBookSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Title: </b>{{ result.title }}</span><br>
+                        <span><b>Author: </b>{{ result.author }}</span><br>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
+                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    @if (total > 0) {
+        <div>
+            <div class="pagination">
+                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
+            </div>
+        </div>  
+    }
+</div>
   

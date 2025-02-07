@@ -22,7 +22,14 @@ interface SearchResult {
 export class SearchBarComponent {
   // discover what page is using the search bar
   @Input() isHomePage: boolean = false;
+  @Input() isCheckinPage: boolean = false;
+  @Input() isCheckoutPage: boolean = false;
+
+  // discover how this page will use the search bar
+  @Input() isBookSearch: boolean = false;
+  @Input() isUserSearch: boolean = false;
   
+  // general searchbar inputs
   @Input() fieldOptions: string[] = [];
   @Input() selectedModel: string = '';
   @Input() selectedField: string = '';
@@ -38,16 +45,21 @@ export class SearchBarComponent {
   lockedQuery: string = '';
   lockedField: string = '';
 
+  // user specific search
+  userId: string = '';
+
+  // book specific search
+  bookId: string = '';
+
   private searchSubject = new Subject<string>;
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.searchSubject.pipe(
       debounceTime(500),  // wait for 500ms after the user stops typing
-      switchMap((query: string) => this.search(query))  // call searchBooks when the user stops typing
+      switchMap((query: string) => this.search(query))  // call search when the user stops typing
     ).subscribe((response: SearchResult) => {
       this.results = response.results;
       this.total = response.total;
-
       this.page = response.page;
       this.perPage = response.per_page;
     });
@@ -104,5 +116,15 @@ export class SearchBarComponent {
 
   onViewDetailsClick(item: any) {
     this.itemSelected.emit(item);
+  }
+
+  onSelectClick(item: any) {
+    if (this.isUserSearch) {
+      this.userId = item.id;
+      this.itemSelected.emit(item);
+    } else if (this.isBookSearch) {
+      this.bookId = item.id;
+      this.itemSelected.emit(item);
+    }
   }
 }

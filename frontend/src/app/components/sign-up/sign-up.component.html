@@ -1,17 +1,14 @@
 <div class="sign-up-container">
     <h2>Create An Account</h2>
-
-    <!-- Display error message if signup fails -->
     @if (errorMessage) {
         <div NgIf="errorMessage" class="error-message" style="color: red; font-size: 14px;">
             {{ errorMessage }}
         </div>
     }
-
     <form (ngSubmit)="onSubmit()">
         <div>
             <label for="email">Email</label>
-            <input type="text" id="email" [(ngModel)]="email" name="email" required />
+            <input type="text" id="email" [(ngModel)]="email" name="email" placeholder="johndoe@hotmail.com" required />
         </div>
         <div>
             <label for="password">Password</label>
@@ -23,11 +20,11 @@
         </div>
         <div>
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" required />
+            <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" placeholder="John" required/>
         </div>
         <div>
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" required />
+            <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" placeholder="Doe" required/>
         </div>
         <button type="submit">Submit</button>
     </form>

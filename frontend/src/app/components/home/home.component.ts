@@ -17,6 +17,7 @@ import { ModalComponent } from '../modal/modal.component';
 export class HomeComponent implements OnInit {
   // for giving modal component context
   isHomePage: boolean = true;
+  isBookSearch: boolean = true;
   isBookDetailsModal: boolean = false;
   isMyReservationsModal: boolean = false;
   isMyAccountModal: boolean = false;
@@ -77,12 +78,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  onSearchQueryEmitted(queryData: any) {
-  }
-
-  onFieldChange(field: any) {
-  }
-
   onItemSelected(item: any) {
     this.isMyReservationsModal = false;
     this.isMyAccountModal = false;
@@ -96,7 +91,6 @@ export class HomeComponent implements OnInit {
         alert(error || 'Failed to load book details');
       }
     });
-    console.log(this.bookDetails);
     this.showModal = true;
   }
 
