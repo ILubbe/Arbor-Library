@@ -26,6 +26,7 @@ export class SearchBarComponent {
   @Input() isHomePage: boolean = false;
   @Input() isCheckoutPage: boolean = false;
   @Input() isCheckinPage: boolean = false;
+  @Input() isUserPage: boolean = false;
 
   // discover how this page will use the search bar
   @Input() isBookSearch: boolean = false;
@@ -37,6 +38,7 @@ export class SearchBarComponent {
   @Input() selectedModel: string = '';
   @Input() selectedField: string = '';
   @Input() perPage: number = 25
+
   @Output() searchQuery = new EventEmitter<any>();
   @Output() itemSelected = new EventEmitter<any>();
   @Output() userSelected = new EventEmitter<any>();
@@ -156,6 +158,33 @@ export class SearchBarComponent {
         alert(error || 'Failed to load user details');
       }
     });
+  }
+
+  onUserRoleToggle(userId: string) {
+    this.userService.SwitchUserRoleById(userId).subscribe({
+      next: (response) => {
+        alert(response.message || 'User role changed');
+        this.onQueryChange(this.query); // refresh search so librarian can see change
+      },
+      error: (error) => {
+        alert(error || 'Failed to switch user role');
+      }
+    })
+  }
+
+  onUserDelete(userId: string) {
+    const isConfirmed = confirm('Are you sure you want to delete this user?');
+    if (isConfirmed) {
+      this.userService.deleteUserById(userId).subscribe({
+        next: (response) => {
+          alert(response.message || 'User deleted');
+          this.onQueryChange(this.query); // refresh search so librarian can see change
+        },
+        error: (error) => {
+          alert(error || 'Failed to delete user');
+        }
+      }
+    )}
   }
 
   onSelectClick(item: any) {

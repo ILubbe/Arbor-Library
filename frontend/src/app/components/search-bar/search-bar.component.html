@@ -98,6 +98,26 @@
             </div>
         }
     }
+    @if (isUserPage && isUserSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Email: </b>{{ result.email }}</span><br>
+                        <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
+                        <span><b>Role: </b>{{ result.role }}</span><br>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
+                        <span>
+                            <button (click)="onUserRoleToggle(result.id)">Switch Role</button>
+                            <button (click)="onUserDelete(result.id)">Delete User</button>
+                        <br>
+                        <br>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
     @if (total > 0 && !isCheckoutSearch) {
         <div>
             <div class="pagination">

@@ -1,1 +1,12 @@
-<p>manage-users works!</p>
+<div class="manage-users-container">
+    <h3>Manage Users</h3>
+    <div class="home-search">
+        <app-search-bar
+        [isUserPage]="isUserPage"
+        [isUserSearch]="isUserSearch"
+        [selectedModel]="selectedModel"
+        [fieldOptions]="fieldOptions"
+        [selectedField]="selectedField"
+        ></app-search-bar>
+    </div>
+</div>

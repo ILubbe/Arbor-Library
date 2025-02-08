@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit {
     this.isMyAccountModal = false;
     this.isBookDetailsModal = true;
     this.selectedItem = item;
+    this.modalTitle = 'Book Details';
     this.bookService.getBookById(this.selectedItem.id).subscribe({
       next: (response) => {
         this.bookDetails = response.book;
@@ -97,6 +98,7 @@ export class HomeComponent implements OnInit {
     this.isBookDetailsModal = false;
     this.isMyAccountModal = false;
     this.isMyReservationsModal = true;
+    this.modalTitle = 'My Reservations';
     this.reservationService.getMyReservations().subscribe({
       next: (response) => {
         this.reservations = response.reservations
@@ -124,6 +126,7 @@ export class HomeComponent implements OnInit {
     this.isMyReservationsModal = false;
     this.isBookDetailsModal = false;
     this.isMyAccountModal = true;
+    this.modalTitle = 'My Account';
     this.userService.getMyProfile().subscribe({
       next: (response) => {
         this.userDetails = response.user;

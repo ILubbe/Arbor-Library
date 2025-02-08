@@ -7,7 +7,7 @@
    }
    <button (click)="viewAccount()">My Account</button>
    <button (click)="viewReservations()">My Reservations</button>
-   <div class="home-page">
+   <div class="home-search">
       <app-search-bar
          [isHomePage]="isHomePage"
          [isBookSearch]="isBookSearch"
@@ -17,7 +17,6 @@
          (itemSelected)="onItemSelected($event)"
       ></app-search-bar>
    </div>
-   @if (showModal) {
       <div class="home-modal">
          <app-modal
             [isHomePage]="isHomePage"
@@ -32,5 +31,4 @@
             (closeModal)="closeModal()">
          </app-modal>
       </div>
-   }
 </div>

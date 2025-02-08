@@ -48,7 +48,7 @@ export class InComponent {
   // for book Details modal with search results
   bookDetails: any = '';
 
-  // for user details modal
+  // for user details modal with search results
   userDetails: any = '';
 
   constructor(private ciCoService: CheckinCheckoutService) {}

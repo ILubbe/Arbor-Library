@@ -25,6 +25,30 @@ export class UserService {
     );
   }
 
+  SwitchUserRoleById(userId: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.patch<any>(`${this.apiUserEndpoint}/${ userId }`, {}, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch user details');
+          })
+        );
+      })
+    );
+  }
+
+  deleteUserById(userId: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.delete<any>(`${this.apiUserEndpoint}/${ userId }`, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch user details');
+          })
+        );
+      })
+    );
+  }
+
   getMyProfile(): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
