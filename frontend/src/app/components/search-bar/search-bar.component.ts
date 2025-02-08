@@ -81,12 +81,11 @@ export class SearchBarComponent {
     if (this.selectedField) {
       apiSearchEndpoint += `&field=${this.selectedField.replace(/ /g,'-')}`;
     }
-    const accessToken = this.authService.getAccessToken();
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    }
-    return this.http.get<SearchResult>(apiSearchEndpoint, { headers });
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<SearchResult>(apiSearchEndpoint, { headers });
+      })
+    )
   }
 
   onQueryChange(query: string) {

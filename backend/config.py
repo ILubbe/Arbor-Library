@@ -27,8 +27,8 @@ elasticsearch_port = os.getenv('ELASTICSEARCH_PORT')
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=60)
-app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(hours=6)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=5)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(hours=30)
 #app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=15)
 #app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(seconds=30)
 app.config['ELASTICSEARCH_URL'] = f"http://{elasticsearch_host}:{elasticsearch_port}"

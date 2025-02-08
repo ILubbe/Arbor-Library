@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const http = inject(HttpClient);
   const authService = inject(AuthService);
-  const apiEndpoint = environment.backendUrl + '/refresh';
+  const apiRefreshEndpoint = environment.backendUrl + '/refresh';
   const accessToken = authService.getAccessToken();
   const refreshToken = authService.getRefreshToken();
 
@@ -32,7 +32,7 @@ export const authGuard: CanActivateFn = async () => {
           }
 
           const response = await http
-            .post<any>(apiEndpoint, {}, { headers })
+            .post<any>(apiRefreshEndpoint, {}, { headers })
             .toPromise();
 
           localStorage.setItem('accessToken', response.accessToken);
