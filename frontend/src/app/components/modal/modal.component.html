@@ -69,6 +69,22 @@
                     </ul>
                 </div>
             }
+            @if (isCheckinPage && isBookDetailsModal) {
+                <div class="modal-body">
+                    <p><b>Title:</b> {{ bookDetails.title }}</p>
+                    <p><b>Author:</b> {{ bookDetails.author }}</p>
+                    <p><b>First Publish Year:</b> {{ bookDetails.firstPublishYear }}</p>
+                    <p><b>Genres:</b> {{ bookDetails.genres.join(',',', ')}}</p>
+                </div>
+            }
+            @if (isCheckinPage && isUserDetailsModal) {
+                <div class="modal-body">
+                    <p><b>Email:</b> {{ userDetails.email }}</p>
+                    <p><b>Role:</b> {{ userDetails.role }}</p>
+                    <p><b>First Name:</b> {{ userDetails.firstName }}</p>
+                    <p><b>Last Name:</b> {{ userDetails.lastName }}</p>
+                </div>
+            }
         </div>
     </div>
 }

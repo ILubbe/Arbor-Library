@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckinCheckoutService } from '../../../../services/checkin-checkout.service';
 import { SearchBarComponent } from '../../../search-bar/search-bar.component';
+import { ModalComponent } from '../../../modal/modal.component';
 
 @Component({
   selector: 'app-in',
-  imports: [FormsModule, SearchBarComponent],
+  imports: [FormsModule, SearchBarComponent, ModalComponent],
   templateUrl: './in.component.html',
   styleUrl: './in.component.scss'
 })
@@ -34,6 +35,21 @@ export class InComponent {
   userId: string = '';
   bookId: string = '';
   checkoutId: string = '';
+
+  // for giving modal component context
+  isBookDetailsModal: boolean = false;
+  isUserDetailsModal: boolean = false;
+
+  // general modal stuff
+  showModal: boolean = false;
+  modalTitle: string = '';
+  selectedItem: any = null;
+
+  // for book Details modal with search results
+  bookDetails: any = '';
+
+  // for user details modal
+  userDetails: any = '';
 
   constructor(private ciCoService: CheckinCheckoutService) {}
 
@@ -81,5 +97,25 @@ export class InComponent {
       }
     });
     this.clear();
+  }
+
+  onUserDetailsReceived(user: any) {
+    this.isBookDetailsModal = false;
+    this.isUserDetailsModal = true;
+    this.userDetails = user;
+    this.modalTitle = 'User Details';
+    this.showModal = true;
+  }
+  
+  onBookDetailsReceived(book: any) {
+    this.isUserDetailsModal = false;
+    this.isBookDetailsModal = true;
+    this.bookDetails = book;
+    this.modalTitle = 'Book Details';
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 }

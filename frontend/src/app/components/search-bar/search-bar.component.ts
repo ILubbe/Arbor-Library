@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { BookService } from '../../services/book.service';
+import { UserService } from '../../services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -37,6 +39,8 @@ export class SearchBarComponent {
   @Input() perPage: number = 25
   @Output() searchQuery = new EventEmitter<any>();
   @Output() itemSelected = new EventEmitter<any>();
+  @Output() userSelected = new EventEmitter<any>();
+  @Output() bookSelected = new EventEmitter<any>();
 
   query: string = '';
   page: number = 1;
@@ -57,7 +61,13 @@ export class SearchBarComponent {
 
   private searchSubject = new Subject<string>;
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private bookService: BookService,
+    private userService: UserService
+  ) { 
+    
     this.searchSubject.pipe(
       debounceTime(500),  // wait for 500ms after the user stops typing
       switchMap((query: string) => this.search(query))  // call search when the user stops typing
@@ -124,6 +134,28 @@ export class SearchBarComponent {
 
   onViewDetailsClick(item: any) {
     this.itemSelected.emit(item);
+  }
+
+  onGetBookDetails(bookId: string) {
+    this.bookService.getBookById(bookId).subscribe({
+      next: (response) => {
+        this.bookSelected.emit(response.book);
+      },
+      error: (error) => {
+        alert(error || 'Failed to load book details');
+      }
+    });
+  }
+
+  onGetUserDetails(userId: string) {
+    this.userService.getUserById(userId).subscribe({
+      next: (response) => {
+        this.userSelected.emit(response.user);
+      },
+      error: (error) => {
+        alert(error || 'Failed to load user details');
+      }
+    });
   }
 
   onSelectClick(item: any) {

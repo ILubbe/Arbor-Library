@@ -21,6 +21,8 @@
                     [selectedModel]="selectedUserModel"
                     [fieldOptions]="fieldUserOptions"
                     [selectedField]="selectedUserField"
+                    (userSelected)="onUserDetailsReceived($event)"
+                    (bookSelected)="onBookDetailsReceived($event)"
                     (itemSelected)="onUserItemSelected($event)"
                 ></app-search-bar>
             }
@@ -33,11 +35,26 @@
                     [selectedModel]="selectedBookModel"
                     [fieldOptions]="fieldBookOptions"
                     [selectedField]="selectedBookField"
+                    (userSelected)="onUserDetailsReceived($event)"
+                    (bookSelected)="onBookDetailsReceived($event)"
                     (itemSelected)="onBookItemSelected($event)"
                 ></app-search-bar>
             }
         }
         </div>
+            <div class="checkin-modal">
+               <app-modal
+                  [isCheckinPage]="isCheckinPage"
+                  [isBookDetailsModal]="isBookDetailsModal"
+                  [isUserDetailsModal]="isUserDetailsModal"
+                  [showModal]="showModal"
+                  [modalTitle]="modalTitle"
+                  [bookDetails]="bookDetails"
+                  [userDetails]="userDetails"
+                  (closeModal)="closeModal()">
+               </app-modal>
+            </div>
+         
     </div>
     @if (checkoutId) {
         <button (click)="checkinBook()">Check In</button>

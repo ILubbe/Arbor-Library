@@ -15,7 +15,7 @@ export class BookService {
   getBookById(bookId: string): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
-        return this.http.patch<any>(`${this.apiBooksEndpoint}/${ bookId }`, { headers }).pipe(
+        return this.http.get<any>(`${this.apiBooksEndpoint}/${ bookId }`, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Could not fetch book details');
           })

@@ -17,12 +17,12 @@ import { ModalComponent } from '../modal/modal.component';
 export class HomeComponent implements OnInit {
   // for giving modal component context
   isHomePage: boolean = true;
-  isBookSearch: boolean = true;
   isBookDetailsModal: boolean = false;
   isMyReservationsModal: boolean = false;
   isMyAccountModal: boolean = false;
 
   // for search
+  isBookSearch: boolean = true;
   selectedModel: string = 'Book'
   selectedField: string = '';
   fieldOptions: string[] = ['Author', 'Title', 'Genre', 'First Publish Year'];
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   // general modal stuff
   showModal: boolean = false;
   modalTitle: string = '';
-  modalContent: string = '';
+  selectedItem: any = null;
 
   // for greeting & library dashboard button
   userFirstName: string = '';
@@ -39,7 +39,6 @@ export class HomeComponent implements OnInit {
   isLibrarian: boolean = false;
 
   // for book Details modal with search results
-  selectedItem: any = null;
   bookDetails: any = '';
 
   // for My Reservations modal
@@ -111,7 +110,7 @@ export class HomeComponent implements OnInit {
   }
 
   generateReservationsContent(): void {
-    const promises = this.reservations.map((reservation) => {
+    this.reservations.map((reservation) => {
       return this.bookService.getBookById(reservation.bookId).toPromise().then((response) => {
         reservation.bookTitle = response.book.title;
         reservation.bookAuthor = response.book.author;
@@ -139,7 +138,6 @@ export class HomeComponent implements OnInit {
   closeModal() {
     this.showModal = false;
     this.selectedItem = null;
-    this.modalContent = '';
   }
 
   logout() {

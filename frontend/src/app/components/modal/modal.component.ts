@@ -14,7 +14,9 @@ import { FormsModule } from '@angular/forms';
 export class ModalComponent {
   // discover what page is using the modal
   @Input() isHomePage: boolean = false;
+  @Input() isCheckinPage: boolean = false;
   @Input() isBookDetailsModal: boolean = false;
+  @Input() isUserDetailsModal: boolean = false;
   @Input() isMyReservationsModal: boolean = false;
   @Input() isMyAccountModal: boolean = false;
 

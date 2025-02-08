@@ -8,9 +8,22 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class UserService {
+  private apiUserEndpoint = environment.backendUrl + '/users';
   private apiUserProfileEndpoint = environment.backendUrl + '/users/profile';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
+
+  getUserById(userId: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<any>(`${this.apiUserEndpoint}/${ userId }`, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch user details');
+          })
+        );
+      })
+    );
+  }
 
   getMyProfile(): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
