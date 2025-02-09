@@ -6,7 +6,8 @@
       <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
    }
    <button (click)="viewAccount()">My Account</button>
-   <button (click)="viewReservations()">My Reservations</button>
+   <button (click)="viewReservations()">My Reserved Books</button>
+   <button (click)="viewCheckouts()">My Checked Out Books</button>
    <div class="home-search">
       <app-search-bar
          [isHomePage]="isHomePage"
@@ -23,11 +24,13 @@
             [isBookDetailsModal]="isBookDetailsModal"
             [isMyReservationsModal]="isMyReservationsModal"
             [isMyAccountModal]="isMyAccountModal"
+            [isMyCheckoutsModal]="isMyCheckoutsModal"
             [showModal]="showModal"
             [modalTitle]="modalTitle"
             [bookDetails]="bookDetails"
             [reservations]="reservations"
             [userDetails]="userDetails"
+            [checkouts]="checkouts"
             (closeModal)="closeModal()">
          </app-modal>
       </div>

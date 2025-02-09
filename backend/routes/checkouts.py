@@ -44,6 +44,22 @@ def get_checkouts_by_user(user_id):
     
     return jsonify({"checkoutsIdByUser": checkout_ids}), 200
 
+@checkouts_bp.route("/my", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_my_checkouts():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(id=current_user).first()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    checkouts_by_user = Checkout.query.filter_by(user_id=user.id).all()
+    if not checkouts_by_user:
+        return jsonify({"message": "You have no checkouts"}), 404
+
+    json_checkouts = list(map(lambda x: x.serialize(), checkouts_by_user))
+    
+    return jsonify({"checkouts": json_checkouts}), 200
+
 # get all checkout(s) made for one book
 @checkouts_bp.route("/by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
 @jwt_required()

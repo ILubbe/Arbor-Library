@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 })
 export class CheckinCheckoutService {
   private apiCheckoutEndpoint = environment.backendUrl + '/checkouts';
+  private apiMyCheckoutEndpoint = environment.backendUrl + '/checkouts/my';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -38,5 +39,17 @@ export class CheckinCheckoutService {
         );
       })
     );
+  }
+
+  getMyCheckouts(): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<any>(this.apiMyCheckoutEndpoint, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch user checkouts');
+          })
+        );
+      })
+    )
   }
 }

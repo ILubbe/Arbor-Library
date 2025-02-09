@@ -69,6 +69,22 @@
                     </ul>
                 </div>
             }
+            @if (isHomePage && isMyCheckoutsModal) {
+                <div class="modal-body">
+                    <ul>
+                    @for (checkout of checkouts; track checkout) {
+                        <li>
+                            <p><b>Title:</b> {{ checkout.bookTitle }}</p>
+                            <p><b>Author:</b> {{ checkout.bookAuthor }}</p>
+                            <p><b>Returned:</b> {{ checkout.returned }}</p>
+                            <p><b>Checked Out At:</b> {{ checkout.checkoutOutAt }}</p>
+                            <p><b>Due At:</b> {{ checkout.dueAt }}</p>
+                            <br>
+                        </li>
+                    }
+                    </ul>
+                </div>
+            }
             @if (isCheckinPage && isBookDetailsModal) {
                 <div class="modal-body">
                     <p><b>Title:</b> {{ bookDetails.title }}</p>

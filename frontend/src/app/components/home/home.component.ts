@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { BookService } from '../../services/book.service';
 import { ReservationService } from '../../services/reservation.service';
+import { CheckinCheckoutService } from '../../services/checkin-checkout.service';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit {
   isBookDetailsModal: boolean = false;
   isMyReservationsModal: boolean = false;
   isMyAccountModal: boolean = false;
+  isMyCheckoutsModal: boolean = false;
 
   // for search
   isBookSearch: boolean = true;
@@ -47,12 +49,15 @@ export class HomeComponent implements OnInit {
   // for My Account modal
   userDetails: any = '';
 
+  // for My Checkouts modal
+  checkouts: any[] = [];
+
   constructor(
-    private router: Router,
     private authService: AuthService,
     private userService: UserService,
     private bookService: BookService,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private ciCoService: CheckinCheckoutService
   ) {}
 
   ngOnInit(): void {
@@ -80,28 +85,31 @@ export class HomeComponent implements OnInit {
   onItemSelected(item: any) {
     this.isMyReservationsModal = false;
     this.isMyAccountModal = false;
+    this.isMyCheckoutsModal = false;
     this.isBookDetailsModal = true;
     this.selectedItem = item;
     this.modalTitle = 'Book Details';
     this.bookService.getBookById(this.selectedItem.id).subscribe({
       next: (response) => {
         this.bookDetails = response.book;
+        this.showModal = true;
       },
       error: (error) => {
         alert(error || 'Failed to load book details');
       }
     });
-    this.showModal = true;
   }
 
   viewReservations() {
     this.isBookDetailsModal = false;
     this.isMyAccountModal = false;
+    this.isMyCheckoutsModal = false;
     this.isMyReservationsModal = true;
     this.modalTitle = 'My Reservations';
     this.reservationService.getMyReservations().subscribe({
       next: (response) => {
         this.reservations = response.reservations
+        // add book details that reservations db table doesn't hold
         this.generateReservationsContent();
         this.showModal = true;
       },
@@ -113,11 +121,12 @@ export class HomeComponent implements OnInit {
 
   generateReservationsContent(): void {
     this.reservations.map((reservation) => {
-      return this.bookService.getBookById(reservation.bookId).toPromise().then((response) => {
+      return this.bookService.getBookById(reservation.bookId).toPromise()
+      .then((response) => {
         reservation.bookTitle = response.book.title;
         reservation.bookAuthor = response.book.author;
       }).catch((error) => {
-        console.error('Error fetching book details for reservations:', error);
+        console.error(error || 'Failed to fetch book details for reservations');
       });
     });
   }
@@ -125,22 +134,55 @@ export class HomeComponent implements OnInit {
   viewAccount() {
     this.isMyReservationsModal = false;
     this.isBookDetailsModal = false;
+    this.isMyCheckoutsModal = false;
     this.isMyAccountModal = true;
     this.modalTitle = 'My Account';
     this.userService.getMyProfile().subscribe({
       next: (response) => {
         this.userDetails = response.user;
+        this.showModal = true;
       },
       error: (error) => {
         alert(error || 'Failed to load user details');
       }
     });
-    this.showModal = true;
+  }
+
+  viewCheckouts() {
+    this.isMyReservationsModal = false;
+    this.isBookDetailsModal = false;
+    this.isMyAccountModal = false;
+    this.isMyCheckoutsModal = true;
+    this.modalTitle = 'My Check Outs'
+    this.ciCoService.getMyCheckouts().subscribe({
+      next: (response) => {
+        this.checkouts = response.checkouts;
+        // add book details that checkouts db table doesn't hold
+        this.generateCheckoutsContent();
+        this.showModal = true;
+      },
+      error: (error) => {
+        alert(error || 'Failed to load user checkouts')
+      }
+    });
+  }
+
+  generateCheckoutsContent(): void {
+    this.checkouts.map((checkout) => {
+      return this.bookService.getBookById(checkout.bookId).toPromise()
+      .then((response) => {
+        checkout.bookTitle = response.book.title;
+        checkout.bookAuthor = response.book.author;
+      }).catch((error) => {
+        console.error(error || 'Failed to fetch book details for checkouts');
+      });
+    });
   }
 
   closeModal() {
     this.showModal = false;
     this.selectedItem = null;
+    this.modalTitle = '';
   }
 
   logout() {

@@ -19,6 +19,7 @@ export class ModalComponent {
   @Input() isUserDetailsModal: boolean = false;
   @Input() isMyReservationsModal: boolean = false;
   @Input() isMyAccountModal: boolean = false;
+  @Input() isMyCheckoutsModal: boolean = false;
 
   // general modal stuff
   @Input() showModal: boolean = false;
@@ -29,6 +30,7 @@ export class ModalComponent {
   @Input() reservations: any = '';
   @Input() bookDetails: any = '';
   @Input() userDetails: any = '';
+  @Input() checkouts: any = '';
 
   // for updating user details in My Account
   isEditMode: boolean = false;
