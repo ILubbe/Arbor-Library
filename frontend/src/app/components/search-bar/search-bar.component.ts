@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface SearchResult {
   total: number;
@@ -65,6 +66,7 @@ export class SearchBarComponent {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     private authService: AuthService,
     private bookService: BookService,
     private userService: UserService
@@ -161,30 +163,78 @@ export class SearchBarComponent {
   }
 
   onUserRoleToggle(userId: string) {
-    this.userService.SwitchUserRoleById(userId).subscribe({
+    this.userService.getMyProfile().subscribe({
       next: (response) => {
-        alert(response.message || 'User role changed');
-        this.onQueryChange(this.query); // refresh search so librarian can see change
+        if (response.user.id == userId) { // gotta warn if they're going to change their own role
+          const changeOwnRoleConfirmed = confirm('WARNING: You are attempting to change your own role. You will no longer be able to access the librarian-dashboard.')
+          if (changeOwnRoleConfirmed) {
+            this.userService.SwitchUserRoleById(userId).subscribe({
+              next: (response) => {
+                alert(response.message || 'User role changed');
+                this.authService.logout();
+              },
+              error: (error) => {
+                alert(error || 'Failed to switch user role');
+              }
+            });
+          }
+        } else {
+          this.userService.SwitchUserRoleById(userId).subscribe({
+            next: (response) => {
+              alert(response.message || 'User role changed');
+              this.onQueryChange(this.query); // refresh search so librarian can see change
+            },
+            error: (error) => {
+              alert(error || 'Failed to switch user role');
+            }
+          });
+        }
       },
       error: (error) => {
-        alert(error || 'Failed to switch user role');
+        alert(error || 'Failed to fetch logged in user profile');
       }
-    })
+    });
   }
 
   onUserDelete(userId: string) {
     const isConfirmed = confirm('Are you sure you want to delete this user?');
     if (isConfirmed) {
-      this.userService.deleteUserById(userId).subscribe({
+      this.userService.getMyProfile().subscribe({
         next: (response) => {
-          alert(response.message || 'User deleted');
-          this.onQueryChange(this.query); // refresh search so librarian can see change
+          if (response.user.id == userId) { // gotta warn if they're going to delete themselves
+            const deleteYourselfConfirmed = confirm('WARNING: You are attempting to delete your own profile');
+            if (deleteYourselfConfirmed) {
+              this.userService.deleteUserById(userId).subscribe({
+                next: (response) => {
+                  alert(response.message || 'User deleted');
+                  // cant call this function because backend doesn't like to log out a user who doesn't exist anymore.
+                  // this.authService.logout();
+                  localStorage.removeItem('accessToken');
+                  localStorage.removeItem('refreshToken');
+                  this.router.navigateByUrl('/login');
+                },
+                error: (error) => {
+                  alert(error || 'Failed to delete user');
+                }
+              });
+            }
+          } else {
+            this.userService.deleteUserById(userId).subscribe({
+              next: (response) => {
+                alert(response.message || 'User deleted');
+                this.onQueryChange(this.query); // refresh search so librarian can see change
+              },
+              error: (error) => {
+                alert(error || 'Failed to delete user');
+              }
+            });
+          }
         },
         error: (error) => {
-          alert(error || 'Failed to delete user');
+          alert(error || 'Failed to fetch logged in user profile');
         }
-      }
-    )}
+      });
+    }
   }
 
   onSelectClick(item: any) {
