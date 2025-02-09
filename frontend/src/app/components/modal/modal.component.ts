@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
+import { BookService } from '../../services/book.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 
@@ -15,6 +16,7 @@ export class ModalComponent {
   // discover what page is using the modal
   @Input() isHomePage: boolean = false;
   @Input() isCheckinPage: boolean = false;
+  @Input() isInventoryPage: boolean = false;
   @Input() isBookDetailsModal: boolean = false;
   @Input() isUserDetailsModal: boolean = false;
   @Input() isMyReservationsModal: boolean = false;
@@ -43,6 +45,7 @@ export class ModalComponent {
     private reservationService: ReservationService,
     private userService: UserService,
     private authService: AuthService,
+    private bookService: BookService,
     private router: Router
   ) {}
 
@@ -109,7 +112,7 @@ export class ModalComponent {
     });
   }
 
-  cancelEdit() {
+  cancelMyAccountEdit() {
     this.isEditMode = false;
     this.firstName = this.userDetails.firstName;
     this.lastName = this.userDetails.lastName;
@@ -132,6 +135,30 @@ export class ModalComponent {
       localStorage.removeItem('refreshToken');
       this.router.navigateByUrl('/login');
     }
+  }
+
+  saveBookEdit() {
+    const updatedBookDetails = {
+      title: this.bookDetails.title,
+      author: this.bookDetails.author,
+      firstPublishYear: this.bookDetails.firstPublishYear,
+      genres: this.bookDetails.genres,
+      bookCondition: this.bookDetails.bookCondition
+    };
+
+    this.bookService.updateBook(this.bookDetails.id, updatedBookDetails).subscribe({
+      next: (response) => {
+        alert(response.message || 'Book updated successfully');
+        this.close();
+      },
+      error: (error) => {
+        alert(error);
+      }
+    });
+  }
+
+  cancelBookEdit() {
+    this.close();
   }
 
   close() {

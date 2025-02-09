@@ -30,25 +30,25 @@
                 <p><b>Role:</b> {{ userDetails.role }}</p>
                 <form>
                     <p>
-                        <label for="firstName"><b>First Name:</b></label>
+                        <label for="firstName"><b>First Name: </b></label>
                         <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" placeholder="John" required>
                     </p>
                     <p>
-                        <label for="lastName"><b>Last Name:</b></label>
+                        <label for="lastName"><b>Last Name: </b></label>
                         <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" placeholder="Doe" required>
                     </p>
                     <p>
-                        <label for="password"><b>Password:</b></label>
+                        <label for="password"><b>Password: </b></label>
                         <input type="password" id="password" [(ngModel)]="password" name="password" required>
                     </p>
                     <p>
-                        <label for="passwordConfirmation"><b>Confirm Password:</b></label>
+                        <label for="passwordConfirmation"><b>Confirm Password: </b></label>
                         <input type="password" id="password" [(ngModel)]="passwordConfirmation" name="passwordConfirmation" required>
                     </p>
               
                     <div class="button-group">
                         <button type="button" (click)="saveMyAccount()">Save</button>
-                        <button type="button" (click)="cancelEdit()">Cancel</button>
+                        <button type="button" (click)="cancelMyAccountEdit()">Cancel</button>
                     </div>
                 </form>
             }
@@ -100,6 +100,35 @@
                     <p><b>First Name:</b> {{ userDetails.firstName }}</p>
                     <p><b>Last Name:</b> {{ userDetails.lastName }}</p>
                 </div>
+            }
+            @if (isInventoryPage && isBookDetailsModal) {
+                <form>
+                    <p>
+                        <label for="Title"><b>Title: </b></label>
+                        <input type="text" id="title" [(ngModel)]="bookDetails.title" name="title" required>
+                    </p>
+                    <p>
+                        <label for="Author"><b>Author: </b></label>
+                        <input type="text" id="author" [(ngModel)]="bookDetails.author" name="author" required>
+                    </p>
+                    <p>
+                        <label for="firstPublishYear"><b>First Publish Year: </b></label>
+                        <input type="text" id="firstPublishYear" [(ngModel)]="bookDetails.firstPublishYear" name="firstPublishYear" required>
+                    </p>
+                    <p>
+                        <label for="genres"><b>Genres: </b></label>
+                        <input type="text" id="genres" [(ngModel)]="bookDetails.genres" name="genres" required>
+                    </p>
+                    <p>
+                        <label for="bookCondition"><b>Book Condition: </b></label>
+                        <input type="text" id="bookCondition" [(ngModel)]="bookDetails.bookCondition" name="bookCondition" required>
+                    </p>
+              
+                    <div class="button-group">
+                        <button type="button" (click)="saveBookEdit()">Save</button>
+                        <button type="button" (click)="cancelBookEdit()">Cancel</button>
+                    </div>
+                </form>
             }
         </div>
     </div>

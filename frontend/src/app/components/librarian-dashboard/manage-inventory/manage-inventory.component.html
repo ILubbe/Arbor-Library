@@ -1,1 +1,23 @@
-<p>manage-inventory works!</p>
+<div class="manage-inventory-container">
+    <h3>Manage Inventory</h3>
+    <div class="inventory-search">
+       <app-search-bar
+          [isInventoryPage]="isInventoryPage"
+          [isBookSearch]="isBookSearch"
+          [selectedModel]="selectedModel"
+          [fieldOptions]="fieldOptions"
+          [selectedField]="selectedField"
+          (itemSelected)="onItemSelected($event)"
+       ></app-search-bar>
+    </div>
+       <div class="inventory-modal">
+          <app-modal
+             [isInventoryPage]="isInventoryPage"
+             [isBookDetailsModal]="isBookDetailsModal"
+             [showModal]="showModal"
+             [modalTitle]="modalTitle"
+             [bookDetails]="bookDetails"
+             (closeModal)="closeModal()">
+          </app-modal>
+       </div>
+ </div>

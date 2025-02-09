@@ -28,6 +28,7 @@ export class SearchBarComponent {
   @Input() isCheckoutPage: boolean = false;
   @Input() isCheckinPage: boolean = false;
   @Input() isUserPage: boolean = false;
+  @Input() isInventoryPage: boolean = false;
 
   // discover how this page will use the search bar
   @Input() isBookSearch: boolean = false;
@@ -234,6 +235,25 @@ export class SearchBarComponent {
           alert(error || 'Failed to fetch logged in user profile');
         }
       });
+    }
+  }
+
+  onBookEdit(item: any) {
+    this.itemSelected.emit(item);
+  }
+
+  onBookDelete(bookId: string) {
+    const isConfirmed = confirm('Are you sure you want to delete this book?');
+    if (isConfirmed) {
+      this.bookService.deleteBookById(bookId).subscribe({
+        next: (response) => {
+          alert(response.message || 'Book deleted');
+          this.onQueryChange(this.query); // refresh search so librarian can see change
+        },
+        error: (error) => {
+          alert(error || 'Failed to delete book');
+        }
+      })
     }
   }
 

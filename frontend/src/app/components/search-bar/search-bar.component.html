@@ -118,6 +118,27 @@
             </div>
         }
     }
+    @if (isInventoryPage && isBookSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Title: </b>{{ result.title }}</span><br>
+                        <span><b>Author: </b>{{ result.author }}</span><br>
+                        <span><b>First Publish Year: </b>{{ result.firstPublishYear }}</span><br>
+                        <span><b>Genres: </b>{{ result.genres.join(',',', ') }}</span><br>
+                        <span><b>Book Condition: </b>{{ result.bookCondition }}</span><br>
+                        <span>
+                            <button (click)="onBookEdit(result.id)">Edit Book</button>
+                            <button (click)="onBookDelete(result.id)">Delete Book</button>
+                        <br>
+                        <br>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
     @if (total > 0 && !isCheckoutSearch) {
         <div>
             <div class="pagination">

@@ -1,7 +1,8 @@
 <button [routerLink]="['/home']">Return Home</button>
 <!-- Display Librarian Dashboard links only if the user is a librarian -->
 @if (isLibrarian) {
-    <button [routerLink]="['checkin-checkout']">Check In / Check Out</button>
+    <button [routerLink]="['in']">Check In</button>
+    <button [routerLink]="['out']">Check Out</button>
     <button [routerLink]="['manage-inventory']">Manage Inventory</button>
     <button [routerLink]="['manage-users']">Manage Users</button>
     <button [routerLink]="['manage-reservations']">Manage Reservations</button>

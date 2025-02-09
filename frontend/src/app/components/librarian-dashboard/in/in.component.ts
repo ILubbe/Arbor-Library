@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CheckinCheckoutService } from '../../../../services/checkin-checkout.service';
-import { SearchBarComponent } from '../../../search-bar/search-bar.component';
-import { ModalComponent } from '../../../modal/modal.component';
+import { CheckinCheckoutService } from '../../../services/checkin-checkout.service';
+import { SearchBarComponent } from '../../search-bar/search-bar.component';
+import { ModalComponent } from '../../modal/modal.component';
 
 @Component({
   selector: 'app-in',
