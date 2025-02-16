@@ -101,7 +101,7 @@
                     <p><b>Last Name:</b> {{ userDetails.lastName }}</p>
                 </div>
             }
-            @if (isInventoryPage && isBookDetailsModal) {
+            @if (isInventoryPage && isBookDetailsModal && this.bookDetails.id) {
                 <form>
                     <p>
                         <label for="Title"><b>Title: </b></label>
@@ -120,13 +120,51 @@
                         <input type="text" id="genres" [(ngModel)]="bookDetails.genres" name="genres" required>
                     </p>
                     <p>
-                        <label for="bookCondition"><b>Book Condition: </b></label>
-                        <input type="text" id="bookCondition" [(ngModel)]="bookDetails.bookCondition" name="bookCondition" required>
+                        <label><b>Book Condition: </b></label>
+                        <select [(ngModel)]="bookDetails.bookCondition" name="bookCondition" required>
+                            @for (condition of conditions; track condition) { 
+                                <option value="{{ condition.toLowerCase() }}" [selected]="bookDetails.bookCondition === condition.toLowerCase()">
+                                    {{ condition }}
+                                </option>
+                            }
+                        </select>
                     </p>
               
                     <div class="button-group">
-                        <button type="button" (click)="saveBookEdit()">Save</button>
-                        <button type="button" (click)="cancelBookEdit()">Cancel</button>
+                        <button type="button" (click)="saveBook()">Save</button>
+                        <button type="button" (click)="close()">Cancel</button>
+                    </div>
+                </form>
+            }
+
+            @if (isInventoryPage && isBookDetailsModal && !this.bookDetails.id) {
+                <form>
+                    <p>
+                        <label for="Title"><b>Title: </b></label>
+                        <input type="text" id="title" [(ngModel)]="title" name="title" required>
+                    </p>
+                    <p>
+                        <label for="Author"><b>Author: </b></label>
+                        <input type="text" id="author" [(ngModel)]="author" name="author" required>
+                    </p>
+                    <p>
+                        <label for="firstPublishYear"><b>First Publish Year: </b></label>
+                        <input type="text" id="firstPublishYear" [(ngModel)]="firstPublishYear" name="firstPublishYear" required>
+                    </p>
+                    <p>
+                        <label for="genres"><b>Genres: </b></label>
+                        <input type="text" id="genres" [(ngModel)]="genres" name="genres" required>
+                    </p>
+                    <p>
+                        <label><b>Book Condition: </b></label>
+                        <select [(ngModel)]="bookCondition" name="bookCondition" required>
+                            @for (condition of conditions; track condition) { <option>{{ condition }}</option> }
+                        </select>
+                    </p>
+
+                    <div class="button-group">
+                        <button type="button" (click)="saveBook()">Add Book</button>
+                        <button type="button" (click)="close()">Cancel</button>
                     </div>
                 </form>
             }

@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Book, db
@@ -51,8 +52,13 @@ def create_book():
     # this one is optional
     if request.json.get("firstPublishYear"):
         first_publish_year = request.json.get("firstPublishYear")
+        if not str(first_publish_year).isdigit():
+            return jsonify({'message': 'First Publish Year must be a number'}), 400
+        if int(first_publish_year) < 0 or int(first_publish_year) > datetime.now().year:
+            return jsonify({'message': 'First Publish Year must be non-negative and cannot be in the future'}), 400
     else:
         first_publish_year = None
+
     book_condition = request.json.get("bookCondition").lower()
 
     new_book = Book(
@@ -74,7 +80,7 @@ def create_book():
         db.session.add(new_book)
         db.session.commit()
     except Exception as e:
-        return jsonify({"message": f"Something went wrong, please try again {str,e}"}), 500
+        return jsonify({"message": f"Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Book {title} added!"}), 201
 
@@ -123,8 +129,13 @@ def change_book_info(book_id):
     # this one is optional
     if request.json.get("firstPublishYear"):
         first_publish_year = request.json.get("firstPublishYear")
+        if not str(first_publish_year).isdigit():
+            return jsonify({'message': 'First Publish Year must be a number'}), 400
+        if int(first_publish_year) < 0 or int(first_publish_year) > datetime.now().year:
+            return jsonify({'message': 'First Publish Year must be non-negative and cannot be in the future'}), 400
     else:
         first_publish_year = None
+
     book_condition = request.json.get("bookCondition").lower()
 
     updated_book = Book(

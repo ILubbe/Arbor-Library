@@ -26,11 +26,18 @@ export class ManageInventoryComponent {
   selectedItem: any = null;
 
   // for book Details modal with search results
-  bookDetails: any = '';
+  bookDetails: any[] = [];
 
   @ViewChild(SearchBarComponent) searchBar!: SearchBarComponent;
 
   constructor(private bookService: BookService) {}
+
+  addBook() {
+    this.isBookDetailsModal = true;
+    this.bookDetails = [];
+    this.modalTitle = 'Add Book';
+    this.showModal = true;
+  }
 
   onItemSelected(item: any) {
     this.isBookDetailsModal = true;

@@ -47,4 +47,16 @@ export class BookService {
       })
     )
   }
+
+  addBook(newBookDetails: any): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.post<any>(this.apiBooksEndpoint, newBookDetails, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not create book');
+          })
+        )
+      })
+    )
+  }
 }

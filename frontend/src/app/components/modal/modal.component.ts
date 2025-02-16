@@ -41,6 +41,14 @@ export class ModalComponent {
   password: string = '';
   passwordConfirmation: string = '';
 
+  // for adding/editing a book
+  title: string = '';
+  author: string = '';
+  firstPublishYear: number | null = null;
+  genres: string[] = [];
+  conditions: string[] = ['New', 'Good', 'Fair', 'Poor', 'Unknown'];
+  bookCondition: string = 'Unknown';
+
   constructor(
     private reservationService: ReservationService,
     private userService: UserService,
@@ -137,28 +145,51 @@ export class ModalComponent {
     }
   }
 
-  saveBookEdit() {
-    const updatedBookDetails = {
-      title: this.bookDetails.title,
-      author: this.bookDetails.author,
-      firstPublishYear: this.bookDetails.firstPublishYear,
-      genres: this.bookDetails.genres,
-      bookCondition: this.bookDetails.bookCondition
-    };
+  saveBook() { 
+    if (this.modalTitle.includes("Edit")) {
+      const updatedBookDetails = {
+        title: this.bookDetails.title,
+        author: this.bookDetails.author,
+        firstPublishYear: this.bookDetails.firstPublishYear,
+        genres: this.bookDetails.genres,
+        bookCondition: this.bookDetails.bookCondition
+      };
 
-    this.bookService.updateBook(this.bookDetails.id, updatedBookDetails).subscribe({
-      next: (response) => {
-        alert(response.message || 'Book updated successfully');
-        this.close();
-      },
-      error: (error) => {
-        alert(error);
-      }
-    });
-  }
+      this.bookService.updateBook(this.bookDetails.id, updatedBookDetails).subscribe({
+        next: (response) => {
+          alert(response.message || 'Book updated successfully');
+          this.close();
+        },
+        error: (error) => {
+          alert(error);
+        }
+      });
 
-  cancelBookEdit() {
-    this.close();
+    } else {
+      const newBookDetails = {
+        title: this.title,
+        author: this.author,
+        firstPublishYear: this.firstPublishYear,
+        genres: this.genres,
+        bookCondition: this.bookCondition
+      };
+
+      this.bookService.addBook(newBookDetails).subscribe({
+        next: (response) => {
+          alert(response.message || 'Book added successfully');
+          this.close();
+        },
+        error: (error) => {
+          alert(error);
+        }
+      });
+      // reset these for the next new book.
+      this.title = '';
+      this.author = '';
+      this.firstPublishYear = null;
+      this.genres = [];
+      this.bookCondition = 'Unknown';
+    }
   }
 
   close() {
