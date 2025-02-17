@@ -62,7 +62,9 @@
                             <p><b>Status:</b> {{ reservation.status }}</p>
                             <p><b>Reserved At:</b> {{ reservation.reservedAt }}</p>
                             <p><b>Expires At:</b> {{ reservation.expiresAt }}</p>
-                            <button (click)="cancelMyReservation(reservation.id)">Cancel Reservation</button>
+                            @if (reservation.status == "active" || reservation.status == "waiting") {
+                                <button (click)="cancelMyReservation(reservation.id)">Cancel Reservation</button>
+                            }
                             <br>
                         </li>
                     }
@@ -85,7 +87,7 @@
                     </ul>
                 </div>
             }
-            @if (isCheckinPage && isBookDetailsModal) {
+            @if ((isCheckinPage || isReservationsPage) && isBookDetailsModal) {
                 <div class="modal-body">
                     <p><b>ID: </b>{{ bookDetails.id }}</p>
                     <p><b>Title: </b>{{ bookDetails.title }}</p>
@@ -94,7 +96,7 @@
                     <p><b>Genres: </b>{{ bookDetails.genres.join(', ')}}</p>
                 </div>
             }
-            @if (isCheckinPage && isUserDetailsModal) {
+            @if ((isCheckinPage || isReservationsPage) && isUserDetailsModal) {
                 <div class="modal-body">
                     <p><b>ID: </b>{{ userDetails.id }}</p>
                     <p><b>Email: </b>{{ userDetails.email }}</p>
@@ -121,9 +123,11 @@
                     </p>
                     <p>
                         <label for="genres"><b>Genres: </b></label>
-                        <button type="button" (click)="getGenres()">Associate Genres</button>
+                        @if (!showGenres) {
+                            <button type="button" (click)="getGenres()">Associate Genres</button>
+                        }
                         <div>
-                            @if (isInventoryPage && showGenres) {
+                            @if (showGenres) {
                                 @for (genre of pagedGenres; track genre) {
                                     <label>
                                         <p>
@@ -138,7 +142,7 @@
                                 <div class="button-group">
                                     <button type="button" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
                                     <button type="button" (click)="nextPage()" [disabled]="currentPage * perPage >= allGenres.length">Next</button>
-                                    <span> Page {{ currentPage }} of {{ totalPages }}</span>
+                                    <p> Page {{ currentPage }} of {{ totalPages }}</p>
                                 </div>
 
                                 <div class="button-group">

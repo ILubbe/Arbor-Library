@@ -266,7 +266,7 @@ def create_my_reservation():
     
     user_already_made_reservation = Reservation.query.filter_by(book_id=book_id, user_id=user.id, status='waiting').first()
     if user_already_made_reservation:
-        return jsonify({"message": "You already have a reservation for this book. You will be notified when the book is returned. If other patrons have this book also reserved, it is first come first serve."}), 409
+        return jsonify({"message": "This book is already reserved"}), 409
 
     active_checkout = Checkout.query.filter_by(book_id=book_id, returned=False).first()
     if active_checkout:
@@ -283,7 +283,7 @@ def create_my_reservation():
             return jsonify({"message": "Something went wrong, please try again"}), 500
 
         return jsonify(
-            {"message": "This book is currently checked out. You will be notified when the book is returned. Your reservation has been created, however, if other patrons have this book also reserved, it is first come first serve."}
+            {"message": "This book is currently checked out. Your reservation has been created and placed in a waiting status."}
         ), 201
 
     # create the new reservation

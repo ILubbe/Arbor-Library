@@ -15,8 +15,8 @@ export class CheckinCheckoutService {
 
   checkout(userId: string, bookId: string): Observable<any> {
     const checkoutBody = {
-      'userId': userId,
-      'bookId': bookId
+      'userId': Number(userId),
+      'bookId': Number(bookId)
     }
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {

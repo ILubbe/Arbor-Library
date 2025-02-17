@@ -1,5 +1,5 @@
 <div class="search-bar">
-    @if (!isCheckoutSearch) {
+    @if (!isCheckoutSearch && !isReservationsSearch) {
         <input
         type="text"
         [(ngModel)]="query"
@@ -49,7 +49,7 @@
             </div>
         }
     }
-    @if ((isCheckoutPage || isCheckinPage) && isUserSearch && !isCheckoutSearch) {
+    @if ((isCheckoutPage || isCheckinPage || isReservationsPage) && isUserSearch && (!isCheckoutSearch || !isReservationsSearch)) {
         @for (result of results; track result) {
             <div class="results">
                 <div class="result-item">
@@ -65,7 +65,7 @@
             </div>
         }
     }
-    @if ((isCheckoutPage || isCheckinPage) && isBookSearch && !isCheckoutSearch) {
+    @if ((isCheckoutPage || isCheckinPage || isReservationsPage) && isBookSearch && (!isCheckoutSearch || !isReservationsSearch)) {
         @for (result of results; track result) {
             <div class="results">
                 <div class="result-item">
@@ -89,6 +89,24 @@
                         <span><b>Returned: </b>{{ result.returned }}</span><br>
                         <span><b>Checked Out at: </b>{{ result.checkoutOutAt }}</span><br>
                         <span><b>Due at: </b>{{ result.dueAt }}</span><br>
+                        <span><b>User ID: </b>{{ result.userId }} <button (click)="onGetUserDetails(result.userId)">View User Details</button></span><br>
+                        <span><b>Book ID: </b>{{ result.bookId }} <button (click)="onGetBookDetails(result.bookId)">View Book Details</button></span><br>
+                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    @if (isReservationsPage && isReservationsSearch) {
+        @for (result of results; track result) {
+            <div class="results">
+                <div class="result-item">
+                    <div>
+                        <span><b>Reservation ID: </b>{{ result.id }}</span><br>
+                        <span><b>Status: </b>{{ result.status }}</span><br>
+                        <span><b>Reserved at: </b>{{ result.reservedAt }}</span><br>
+                        <span><b>Expires at: </b>{{ result.expiresAt }}</span><br>
                         <span><b>User ID: </b>{{ result.userId }} <button (click)="onGetUserDetails(result.userId)">View User Details</button></span><br>
                         <span><b>Book ID: </b>{{ result.bookId }} <button (click)="onGetBookDetails(result.bookId)">View Book Details</button></span><br>
                         <button (click)="onSelectClick(result)">Select</button><br>
@@ -140,7 +158,7 @@
             </div>
         }
     }
-    @if (total > 0 && !isCheckoutSearch) {
+    @if (total > 0 && (!isCheckoutSearch || !isReservationsSearch)) {
         <div>
             <div class="pagination">
                 <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>

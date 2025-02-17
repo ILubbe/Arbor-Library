@@ -17,6 +17,7 @@ export class ModalComponent {
   @Input() isHomePage: boolean = false;
   @Input() isCheckinPage: boolean = false;
   @Input() isInventoryPage: boolean = false;
+  @Input() isReservationsPage: boolean = false;
   @Input() isBookDetailsModal: boolean = false;
   @Input() isUserDetailsModal: boolean = false;
   @Input() isMyReservationsModal: boolean = false;

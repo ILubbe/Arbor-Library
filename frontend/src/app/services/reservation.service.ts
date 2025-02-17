@@ -8,7 +8,8 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ReservationService {
-  private apiMyReservationsEndpoint = environment.backendUrl + '/reservations/my';
+  private apiReservationsEndpoint = environment.backendUrl + '/reservations';
+  private apiMyReservationsEndpoint = this.apiReservationsEndpoint + '/my';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -43,6 +44,18 @@ export class ReservationService {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
         return this.http.delete(`${this.apiMyReservationsEndpoint}/${reservationId}`, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Failed to cancel reservation');
+          })
+        );
+      })
+    )
+  }
+
+  cancelReservation(reservationId: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.delete(`${this.apiReservationsEndpoint}/${reservationId}`, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Failed to cancel reservation');
           })

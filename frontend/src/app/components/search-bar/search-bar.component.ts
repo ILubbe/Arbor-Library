@@ -29,11 +29,13 @@ export class SearchBarComponent {
   @Input() isCheckinPage: boolean = false;
   @Input() isUserPage: boolean = false;
   @Input() isInventoryPage: boolean = false;
+  @Input() isReservationsPage: boolean = false;
 
   // discover how this page will use the search bar
   @Input() isBookSearch: boolean = false;
   @Input() isUserSearch: boolean = false;
   @Input() isCheckoutSearch: boolean = false;
+  @Input() isReservationsSearch: boolean = false;
 
   // general searchbar inputs
   @Input() fieldOptions: string[] = [];
@@ -63,6 +65,9 @@ export class SearchBarComponent {
   // checkout specific search
   checkoutId: string = '';
 
+  // reservation specific search
+  reservationId: string = '';
+
   private searchSubject = new Subject<string>;
 
   constructor(
@@ -82,6 +87,9 @@ export class SearchBarComponent {
       if (this.isCheckoutSearch) {
         this.results = this.results.filter(result => result.returned === false);
         this.total = this.results.length;
+      } else if (this.isReservationsSearch) {
+        this.results = this.results.filter(result => result.status === "waiting" || result.status === "active");
+        this.total = this.results.length;
       }
       this.page = response.page;
       this.perPage = response.per_page;
@@ -89,7 +97,7 @@ export class SearchBarComponent {
   }
 
   search(query: string) {
-    if (this.isCheckoutSearch) {
+    if (this.isCheckoutSearch || this.isReservationsSearch) {
       this.perPage = 10000; // set this as there will be no pagination on checkout searches due to filtering in template
     }
     let apiSearchEndpoint = environment.backendUrl + `/search?model=${this.selectedModel}&query=${this.query}&page=${this.page}&limit=${this.perPage}`;
@@ -104,19 +112,17 @@ export class SearchBarComponent {
   }
 
   onQueryChange(query: string) {
-    if (query != '') {
-      if (this.query !== this.lockedQuery) {
-        this.page = 1;
-        this.lockedQuery = this.query; // lock the query
-      }
-      this.searchSubject.next(query);
-      this.searchQuery.emit({
-        model: this.selectedModel,
-        field: this.selectedField,
-        page: this.page,
-        limit: this.perPage
-      });
+    if (this.query !== this.lockedQuery) {
+      this.page = 1;
+      this.lockedQuery = this.query; // lock the query
     }
+    this.searchSubject.next(query);
+    this.searchQuery.emit({
+      model: this.selectedModel,
+      field: this.selectedField,
+      page: this.page,
+      limit: this.perPage
+    });
   }
 
   onFieldChange(field: string) {
@@ -272,6 +278,13 @@ export class SearchBarComponent {
         this.selectedField = 'user-id';
         this.query = this.userId;
         this.onQueryChange(this.query);
+      } else if (this.isReservationsPage) {
+        this.isUserSearch = false;
+        this.isReservationsSearch = true;
+        this.selectedModel = 'Reservation';
+        this.selectedField = 'user-id';
+        this.query = this.userId;
+        this.onQueryChange(this.query);
       }
       
     } else if (this.isBookSearch) {
@@ -286,12 +299,24 @@ export class SearchBarComponent {
         this.selectedField = 'book-id';
         this.query = this.bookId;
         this.onQueryChange(this.query);
+      } else if (this.isReservationsPage) {
+        this.isBookSearch = false;
+        this.isReservationsSearch = true;
+        this.selectedModel = 'Checkout';
+        this.selectedField = 'book-id';
+        this.query = this.bookId;
+        this.onQueryChange(this.query);
       }
 
     } else if (this.isCheckoutSearch) {
       this.checkoutId = item.id;
       this.itemSelected.emit(item);
       this.isCheckoutSearch = false;
+      this.clearResults();
+    } else if (this.isReservationsSearch) {
+      this.reservationId = item.id;
+      this.itemSelected.emit(item);
+      this.isReservationsSearch = false;
       this.clearResults();
     }
   }

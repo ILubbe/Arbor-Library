@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from sqlalchemy import func
@@ -201,6 +202,17 @@ def check_in_book(checkout_id):
     
     if checkout.returned == True:
         return jsonify({"message": "Book already checked in"}), 400
+
+    # this promotes a waiting reservation to active
+    book_id = checkout.book_id
+    waiting_reservation = Reservation.query.filter_by(book_id=book_id, status='waiting').first()
+    if waiting_reservation:
+        try:
+            waiting_reservation.status = 'active'
+            waiting_reservation.expires_at = datetime.utcnow() + timedelta(hours=96)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({"message": "Something went wrong, please try again"}), 500
 
     try:
         checkout.returned = True

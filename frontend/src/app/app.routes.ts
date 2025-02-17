@@ -7,9 +7,9 @@ import { authGuard } from './auth.guard';
 import { roleGuard } from './role.guard';
 import { InComponent } from './components/librarian-dashboard/in/in.component';
 import { OutComponent } from './components/librarian-dashboard/out/out.component';
-import { ManageUsersComponent } from './components/librarian-dashboard/manage-users/manage-users.component';
 import { ManageInventoryComponent } from './components/librarian-dashboard/manage-inventory/manage-inventory.component';
-import { ManageReservationsComponent } from './components/librarian-dashboard/manage-reservations/manage-reservations.component';
+import { ManageUsersComponent } from './components/librarian-dashboard/manage-users/manage-users.component';
+import { CancelReservationsComponent } from './components/librarian-dashboard/cancel-reservations/cancel-reservations.component';
 import { ReportsComponent } from './components/librarian-dashboard/reports/reports.component';
 
 export const routes: Routes = [
@@ -27,7 +27,7 @@ export const routes: Routes = [
         {path: "out", component: OutComponent, canActivate: [authGuard, roleGuard]},
         {path: "manage-inventory", component: ManageInventoryComponent, canActivate: [authGuard, roleGuard]},
         {path: "manage-users", component: ManageUsersComponent, canActivate: [authGuard, roleGuard]},
-        {path: "manage-reservations", component: ManageReservationsComponent, canActivate: [authGuard, roleGuard]},
+        {path: "cancel-reservations", component: CancelReservationsComponent, canActivate: [authGuard, roleGuard]},
         {path: "reports", component: ReportsComponent, canActivate: [authGuard, roleGuard]}
     ]}
 ];

@@ -138,7 +138,7 @@ class Book_Genre(db.Model):
 
 class Reservation(SearchableMixin, db.Model):
     __tablename__ = 'reservations'
-    __searchable__ = ['status']
+    __searchable__ = ['status', 'user_id', 'book_id']
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))

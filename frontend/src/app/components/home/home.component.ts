@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit {
     this.modalTitle = 'My Reservations';
     this.reservationService.getMyReservations().subscribe({
       next: (response) => {
-        this.reservations = response.reservations
+        this.reservations = response.reservations.reverse(); // reverse so more recent is at top
         // add book details that reservations db table doesn't hold
         this.generateReservationsContent();
         this.showModal = true;
