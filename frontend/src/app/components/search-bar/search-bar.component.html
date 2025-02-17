@@ -54,10 +54,10 @@
             <div class="results">
                 <div class="result-item">
                     <div>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <span><b>Email: </b>{{ result.email }}</span><br>
                         <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
                         <span><b>Role: </b>{{ result.role }}</span><br>
-                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <button (click)="onSelectClick(result)">Select</button><br>
                         <br>
                     </div>
@@ -70,9 +70,9 @@
             <div class="results">
                 <div class="result-item">
                     <div>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <span><b>Title: </b>{{ result.title }}</span><br>
                         <span><b>Author: </b>{{ result.author }}</span><br>
-                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <button (click)="onSelectClick(result)">Select</button><br>
                         <br>
                     </div>
@@ -85,12 +85,12 @@
             <div class="results">
                 <div class="result-item">
                     <div>
+                        <span><b>Checkout ID: </b>{{ result.id }}</span><br>
                         <span><b>Returned: </b>{{ result.returned }}</span><br>
                         <span><b>Checked Out at: </b>{{ result.checkoutOutAt }}</span><br>
                         <span><b>Due at: </b>{{ result.dueAt }}</span><br>
                         <span><b>User ID: </b>{{ result.userId }} <button (click)="onGetUserDetails(result.userId)">View User Details</button></span><br>
                         <span><b>Book ID: </b>{{ result.bookId }} <button (click)="onGetBookDetails(result.bookId)">View Book Details</button></span><br>
-                        <span><b>Checkout ID: </b>{{ result.id }}</span><br>
                         <button (click)="onSelectClick(result)">Select</button><br>
                         <br>
                     </div>
@@ -103,10 +103,10 @@
             <div class="results">
                 <div class="result-item">
                     <div>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <span><b>Email: </b>{{ result.email }}</span><br>
                         <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
                         <span><b>Role: </b>{{ result.role }}</span><br>
-                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <span>
                             <button (click)="onUserRoleToggle(result.id)">Switch Role</button>
                             <button (click)="onUserDelete(result.id)">Delete User</button>
@@ -123,10 +123,11 @@
             <div class="results">
                 <div class="result-item">
                     <div>
+                        <span><b>ID: </b>{{ result.id }}</span><br>
                         <span><b>Title: </b>{{ result.title }}</span><br>
                         <span><b>Author: </b>{{ result.author }}</span><br>
                         <span><b>First Publish Year: </b>{{ result.firstPublishYear }}</span><br>
-                        <span><b>Genres: </b>{{ result.genres.join(',',', ') }}</span><br>
+                        <span><b>Genres: </b>{{ result.genres.join(', ') }}</span><br>
                         <span><b>Book Condition: </b>{{ result.bookCondition }}</span><br>
                         <span>
                             <button (click)="onBookEdit(result.id)">Edit Book</button>

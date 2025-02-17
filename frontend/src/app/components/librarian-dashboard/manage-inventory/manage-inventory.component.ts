@@ -13,6 +13,7 @@ export class ManageInventoryComponent {
   // for giving modal component context
   isInventoryPage: boolean = true;
   isBookDetailsModal: boolean = false;
+  isGenreModal: boolean = false;
 
   // for search
   isBookSearch: boolean = true;
@@ -33,9 +34,17 @@ export class ManageInventoryComponent {
   constructor(private bookService: BookService) {}
 
   addBook() {
+    this.isGenreModal = false;
     this.isBookDetailsModal = true;
     this.bookDetails = [];
     this.modalTitle = 'Add Book';
+    this.showModal = true;
+  }
+
+  addGenre() {
+    this.isBookDetailsModal = false;
+    this.isGenreModal = true;
+    this.modalTitle = 'Add Genre';
     this.showModal = true;
   }
 
@@ -58,6 +67,8 @@ export class ManageInventoryComponent {
     this.showModal = false;
     this.modalTitle = '';
     this.selectedItem = null;
+    this.isBookDetailsModal = false;
+    this.isGenreModal = false;
     if (this.searchBar) {
       this.searchBar.onQueryChange(this.searchBar.query); // refreshed search so librarian can see changes
     }

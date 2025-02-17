@@ -26,7 +26,7 @@ def get_books_by_genre(genre_id):
 
     books_by_genre = Book_Genre.query.filter_by(genre_id=genre_id).all()
     if not books_by_genre:
-        return jsonify({"message": "No books associated with this genre"}), 404
+        return jsonify({"booksByGenre": []}), 200
 
     book_ids = [book.book_id for book in books_by_genre]
     
@@ -43,11 +43,11 @@ def get_genres_by_book(book_id):
 
     genres_by_book = Book_Genre.query.filter_by(book_id=book_id).all()
     if not genres_by_book:
-        return jsonify({"message": "No genres associated with this book"}), 404
+        return jsonify({"genresByBook": []}), 200
 
     genre_ids = [genre.genre_id for genre in genres_by_book]
 
-    return jsonify({"GenresByBook": genre_ids}), 200
+    return jsonify({"genresByBook": genre_ids}), 200
 
 # associate a book with a genre
 @books_genres_bp.route("/associate-book-to-genre", methods=["POST"], strict_slashes=False)

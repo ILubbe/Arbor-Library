@@ -1,6 +1,7 @@
 <div class="manage-inventory-container">
     <h3>Manage Inventory</h3>
     <button (click)="addBook()">Add Book</button>
+    <button (click)="addGenre()">Add Genre</button>
     <div class="inventory-search">
        <app-search-bar
           [isInventoryPage]="isInventoryPage"
@@ -15,6 +16,7 @@
           <app-modal
              [isInventoryPage]="isInventoryPage"
              [isBookDetailsModal]="isBookDetailsModal"
+             [isGenreModal]="isGenreModal"
              [showModal]="showModal"
              [modalTitle]="modalTitle"
              [bookDetails]="bookDetails"

@@ -9,7 +9,7 @@
                     <p><b>Title:</b> {{ bookDetails.title }}</p>
                     <p><b>Author:</b> {{ bookDetails.author }}</p>
                     <p><b>First Publish Year:</b> {{ bookDetails.firstPublishYear }}</p>
-                    <p><b>Genres:</b> {{ bookDetails.genres.join(',',', ')}}</p>
+                    <p><b>Genres:</b> {{ bookDetails.genres.join(', ')}}</p>
                     <button (click)="createMyReservation(bookDetails.id)">Reserve Now!</button>
                 </div>
             }
@@ -87,22 +87,26 @@
             }
             @if (isCheckinPage && isBookDetailsModal) {
                 <div class="modal-body">
-                    <p><b>Title:</b> {{ bookDetails.title }}</p>
-                    <p><b>Author:</b> {{ bookDetails.author }}</p>
-                    <p><b>First Publish Year:</b> {{ bookDetails.firstPublishYear }}</p>
-                    <p><b>Genres:</b> {{ bookDetails.genres.join(',',', ')}}</p>
+                    <p><b>ID: </b>{{ bookDetails.id }}</p>
+                    <p><b>Title: </b>{{ bookDetails.title }}</p>
+                    <p><b>Author: </b>{{ bookDetails.author }}</p>
+                    <p><b>First Publish Year: </b>{{ bookDetails.firstPublishYear }}</p>
+                    <p><b>Genres: </b>{{ bookDetails.genres.join(', ')}}</p>
                 </div>
             }
             @if (isCheckinPage && isUserDetailsModal) {
                 <div class="modal-body">
-                    <p><b>Email:</b> {{ userDetails.email }}</p>
-                    <p><b>Role:</b> {{ userDetails.role }}</p>
-                    <p><b>First Name:</b> {{ userDetails.firstName }}</p>
-                    <p><b>Last Name:</b> {{ userDetails.lastName }}</p>
+                    <p><b>ID: </b>{{ userDetails.id }}</p>
+                    <p><b>Email: </b>{{ userDetails.email }}</p>
+                    <p><b>Role: </b>{{ userDetails.role }}</p>
+                    <p><b>First Name: </b>{{ userDetails.firstName }}</p>
+                    <p><b>Last Name: </b>{{ userDetails.lastName }}</p>
                 </div>
             }
+            <!-- existing book -->
             @if (isInventoryPage && isBookDetailsModal && this.bookDetails.id) {
                 <form>
+                    <p><b>ID: </b>{{ bookDetails.id }}</p>
                     <p>
                         <label for="Title"><b>Title: </b></label>
                         <input type="text" id="title" [(ngModel)]="bookDetails.title" name="title" required>
@@ -117,8 +121,32 @@
                     </p>
                     <p>
                         <label for="genres"><b>Genres: </b></label>
-                        <input type="text" id="genres" [(ngModel)]="bookDetails.genres" name="genres" required>
-                    </p>
+                        <button type="button" (click)="getGenres()">Associate Genres</button>
+                        <div>
+                            @if (isInventoryPage && showGenres) {
+                                @for (genre of pagedGenres; track genre) {
+                                    <label>
+                                        <p>
+                                            <input type="checkbox"
+                                            [checked]="selectedGenres.has(genre.id)"
+                                            (change)="toggleGenreSelection(genre.id)">
+                                            {{ genre.genre }}
+                                        </p>
+                                    </label>
+                                }
+
+                                <div class="button-group">
+                                    <button type="button" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+                                    <button type="button" (click)="nextPage()" [disabled]="currentPage * perPage >= allGenres.length">Next</button>
+                                    <span> Page {{ currentPage }} of {{ totalPages }}</span>
+                                </div>
+
+                                <div class="button-group">
+                                    <button type="button" (click)="saveGenreSelection()">Save Genres</button>
+                                    <button type="button" (click)="closeGenres()">Cancel</button>
+                                </div>
+                            }
+                        </div>
                     <p>
                         <label><b>Book Condition: </b></label>
                         <select [(ngModel)]="bookDetails.bookCondition" name="bookCondition" required>
@@ -136,7 +164,7 @@
                     </div>
                 </form>
             }
-
+            <!-- new book -->
             @if (isInventoryPage && isBookDetailsModal && !this.bookDetails.id) {
                 <form>
                     <p>
@@ -152,10 +180,6 @@
                         <input type="text" id="firstPublishYear" [(ngModel)]="firstPublishYear" name="firstPublishYear" required>
                     </p>
                     <p>
-                        <label for="genres"><b>Genres: </b></label>
-                        <input type="text" id="genres" [(ngModel)]="genres" name="genres" required>
-                    </p>
-                    <p>
                         <label><b>Book Condition: </b></label>
                         <select [(ngModel)]="bookCondition" name="bookCondition" required>
                             @for (condition of conditions; track condition) { <option>{{ condition }}</option> }
@@ -167,6 +191,16 @@
                         <button type="button" (click)="close()">Cancel</button>
                     </div>
                 </form>
+            }
+            @if (isInventoryPage && isGenreModal) {
+                <p>
+                    <label for="Genre Name"><b>Genre Name: </b></label>
+                    <input type="text" id="genreName" [(ngModel)]="genreName" name="genreName" required>
+                </p>
+                <div class="button-group">
+                    <button type="button" (click)="saveGenre()">Add Genre</button>
+                    <button type="button" (click)="close()">Cancel</button>
+                </div>
             }
         </div>
     </div>

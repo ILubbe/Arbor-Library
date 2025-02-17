@@ -104,17 +104,19 @@ export class SearchBarComponent {
   }
 
   onQueryChange(query: string) {
-    if (this.query !== this.lockedQuery) {
-      this.page = 1;
-      this.lockedQuery = this.query; // lock the query
+    if (query != '') {
+      if (this.query !== this.lockedQuery) {
+        this.page = 1;
+        this.lockedQuery = this.query; // lock the query
+      }
+      this.searchSubject.next(query);
+      this.searchQuery.emit({
+        model: this.selectedModel,
+        field: this.selectedField,
+        page: this.page,
+        limit: this.perPage
+      });
     }
-    this.searchSubject.next(query);
-    this.searchQuery.emit({
-      model: this.selectedModel,
-      field: this.selectedField,
-      page: this.page,
-      limit: this.perPage
-    });
   }
 
   onFieldChange(field: string) {

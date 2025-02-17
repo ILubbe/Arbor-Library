@@ -7,7 +7,7 @@ def create_default_admin_user():
     # Check if the users table is empty
     user_count = User.query.count()
     if user_count == 0:
-        print(f"Bootstrap: users table in database is empty, creating the default admin user")
+        print(f"Seed: users table in database is empty, creating the default admin user")
         default_admin = User(
             role = 'librarian',
             email = 'defaultadmin@arborlibrary.com',
@@ -18,25 +18,25 @@ def create_default_admin_user():
 
         db.session.add(default_admin)
         db.session.commit()
-        print('Bootstrap: Reindexing Users in ElasticSearch...')
+        print('Seed: Reindexing Users in ElasticSearch...')
         User.reindex()
-        print('Bootstrap: Users in ElasticSearch indexed!')
+        print('Seed: Users in ElasticSearch indexed!')
     else:
-        print("Bootstrap: User(s) already inside database")
+        print("Seed: User(s) already inside database")
         # make sure db count and elasticsearch index count match up
         es_response = app.es.search(index="users", body={"query": {"match_all":{}}})
         es_index_count = es_response['hits']['total']['value']
         if user_count != es_index_count:
-            print('Bootstrap: Reindexing Users in ElasticSearch...')
+            print('Seed: Reindexing Users in ElasticSearch...')
             User.reindex()
-        print('Bootstrap: Users in ElasticSearch indexed!')
+        print('Seed: Users in ElasticSearch indexed!')
     return
 
 def fetch_and_populate_books(max_books):
     # Check if the books table is empty
     book_count = Book.query.count()
     if book_count == 0:
-        print(f"Bootstrap: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)")
+        print(f"Seed: books table in database is empty, fetching data for {max_books} book(s) from API (This might take a minute)")
 
         seed_subjects = [
             "horror",
@@ -71,7 +71,7 @@ def fetch_and_populate_books(max_books):
         count = 0
         laps = 0
         offset = 0
-        print(f"Bootstrap: requesting book data from {base_url}...")
+        print(f"Seed: requesting book data from {base_url}...")
         while added_books < max_books:
             if count == len(seed_subjects):
                 count = 0
@@ -91,7 +91,7 @@ def fetch_and_populate_books(max_books):
                 data = response.json()
             
             except:
-                print(f"Bootstrap: cannot connect to {url} moving on...")
+                print(f"Seed: cannot connect to {url} moving on...")
                 continue
 
             for item in data['works']:
@@ -144,26 +144,26 @@ def fetch_and_populate_books(max_books):
                     )
                     db.session.add(books_genres_object)
 
-                print(f"Bootstrap: {added_books - added_books_current} {seed_subjects[count]} book(s) added")
+                print(f"Seed: {added_books - added_books_current} {seed_subjects[count]} book(s) added")
                 db.session.commit()
                 added_books_current = added_books
-                print(f"Bootstrap: {added_books} book(s) of {max_books} added")
+                print(f"Seed: {added_books} book(s) of {max_books} added")
 
             count += 1
 
         # since a lot of books were just added to database, need to reindex elasticsearch
-        print('Bootstrap: Reindexing Books in ElasticSearch...')
+        print('Seed: Reindexing Books in ElasticSearch...')
         Book.reindex()
-        print('Bootstrap: Books in ElasticSearch indexed!')
+        print('Seed: Books in ElasticSearch indexed!')
 
     else:
-        print("Bootstrap: Book(s) already inside database")
+        print("Seed: Book(s) already inside database")
         # make sure db count and elasticsearch index count match up
         es_response = app.es.search(index="books", body={"query": {"match_all":{}}})
         es_index_count = es_response['hits']['total']['value']
         if book_count != es_index_count:
-            print('Bootstrap: Reindexing Books in ElasticSearch...')
+            print('Seed: Reindexing Books in ElasticSearch...')
             Book.reindex()
-        print('Bootstrap: Books in ElasticSearch indexed!')
+        print('Seed: Books in ElasticSearch indexed!')
     return
 
