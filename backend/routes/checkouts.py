@@ -12,124 +12,11 @@ checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
 # get all checkouts
 @checkouts_bp.route("/", methods=["GET"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def get_checkouts():
     checkouts = Checkout.query.all()
     json_checkouts = list(map(lambda x: x.serialize(), checkouts))
-    return jsonify({"checkouts": json_checkouts})
-
-# get a checkout by id
-@checkouts_bp.route("/<int:checkout_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_checkout_by_id(checkout_id):
-    checkout = Checkout.query.get(checkout_id)
-
-    if checkout is None:
-        return jsonify({"message": "Checkout not found"}), 404
-    
-    return jsonify({"checkout": checkout.serialize()})
-
-# get checkout(s) by user
-@checkouts_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_checkouts_by_user(user_id):
-    # ensure user exists
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    checkouts_by_user = Checkout.query.filter_by(user_id=user_id)
-    if not checkouts_by_user:
-        return jsonify({"message": "No checkouts associated with this user"}), 404
-
-    checkout_ids = [checkout.id for checkout in checkouts_by_user]
-    
-    return jsonify({"checkoutsIdByUser": checkout_ids}), 200
-
-@checkouts_bp.route("/my", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_my_checkouts():
-    current_user = get_jwt_identity()
-    user = User.query.filter_by(id=current_user).first()
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    checkouts_by_user = Checkout.query.filter_by(user_id=user.id).all()
-    if not checkouts_by_user:
-        return jsonify({"message": "You have no checkouts"}), 404
-
-    json_checkouts = list(map(lambda x: x.serialize(), checkouts_by_user))
-    
     return jsonify({"checkouts": json_checkouts}), 200
-
-# get all checkout(s) made for one book
-@checkouts_bp.route("/by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_checkouts_by_book(book_id):
-    # ensure book exists
-    book = Book.query.get(book_id)
-    if not book:
-        return jsonify({"message": "Book not found"}), 404
-
-    checkouts_by_book = Checkout.query.filter_by(book_id=book_id)
-    if not checkouts_by_book:
-        return jsonify({"message": "No checkouts associated with this book"}), 404
-
-    checkout_ids = [checkout.id for checkout in checkouts_by_book]
-    
-    return jsonify({"checkoutsIdByBook": checkout_ids}), 200
-
-# get active checkout(s) by user (not yet returned)
-@checkouts_bp.route("/by-user/active/<int:user_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_active_checkouts_by_user(user_id):
-    # ensure user exists
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    active_checkouts_by_user = Checkout.query.filter_by(user_id=user_id, returned=False)
-    if not active_checkouts_by_user:
-        return jsonify({"message": "No active checkouts associated with this user"}), 404
-
-    active_checkouts_by_user_ids = [checkout.id for checkout in active_checkouts_by_user]
-    
-    return jsonify({"activeCheckoutsIdByUser": active_checkouts_by_user_ids}), 200
-
-# get active checkout(s) by book (not yet returned)
-@checkouts_bp.route("/by-book/active/<int:book_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_active_checkouts_by_book(book_id):
-    # ensure book exists
-    book = Book.query.get(book_id)
-    if not book:
-        return jsonify({"message": "Book not found"}), 404
-
-    active_checkouts_by_book = Checkout.query.filter_by(book_id=book_id, returned=False)
-    if not active_checkouts_by_book:
-        return jsonify({"message": "No active checkouts associated with this book"}), 404
-
-    active_checkouts_by_book_ids = [checkout.id for checkout in active_checkouts_by_book]
-    
-    return jsonify({"activeCheckoutsIdByBook": active_checkouts_by_book_ids}), 200
-
-# get all checkout(s) that one user has made for one book
-@checkouts_bp.route("/<int:user_id>/<int:book_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_checkouts_by_book_and_user(user_id, book_id):
-    #ensure user and book exist
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    book = Book.query.get(book_id)
-    if not book:
-        return jsonify({"message": "Book not found"}), 404
-
-    checkouts_by_book_and_user = Checkout.query.filter_by(user_id=user_id, book_id=book_id)
-
-    checkout_ids = [checkout.id for checkout in checkouts_by_book_and_user]
-
-    return jsonify({"checkoutsIdByUserAndBook": checkout_ids}), 200
 
 # create a checkout that goes into effect immediately
 @checkouts_bp.route("/", methods=["POST"], strict_slashes=False)
@@ -221,3 +108,118 @@ def check_in_book(checkout_id):
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": "Book checked in"}), 201
+
+# get your own checkouts
+@checkouts_bp.route("/my", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_my_checkouts():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(id=current_user).first()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    checkouts_by_user = Checkout.query.filter_by(user_id=user.id).all()
+    if not checkouts_by_user:
+        return jsonify({"message": "You have no checkouts"}), 404
+
+    json_checkouts = list(map(lambda x: x.serialize(), checkouts_by_user))
+    
+    return jsonify({"checkouts": json_checkouts}), 200
+
+""" # get a checkout by id
+@checkouts_bp.route("/<int:checkout_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_checkout_by_id(checkout_id):
+    checkout = Checkout.query.get(checkout_id)
+
+    if checkout is None:
+        return jsonify({"message": "Checkout not found"}), 404
+    
+    return jsonify({"checkout": checkout.serialize()}) """
+
+""" # get checkout(s) by user
+@checkouts_bp.route("/by-user/<int:user_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_checkouts_by_user(user_id):
+    # ensure user exists
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    checkouts_by_user = Checkout.query.filter_by(user_id=user_id)
+    if not checkouts_by_user:
+        return jsonify({"message": "No checkouts associated with this user"}), 404
+
+    checkout_ids = [checkout.id for checkout in checkouts_by_user]
+    
+    return jsonify({"checkoutsIdByUser": checkout_ids}), 200 """
+
+""" # get all checkout(s) made for one book
+@checkouts_bp.route("/by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_checkouts_by_book(book_id):
+    # ensure book exists
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+
+    checkouts_by_book = Checkout.query.filter_by(book_id=book_id)
+    if not checkouts_by_book:
+        return jsonify({"message": "No checkouts associated with this book"}), 404
+
+    checkout_ids = [checkout.id for checkout in checkouts_by_book]
+    
+    return jsonify({"checkoutsIdByBook": checkout_ids}), 200 """
+
+""" # get active checkout(s) by user (not yet returned)
+@checkouts_bp.route("/by-user/active/<int:user_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_active_checkouts_by_user(user_id):
+    # ensure user exists
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    active_checkouts_by_user = Checkout.query.filter_by(user_id=user_id, returned=False)
+    if not active_checkouts_by_user:
+        return jsonify({"message": "No active checkouts associated with this user"}), 404
+
+    active_checkouts_by_user_ids = [checkout.id for checkout in active_checkouts_by_user]
+    
+    return jsonify({"activeCheckoutsIdByUser": active_checkouts_by_user_ids}), 200 """
+
+""" # get active checkout(s) by book (not yet returned)
+@checkouts_bp.route("/by-book/active/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_active_checkouts_by_book(book_id):
+    # ensure book exists
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+
+    active_checkouts_by_book = Checkout.query.filter_by(book_id=book_id, returned=False)
+    if not active_checkouts_by_book:
+        return jsonify({"message": "No active checkouts associated with this book"}), 404
+
+    active_checkouts_by_book_ids = [checkout.id for checkout in active_checkouts_by_book]
+    
+    return jsonify({"activeCheckoutsIdByBook": active_checkouts_by_book_ids}), 200 """
+
+""" # get all checkout(s) that one user has made for one book
+@checkouts_bp.route("/<int:user_id>/<int:book_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_checkouts_by_book_and_user(user_id, book_id):
+    #ensure user and book exist
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({"message": "Book not found"}), 404
+
+    checkouts_by_book_and_user = Checkout.query.filter_by(user_id=user_id, book_id=book_id)
+
+    checkout_ids = [checkout.id for checkout in checkouts_by_book_and_user]
+
+    return jsonify({"checkoutsIdByUserAndBook": checkout_ids}), 200 """

@@ -10,21 +10,11 @@ genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
 # read all genres
 @genres_bp.route("/", methods=["GET"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def get_genres():
     genres = Genre.query.all()
     json_genres = list(map(lambda x: x.serialize(), genres))
     return jsonify({"genres": json_genres})
-
-# get a genre by id
-@genres_bp.route("/<int:genre_id>", methods=["GET"])
-@jwt_required()
-def get_genre_by_id(genre_id):
-    genre = Genre.query.get(genre_id)
-
-    if genre is None:
-        return jsonify({"message": "Genre not found"}), 404
-    
-    return jsonify({"genre": genre.serialize()})
 
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)
@@ -70,7 +60,7 @@ def create_genre():
 
     return jsonify({"message": f"Genre {genre} added!"}), 201
 
-# delete a genre by id
+""" # delete a genre by id
 @genres_bp.route("/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
 @role_required('librarian')
@@ -85,4 +75,16 @@ def delete_genre(genre_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "Genre deleted successfully"}), 200
+    return jsonify({"message": "Genre deleted successfully"}), 200 """
+
+
+""" # get a genre by id
+@genres_bp.route("/<int:genre_id>", methods=["GET"])
+@jwt_required()
+def get_genre_by_id(genre_id):
+    genre = Genre.query.get(genre_id)
+
+    if genre is None:
+        return jsonify({"message": "Genre not found"}), 404
+    
+    return jsonify({"genre": genre.serialize()}) """

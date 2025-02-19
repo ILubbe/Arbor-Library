@@ -7,34 +7,10 @@ from utils.rbac_decorators import *
 # define blueprint
 books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres')
 
-# read all books_genres
-@books_genres_bp.route("/", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_books_genres():
-    books_genres = Book_Genre.query.all()
-    json_books_genres = list(map(lambda x: x.serialize(), books_genres))
-    return jsonify({"booksGenres": json_books_genres}), 200
-
-# read book id(s) by genre-id
-@books_genres_bp.route("/books-by-genre/<int:genre_id>", methods=["GET"], strict_slashes=False)
-@jwt_required()
-def get_books_by_genre(genre_id):
-    # ensure the genre exists
-    genre = Genre.query.get(genre_id)
-    if not genre:
-        return jsonify({"message": "Genre not found"}), 404
-
-    books_by_genre = Book_Genre.query.filter_by(genre_id=genre_id).all()
-    if not books_by_genre:
-        return jsonify({"booksByGenre": []}), 200
-
-    book_ids = [book.book_id for book in books_by_genre]
-    
-    return jsonify({"booksByGenre": book_ids}), 200
-
 # read genre id(s) by book-id
 @books_genres_bp.route("/genres-by-book/<int:book_id>", methods=["GET"], strict_slashes=False)
 @jwt_required()
+@role_required('librarian')
 def get_genres_by_book(book_id):
     # ensure the book exists
     book = Book.query.get(book_id)
@@ -132,4 +108,28 @@ def delete_book_genre_association(book_id, genre_id):
 
     return jsonify({"message": "Book-Genre association deleted successfully"}), 200
 
+""" # read all books_genres
+@books_genres_bp.route("/", methods=["GET"], strict_slashes=False)
+@jwt_required()
+@role_required('librarian')
+def get_books_genres():
+    books_genres = Book_Genre.query.all()
+    json_books_genres = list(map(lambda x: x.serialize(), books_genres))
+    return jsonify({"booksGenres": json_books_genres}), 200 """
 
+""" # read book id(s) by genre-id
+@books_genres_bp.route("/books-by-genre/<int:genre_id>", methods=["GET"], strict_slashes=False)
+@jwt_required()
+def get_books_by_genre(genre_id):
+    # ensure the genre exists
+    genre = Genre.query.get(genre_id)
+    if not genre:
+        return jsonify({"message": "Genre not found"}), 404
+
+    books_by_genre = Book_Genre.query.filter_by(genre_id=genre_id).all()
+    if not books_by_genre:
+        return jsonify({"booksByGenre": []}), 200
+
+    book_ids = [book.book_id for book in books_by_genre]
+    
+    return jsonify({"booksByGenre": book_ids}), 200 """
