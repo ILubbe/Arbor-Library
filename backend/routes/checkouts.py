@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from sqlalchemy import func
 from models import Checkout, User, Book, Reservation, db
+from sqlalchemy import func, asc, desc
 from utils.general_utils import *
 from utils.rbac_decorators import *
 
@@ -14,9 +14,26 @@ checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
 @jwt_required()
 @role_required('librarian')
 def get_checkouts():
-    checkouts = Checkout.query.all()
-    json_checkouts = list(map(lambda x: x.serialize(), checkouts))
-    return jsonify({"checkouts": json_checkouts}), 200
+    # sort & paginate 
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per-page", 50, type=int)  # default 50
+    col = request.args.get("col", "id").replace("-", "_").lower()
+    order = request.args.get("order", "asc")
+
+    if not hasattr(Checkout, col):
+        return jsonify({"message": f"invalid column to sort by: {col}"}), 400
+
+    sorted_column = getattr(Checkout, col)
+    order_by = desc(sorted_column) if order.lower() == "desc" else asc(sorted_column)
+
+    checkouts_paginated = Checkout.query.order_by(order_by).paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "checkouts": [checkout.serialize() for checkout in checkouts_paginated.items],
+        "total": checkouts_paginated.total,
+        "page": checkouts_paginated.page,
+        "pages": checkouts_paginated.pages
+    })
 
 # create a checkout that goes into effect immediately
 @checkouts_bp.route("/", methods=["POST"], strict_slashes=False)

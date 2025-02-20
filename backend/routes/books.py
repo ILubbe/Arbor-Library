@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Book, db
+from sqlalchemy import asc, desc
 from utils.general_utils import *
 from utils.rbac_decorators import *
 from config import app
@@ -13,9 +14,26 @@ books_bp = Blueprint('books', __name__, url_prefix='/books')
 @books_bp.route("/", methods=["GET"], strict_slashes=False)
 @jwt_required()
 def get_books():
-    books = Book.query.all()
-    json_books = list(map(lambda x: x.serialize(), books))
-    return jsonify({"books": json_books})
+    # sort & paginate 
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per-page", 50, type=int)  # default 50
+    col = request.args.get("col", "id").replace("-", "_").lower()
+    order = request.args.get("order", "asc")
+
+    if not hasattr(Book, col):
+        return jsonify({"message": f"invalid column to sort by: {col}"}), 400
+
+    sorted_column = getattr(Book, col)
+    order_by = desc(sorted_column) if order.lower() == "desc" else asc(sorted_column)
+
+    books_paginated = Book.query.order_by(order_by).paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "books": [book.serialize() for book in books_paginated.items],
+        "total": books_paginated.total,
+        "page": books_paginated.page,
+        "pages": books_paginated.pages
+    })
 
 # get a book by id
 @books_bp.route("/<int:book_id>", methods=["GET"])

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from sqlalchemy import func, text
 from models import Reservation, User, Book, Checkout, db
+from sqlalchemy import func, text, asc, desc
 from utils.general_utils import *
 from utils.rbac_decorators import *
 
@@ -13,9 +13,26 @@ reservations_bp = Blueprint('reservations', __name__, url_prefix='/reservations'
 @jwt_required()
 @role_required('librarian')
 def get_reservations():
-    reservations = Reservation.query.all()
-    json_reservations = list(map(lambda x: x.serialize(), reservations))
-    return jsonify({"reservations": json_reservations})
+    # sort & paginate 
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per-page", 50, type=int)  # default 50
+    col = request.args.get("col", "id").replace("-", "_").lower()
+    order = request.args.get("order", "asc")
+
+    if not hasattr(Reservation, col):
+        return jsonify({"message": f"invalid column to sort by: {col}"}), 400
+
+    sorted_column = getattr(Reservation, col)
+    order_by = desc(sorted_column) if order.lower() == "desc" else asc(sorted_column)
+
+    reservations_paginated = Reservation.query.order_by(order_by).paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "reservations": [reservation.serialize() for reservation in reservations_paginated.items],
+        "total": reservations_paginated.total,
+        "page": reservations_paginated.page,
+        "pages": reservations_paginated.pages
+    })
 
 # get your own reservation info
 @reservations_bp.route("/my", methods=["GET"], strict_slashes=False)

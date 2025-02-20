@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Genre, db
+from sqlalchemy import asc, desc
 from utils.general_utils import *
 from utils.rbac_decorators import *
 
@@ -12,9 +13,26 @@ genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
 @jwt_required()
 @role_required('librarian')
 def get_genres():
-    genres = Genre.query.all()
-    json_genres = list(map(lambda x: x.serialize(), genres))
-    return jsonify({"genres": json_genres})
+    # sort & paginate 
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per-page", 50, type=int)  # default 50
+    col = request.args.get("col", "id").replace("-", "_").lower()
+    order = request.args.get("order", "asc")
+
+    if not hasattr(Genre, col):
+        return jsonify({"message": f"invalid column to sort by: {col}"}), 400
+
+    sorted_column = getattr(Genre, col)
+    order_by = desc(sorted_column) if order.lower() == "desc" else asc(sorted_column)
+
+    genres_paginated = Genre.query.order_by(order_by).paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "genres": [genre.serialize() for genre in genres_paginated.items],
+        "total": genres_paginated.total,
+        "page": genres_paginated.page,
+        "pages": genres_paginated.pages
+    })
 
 # create a genre
 @genres_bp.route("/", methods=["POST"], strict_slashes=False)

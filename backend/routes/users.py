@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import User, db
+from sqlalchemy import asc, desc
 from utils.general_utils import *
 from utils.password_utils import *
 from utils.rbac_decorators import *
@@ -14,9 +15,26 @@ users_bp = Blueprint('users', __name__, url_prefix='/users')
 @jwt_required()
 @role_required('librarian')
 def get_users():
-    users = User.query.all()
-    json_users = list(map(lambda x: x.serialize(), users))
-    return jsonify({"users": json_users})
+    # sort & paginate 
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per-page", 50, type=int)  # default 50
+    col = request.args.get("col", "id").replace("-", "_").lower()
+    order = request.args.get("order", "asc")
+
+    if not hasattr(User, col):
+        return jsonify({"message": f"invalid column to sort by: {col}"}), 400
+
+    sorted_column = getattr(User, col)
+    order_by = desc(sorted_column) if order.lower() == "desc" else asc(sorted_column)
+
+    users_paginated = User.query.order_by(order_by).paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "users": [user.serialize() for user in users_paginated.items],
+        "total": users_paginated.total,
+        "page": users_paginated.page,
+        "pages": users_paginated.pages
+    })
 
 # get user by id
 @users_bp.route("/<int:user_id>", methods=["GET"], strict_slashes=False)
