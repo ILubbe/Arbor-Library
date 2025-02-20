@@ -28,7 +28,7 @@ def is_valid_field(model, field):
 
 @jwt_required()
 @role_required('librarian')
-# only for librarians to search users
+# only for librarians to search specific tables/fields
 def privileged_search(query, page, per_page, field, model):
     # if the index doesn't exist, just give a response like it does.
     # This means that the db table is empty for that model, so elasticsearch never made an index.
@@ -67,11 +67,11 @@ def search():
     per_page = int(request.args.get('limit', 25)) # optional
     field = request.args.get('field') # optional
 
-    if field:
-        field = field.replace("-", "_").lower() # change field from URL friendly to DB friendly
-
     if not model:
         return jsonify({"message": "Model is required in search"}), 400
+
+    if field:
+        field = field.replace("-", "_").lower() # change field from URL friendly to DB friendly
 
     model = model.lower().capitalize()
 

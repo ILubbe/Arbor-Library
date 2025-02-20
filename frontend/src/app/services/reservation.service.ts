@@ -13,6 +13,18 @@ export class ReservationService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
+  getSortedReservations(col: string, order: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<any>(`${this.apiReservationsEndpoint}?col=${ col }&order=${ order }`, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch users');
+          })
+        );
+      })
+    );
+  }
+
   getMyReservations(): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
@@ -22,7 +34,7 @@ export class ReservationService {
           })
         );
       })
-    )
+    );
   }
 
   createMyReservation(bookId: string): Observable<any> {
@@ -37,7 +49,7 @@ export class ReservationService {
           })
         );
       })
-    )
+    );
   }
 
   cancelMyReservation(reservationId: string): Observable<any> {
@@ -49,7 +61,7 @@ export class ReservationService {
           })
         );
       })
-    )
+    );
   }
 
   cancelReservation(reservationId: string): Observable<any> {
@@ -61,6 +73,6 @@ export class ReservationService {
           })
         );
       })
-    )
+    );
   }
 }

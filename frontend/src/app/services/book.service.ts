@@ -16,6 +16,18 @@ export class BookService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
+  getSortedBooks(col: string, order: string): Observable<any> {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<any>(`${ this.apiBooksEndpoint }?col=${ col }&order=${ order }`, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch book books');
+          })
+        );
+      })
+    );
+  }
+
   getBookById(bookId: string): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
@@ -44,6 +56,18 @@ export class BookService {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
         return this.http.get<any>(this.apiGenresEndpoint, { headers }).pipe(
+          catchError((error) => {
+            return throwError(() => error.error.message || 'Could not fetch genres');
+          })
+        );
+      })
+    );
+  }
+
+  getSortedGenres(col: string, order: string) {
+    return this.authService.addHttpHeaders().pipe(
+      switchMap((headers) => {
+        return this.http.get<any>(`${this.apiGenresEndpoint}?col=${ col }&order=${ order }`, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Could not fetch genres');
           })
