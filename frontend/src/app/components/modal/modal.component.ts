@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
 import { BookService } from '../../services/book.service';
+import { GenreService } from '../../services/genre.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 
@@ -69,6 +70,7 @@ export class ModalComponent {
     private userService: UserService,
     private authService: AuthService,
     private bookService: BookService,
+    private genreService: GenreService,
     private router: Router
   ) {}
 
@@ -161,7 +163,7 @@ export class ModalComponent {
   }
 
   getGenres() {
-    this.bookService.getGenres().subscribe({
+    this.genreService.getGenres().subscribe({
       next: (response) => {
         this.allGenres = response.genres;
         if (this.bookDetails.id) {
@@ -317,7 +319,7 @@ export class ModalComponent {
   }
 
   saveGenre() {
-    this.bookService.addGenre(this.genreName).subscribe({
+    this.genreService.addGenre(this.genreName).subscribe({
       next: (response) => {
         alert(response.message || 'Genre added successfully');
         this.close();

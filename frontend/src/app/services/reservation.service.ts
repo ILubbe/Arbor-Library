@@ -13,10 +13,16 @@ export class ReservationService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  getSortedReservations(col: string, order: string): Observable<any> {
+  getAllSorted(col?: string, order?: string): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
-        return this.http.get<any>(`${this.apiReservationsEndpoint}?col=${ col }&order=${ order }`, { headers }).pipe(
+        let url;
+        if (col && order) {
+          url = `${this.apiReservationsEndpoint}?col=${ col }&order=${ order }`
+        } else {
+          url = this.apiReservationsEndpoint;
+        }
+        return this.http.get<any>(url, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Could not fetch users');
           })

@@ -13,10 +13,16 @@ export class CheckinCheckoutService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  getSortedCheckouts(col: string, order: string): Observable<any> {
+  getAllSorted(col?: string, order?: string): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
-        return this.http.get<any>(`${this.apiCheckoutEndpoint}?col=${ col }&order=${ order }`, { headers }).pipe(
+        let url;
+        if (col && order) {
+          url = `${this.apiCheckoutEndpoint}?col=${ col }&order=${ order }`
+        } else {
+          url = this.apiCheckoutEndpoint;
+        }
+        return this.http.get<any>(url, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Could not fetch books');
           })

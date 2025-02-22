@@ -1,1 +1,44 @@
-<p>reports works!</p>
+<div class="reservations-container">
+    <h3>Generate A Report</h3>
+    <label for="model"><b>Get Report On: </b></label>
+    @if (modelOptions.length > 0) {
+        <select [(ngModel)]="selectedModel" class="model-select">
+        <option value="">-- Select Model --</option>
+        @for (model of modelOptions; track model) {
+            <option [value]="model">{{ model }}</option>
+        } @empty {
+            <option>No models available</option>
+        }
+        </select>
+    }
+    <button (click)="generateReport()" [disabled]="!selectedModel" class="generate-button">Go!</button>
+    
+    @if (response) {
+        <table class="report-table">
+            <thead class="report-head">
+                <tr>
+                    @for (key of tableHeaders; track key) {
+                        <th>
+                            {{ camelCaseToTitleCase(key) }}
+                            <!-- Don't show sort button for Genres, cant sort these -->
+                            @if (key !== 'genres') { 
+                                <button (click)="generateReport(key)" class="sort-button">Sort</button>
+                            }
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of response; track row) {
+                    <tr>
+                        @for (key of tableHeaders; track key) {
+                        <td>
+                            {{ row[key] }}
+                        </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

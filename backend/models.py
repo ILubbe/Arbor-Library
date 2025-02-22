@@ -174,7 +174,7 @@ class Checkout(SearchableMixin, db.Model):
             "id": self.id,
             "userId": self.user_id,
             "bookId": self.book_id,
-            "checkoutOutAt": self.checked_out_at,
+            "checkedOutAt": self.checked_out_at,
             "dueAt": self.due_at,
             "returned": self.returned
         }
