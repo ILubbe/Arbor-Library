@@ -11,7 +11,31 @@
         }
         </select>
     }
+
+    @if (perPageOptions.length > 0) {
+        <label for="perPage"><b>Results/Page: </b></label>
+        <select [(ngModel)]="selectedPerPage" class="per-page-select">
+        @for (perPage of perPageOptions; track perPage) {
+            <option [value]="perPage">{{ perPage }}</option>
+        } @empty {
+            <option>No per-page options available</option>
+        }
+        </select>
+    }
+
     <button (click)="generateReport()" [disabled]="!selectedModel" class="generate-button">Go!</button>
+    @if (total > 0) {
+        <div>
+            <div class="results-info">
+                <p>Found {{ total }} Results</p>
+                <p>Page {{ page }} of {{ totalPages }}</p>
+            </div>
+            <div class="pagination">
+                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                <button (click)="changePage(page + 1)" [disabled]="page * selectedPerPage >= total">Next</button>
+            </div>
+        </div>  
+    }
     
     @if (response) {
         <table class="report-table">
@@ -22,7 +46,7 @@
                             {{ camelCaseToTitleCase(key) }}
                             <!-- Don't show sort button for Genres, cant sort these -->
                             @if (key !== 'genres') { 
-                                <button (click)="generateReport(key)" class="sort-button">Sort</button>
+                                <button (click)="sort(key)" class="sort-button">Sort</button>
                             }
                         </th>
                     }

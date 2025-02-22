@@ -8,7 +8,7 @@ import { CheckinCheckoutService } from '../../../services/checkin-checkout.servi
 import { ReservationService } from '../../../services/reservation.service';
 
 export interface ReportService {
-  getAllSorted(col?: string, order?: string): Observable<any>;
+  getAllSorted(col: string, order: string, page: number, perPage: number): Observable<any>;
 }
 
 @Component({
@@ -22,9 +22,16 @@ export class ReportsComponent {
 
   modelOptions: string[] = ['Users', 'Books', 'Genres', 'Checkouts', 'Reservations']
   selectedModel: string = '';
+  previousSelectedModel: string = '';
   response: any[] = [];
+  total: number = 0;
   tableHeaders: string[] = [];
-  order: string = 'desc';
+  col: string = 'id';
+  order: string = 'asc';
+  page: number = 1;
+  perPageOptions: number[] = [10, 25, 50, 100, 250, 500, 1000]
+  selectedPerPage: number = 25;
+  totalPages: number = 1;
   service!: ReportService;
 
   constructor(
@@ -35,8 +42,15 @@ export class ReportsComponent {
     private reservationService: ReservationService
     ) {}
   
-  generateReport(col?: string) {
+  generateReport(selectedColumn?: string) {
     if (this.selectedModel) {
+      // ensure order is always 'asc' and col is always 'id' when changing models
+      if (this.selectedModel !== this.previousSelectedModel) {
+        this.order = 'asc';
+        this.col = 'id';
+      }
+      this.previousSelectedModel = this.selectedModel;
+
       // get correct service
       if (this.selectedModel === 'Users') {
         this.service = this.userService;
@@ -52,47 +66,69 @@ export class ReportsComponent {
 
       const responseItem = this.selectedModel.toLowerCase();
 
-      if (col) {
-        col = this.camelCaseToDashCase(col);
-        this.order = this.order === 'asc' ? 'desc' : 'asc'; // toggle order
-        this.service.getAllSorted(col, this.order).subscribe({
-          next: (response) => {
-            this.response = response[responseItem];
-            this.tableHeaders = this.response.length ? Object.keys(this.response[0]) : [];
-            this.idColumnFirst();
-          },
-          error: (error) => {
-            console.error(error || 'Could not fetch report')
-          }
-        })
-
-      } else {
-        this.service.getAllSorted().subscribe({
-          next: (response) => {
-            this.response = response[responseItem];
-            this.tableHeaders = this.response.length ? Object.keys(this.response[0]) : [];
-            this.idColumnFirst();
-          },
-          error: (error) => {
-            console.error(error || 'Could not fetch report');
-          }
-        });
+      if (selectedColumn && this.camelCaseToDashCase(selectedColumn) !== this.col) {
+        this.col = this.camelCaseToDashCase(selectedColumn);
       }
+      this.service.getAllSorted(this.col, this.order, this.page, this.selectedPerPage).subscribe({
+        next: (response) => {
+          this.response = response[responseItem];
+          this.total = response.total;
+          this.totalPages = Math.ceil(this.total / this.selectedPerPage);
+          this.tableHeaders = this.response.length ? Object.keys(this.response[0]) : [];
+          this.reorderHeaders();
+        },
+        error: (error) => {
+          console.error(error || 'Could not fetch report')
+        }
+      });
     }
   }
 
-  idColumnFirst() {
-    // bring id col to far left
-    const idIndex = this.tableHeaders.indexOf('id');
-    if (idIndex !== 0) {
-      this.tableHeaders.unshift(this.tableHeaders.splice(idIndex, 1)[0]);
+  sort(selectedColumn: string) {
+    this.changePage(1);
+    this.order = this.order === 'asc' ? 'desc' : 'asc'; // toggle order
+    this.generateReport(selectedColumn);
+  }
+
+  changePage(page: number) {
+    this.page = page;
+    this.generateReport();
+  }
+
+  reorderHeaders() {
+    const desiredHeaderOrder: { [model: string]: string[] } = {
+      'users': ['id', 'email', 'firstname', 'lastname', 'role'],
+      'books': ['id', 'title', 'author', 'firstyearpublished', 'bookcondition', 'genres'],
+      'genres': ['id', 'genre'],
+      'checkouts': ['id', 'userid', 'bookid', 'checkedoutat', 'dueat', 'returned'],
+      'reservations': ['id', 'userid', 'bookid', 'reservedat', 'expiresat', 'status']
+    };
+
+    const modelKey = this.selectedModel.toLowerCase();
+    if (desiredHeaderOrder[modelKey]) {
+      // normalize the current headers to lowercase for comparison
+      const lowerHeaders = this.tableHeaders.map(header => header.toLowerCase());
+      const desiredOrder = desiredHeaderOrder[modelKey];
+      let newOrder: string[] = [];
+
+      // reorder headers
+      desiredOrder.forEach(desiredKey => {
+        const index = lowerHeaders.indexOf(desiredKey);
+        if (index !== -1) {
+          newOrder.push(this.tableHeaders[index]);
+        }
+      });
+
+      this.tableHeaders = newOrder;
     }
   }
 
+  // for display
   camelCaseToTitleCase(camelCaseString: string): string {
     return camelCaseString.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str) => str.toUpperCase());
   }
 
+  // for urls
   camelCaseToDashCase(camelCaseString: string): string {
     return camelCaseString.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }

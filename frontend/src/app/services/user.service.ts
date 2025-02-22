@@ -13,15 +13,10 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  getAllSorted(col?: string, order?: string): Observable<any> {
+  getAllSorted(col: string, order: string, page: number, perPage: number): Observable<any> {
     return this.authService.addHttpHeaders().pipe(
       switchMap((headers) => {
-        let url;
-        if (col && order) {
-          url = `${this.apiUserEndpoint}?col=${ col }&order=${ order }`
-        } else {
-          url = this.apiUserEndpoint;
-        }
+        const url = `${this.apiUserEndpoint}?col=${col}&order=${order}&page=${page}&per-page=${perPage}`;
         return this.http.get<any>(url, { headers }).pipe(
           catchError((error) => {
             return throwError(() => error.error.message || 'Could not fetch users');
