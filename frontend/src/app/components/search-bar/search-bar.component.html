@@ -1,5 +1,6 @@
-<div class="search-bar">
+<div class="search-bar-container">
     @if (!isCheckoutSearch && !isReservationsSearch) {
+        <div class="search-bar-and-select-container">
         <input
         type="text"
         [(ngModel)]="query"
@@ -18,14 +19,14 @@
             }
             </select>
         }
+        </div>
         @if (total > 0) {
-            <div>
-                <div class="pagination">
-                    <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
-                    <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
-                </div>
-            </div> 
+            <div class="pagination">
+                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                <button (click)="changePage(page + 1)" [disabled]="page * perPage >= total">Next</button>
+            </div>
         }
+        
     }
     <div class="results-info">
         @if (query) {
@@ -41,7 +42,7 @@
                 <div class="result-item">
                     <div>
                         <li><b>{{ result.title }}</b> by {{ result.author }} 
-                            <button (click)="onViewDetailsClick(result)">View Details</button>
+                            <span class="btn-cluster"><button (click)="onViewDetailsClick(result)">View Details</button></span>
                         </li>
                         <br>
                     </div>
@@ -58,7 +59,7 @@
                         <span><b>Email: </b>{{ result.email }}</span><br>
                         <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
                         <span><b>Role: </b>{{ result.role }}</span><br>
-                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <span class="btn-cluster"><button (click)="onSelectClick(result)">Select</button><br></span>
                         <br>
                     </div>
                 </div>
@@ -73,7 +74,7 @@
                         <span><b>ID: </b>{{ result.id }}</span><br>
                         <span><b>Title: </b>{{ result.title }}</span><br>
                         <span><b>Author: </b>{{ result.author }}</span><br>
-                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <span class="btn-cluster"><button (click)="onSelectClick(result)">Select</button><br></span>
                         <br>
                     </div>
                 </div>
@@ -91,7 +92,7 @@
                         <span><b>Due at: </b>{{ result.dueAt }}</span><br>
                         <span><b>User ID: </b>{{ result.userId }} <button (click)="onGetUserDetails(result.userId)">View User Details</button></span><br>
                         <span><b>Book ID: </b>{{ result.bookId }} <button (click)="onGetBookDetails(result.bookId)">View Book Details</button></span><br>
-                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <span class="btn-cluster"><button (click)="onSelectClick(result)">Select</button><br></span>
                         <br>
                     </div>
                 </div>
@@ -109,7 +110,7 @@
                         <span><b>Expires at: </b>{{ result.expiresAt }}</span><br>
                         <span><b>User ID: </b>{{ result.userId }} <button (click)="onGetUserDetails(result.userId)">View User Details</button></span><br>
                         <span><b>Book ID: </b>{{ result.bookId }} <button (click)="onGetBookDetails(result.bookId)">View Book Details</button></span><br>
-                        <button (click)="onSelectClick(result)">Select</button><br>
+                        <span class="btn-cluster"><button (click)="onSelectClick(result)">Select</button><br></span>
                         <br>
                     </div>
                 </div>
@@ -125,9 +126,9 @@
                         <span><b>Email: </b>{{ result.email }}</span><br>
                         <span><b>Name: </b>{{ result.firstName }} {{ result.lastName }}</span><br>
                         <span><b>Role: </b>{{ result.role }}</span><br>
-                        <span>
+                        <span class="btn-cluster">
                             <button (click)="onUserRoleToggle(result.id)">Switch Role</button>
-                            <button (click)="onUserDelete(result.id)">Delete User</button>
+                            <button (click)="onUserDelete(result.id)" class="delete-btn">Delete User</button>
                         <br>
                         <br>
                         </span>
@@ -147,9 +148,9 @@
                         <span><b>First Publish Year: </b>{{ result.firstPublishYear }}</span><br>
                         <span><b>Genres: </b>{{ result.genres.join(', ') }}</span><br>
                         <span><b>Book Condition: </b>{{ result.bookCondition }}</span><br>
-                        <span>
+                        <span class="btn-cluster">
                             <button (click)="onBookEdit(result.id)">Edit Book</button>
-                            <button (click)="onBookDelete(result.id)">Delete Book</button>
+                            <button (click)="onBookDelete(result.id)" class="delete-btn">Delete Book</button>
                         <br>
                         <br>
                         </span>

@@ -1,32 +1,48 @@
 .cancel-reservations-container {
+    color: white;
+    flex-grow: 1;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-}
+    margin-top: 0px;
+    min-height: 100vh;
+    background-color: rgb(0, 0, 100);
 
-.form-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 20px;
-}
+    .form-container {
+        color: white;
+        background-color: #ddd;
+        display: flex;
+        border-radius: 5px;
+        justify-content: space-between;
+        width: 95%;
+        flex-grow: 1;
+        margin-bottom: 10px;
 
-.input-section {
-    flex: 1;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-}
+        .input-section {
+            flex: 1;
+            background-color: #333;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.input-section input {
-    padding: 8px;
-    margin-bottom: 10px;
-    max-width: 290px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+        .input-section input {
+            max-width: 290px;
+        }
+
+        button {
+            border: 1px solid #fff;
+            background-color: teal;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 8px;
+            cursor: pointer;
+        }
+    }
 }

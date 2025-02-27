@@ -1,15 +1,12 @@
 <div class="login-container">
+    <h1>Arbor Library</h1>
     <h2>Login</h2>
-  
-    <!-- Display error message if login fails -->
     @if (errorMessage) {
-        <div class="error-message" style="color: red; font-size: 14px;">
+        <div class="error-message">
             {{ errorMessage }}
         </div>
     }
     
-  
-    <!-- Login form -->
     <form (ngSubmit)="onSubmit()">
         <div>
             <label for="email">Email:</label>
@@ -19,8 +16,12 @@
             <label for="password">Password:</label>
             <input type="password" id="password" [(ngModel)]="password" name="password" required />
         </div>
-        <button type="submit">Login</button>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+        <p>Don't have an account?</p>
+        <div>
+            <button [routerLink]="['/sign-up']" class="sign-up-btn">Sign Up</button>
+        </div>
     </form>
-    <p>Don't have an account?</p>
-    <button [routerLink]="['/sign-up']">Sign Up</button>
 </div>

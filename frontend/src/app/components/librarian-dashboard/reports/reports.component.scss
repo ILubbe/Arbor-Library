@@ -1,0 +1,121 @@
+.reports-container {
+    color: white;
+    background-color: #ddd;
+    flex-grow: 1;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0px;
+    background-color: rgb(100, 0, 100);
+
+    .form-container {
+        color: white;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+        background-color: #ddd;
+        align-items: center;
+        width: 95%;
+        margin-bottom: 10px;
+
+        .generate-container {
+            background-color: #333;
+            border: solid 1px #ddd;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: calc(100% - 20px);
+
+            .generate-button {
+                background-color: limegreen;
+                cursor: pointer;
+                color: white;
+                border-radius: 5px;
+                border: none;
+                font-size: 16px;
+                padding: 8px;
+            }
+
+            .generate-button:disabled {
+                background-color: #888;
+            }
+
+
+            .per-page-select, .model-select {
+                border: 1px solid #fff;
+                background-color: teal;
+                color: #fff;
+                border-radius: 5px;
+                font-size: 16px;
+                padding: 8px;
+                cursor: pointer;
+            }
+            
+
+            .pagination {
+                margin-top: 15px;
+                display: flex;
+                gap: 15px;
+        
+                button {
+                    background-color: teal;
+                }
+        
+                button:disabled {
+                    background-color: #888;
+                }
+            }
+        }
+
+        button {
+            border: 1px solid #fff;
+            background-color: limegreen;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .report-table {
+            width: 95%;
+            border-collapse: collapse;
+            text-align: left;
+            padding: 8px;
+            border: 1px solid white;
+            margin: 10px;
+
+            th {
+                white-space: nowrap;
+                border: 3px solid white;
+                padding: 8px;
+            }
+
+            .sort-button {
+                font-weight: bold;
+                background-color: teal;
+                padding: 2px;
+                cursor: pointer;
+                color: white;
+                border-radius: 5px;
+                border: none;
+                font-size: 16px;
+                padding: 4px 8px;
+            }
+
+            td {
+                border: 1px solid white;
+                padding: 8px;
+            }
+        }
+    }
+}

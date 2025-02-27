@@ -1,0 +1,53 @@
+.search-bar-container {
+    color: white;
+
+    .search-bar-and-select-container {
+        display: flex;
+        gap: 15px;
+
+        select {
+            border: 1px solid #fff;
+            background-color: teal;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 8px;
+            cursor: pointer;
+        }
+    }
+
+    .btn-cluster {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    button {
+        border: 1px solid #fff;
+        background-color: limegreen;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .delete-btn {
+        background-color: red;
+    }
+
+    .pagination {
+        margin-top: 15px;
+        display: flex;
+        gap: 15px;
+
+        button {
+            background-color: teal;
+        }
+
+        button:disabled {
+            background-color: #888;
+        }
+    }
+}

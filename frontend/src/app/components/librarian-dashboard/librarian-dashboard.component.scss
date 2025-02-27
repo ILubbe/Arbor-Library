@@ -1,0 +1,60 @@
+.librarian-dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    .home-btn-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        position: relative;
+
+        .home-btn {
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: teal;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px;
+            position: absolute;
+            left: 0px;
+        }
+
+        .banner-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            color: limegreen;
+        }
+    }
+
+    .tabs {
+        display: flex;
+        width: 100%;
+        background-color: #333;
+        
+        button {
+            flex-grow: 1;
+            color: #fff;
+            font-size: 16px;
+            padding: 12px 20px;
+            border-top: 2px solid white;
+            border-left: 1px solid white;
+            border-right: 1px solid white;
+            border-bottom: none;
+            border-radius: 5px 5px 0px 0px;
+            cursor: pointer;
+        }
+
+        button:nth-child(1) { background-color: rgb(100 ,0 ,0); }
+        button:nth-child(2) { background-color: rgb(100, 100, 0); }
+        button:nth-child(3) { background-color: rgb(0, 100, 0); }
+        button:nth-child(4) { background-color: rgb(0, 100, 100); }
+        button:nth-child(5) { background-color: rgb(0, 0, 100); }
+        button:nth-child(6) { background-color: rgb(100, 0, 100); }
+    }
+}

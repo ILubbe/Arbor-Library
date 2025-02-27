@@ -2,8 +2,8 @@
     <h3>Check Out Books</h3>
     <div class="form-container">
         <div class="input-section">
-            <p>Enter a User ID, or search for a User</p>
-            <label for="userId">User ID:</label>
+            <h3>Enter a User ID, or search for a User</h3>
+            <label for="userId"><h3>User ID:</h3></label>
             <input type="text" id="userId" [(ngModel)]="userId" [value]="userId" placeholder="Enter User ID" required>
             @if (!userId) {
                 <app-search-bar
@@ -19,8 +19,8 @@
         </div>
   
         <div class="input-section">
-            <p>Enter a Book ID, or search for a Book</p>
-            <label for="bookId">Book ID:</label>
+            <h3>Enter a Book ID, or search for a Book</h3>
+            <label for="bookId"><h3>Book ID:</h3></label>
             <input type="text" id="bookId" [(ngModel)]="bookId" [value]="bookId" placeholder="Enter Book ID" required>
             @if (!bookId) {
                 <app-search-bar

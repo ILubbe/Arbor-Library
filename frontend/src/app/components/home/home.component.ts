@@ -39,6 +39,7 @@ export class HomeComponent implements OnInit {
   userLastName: string = '';
   userRole: string = '';
   isLibrarian: boolean = false;
+  total: number = -1;
 
   // for book Details modal with search results
   bookDetails: any = '';
@@ -67,6 +68,7 @@ export class HomeComponent implements OnInit {
       this.isLibrarian = true;
     }
     this.fetchUserProfile();
+    this.fetchBooksCount();
   }
 
   fetchUserProfile(): void {
@@ -78,6 +80,17 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
+      }
+    });
+  }
+
+  fetchBooksCount(): void {
+    this.bookService.getAllSorted('id', 'asc', 1, 1).subscribe({
+      next: (response) => {
+        this.total = response.total;
+      },
+      error: (error) => {
+        console.log(error || 'could not fetch books count');
       }
     });
   }

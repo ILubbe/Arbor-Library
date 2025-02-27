@@ -18,7 +18,7 @@ export class SignUpComponent {
   passwordConfirmation: string = '';
   firstName: string = '';
   lastName: string = '';
-  errorMessage: string = '';
+  errorMessage: string | string[] = '';
   successMessage: string = '';
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -44,5 +44,9 @@ export class SignUpComponent {
         this.errorMessage = error.error?.message || "Something went wrong";
       }
     });
+  }
+
+  isArray(value: any): boolean {
+    return Array.isArray(value);
   }
 }

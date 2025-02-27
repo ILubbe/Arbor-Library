@@ -1,14 +1,26 @@
 <div class="home-container">
-   <h2>Welcome, {{ userRole }} {{ userFirstName }} {{ userLastName }}</h2>
-      <button (click)="logout()">Logout</button>
-   <!-- Display Librarian Dashboard link only if the user is a librarian -->
-   @if (isLibrarian) {
-      <button [routerLink]="['/librarian-dashboard']">Go to Librarian Dashboard</button>
-   }
-   <button (click)="viewAccount()">My Account</button>
-   <button (click)="viewReservations()">My Reserved Books</button>
-   <button (click)="viewCheckouts()">My Checked Out Books</button>
+   <div class="navbar">
+      <h2>Welcome, {{ userRole }} {{ userFirstName }} {{ userLastName }}</h2>
+      <div class="nav-btns">
+         <!-- Display Librarian Dashboard link only if the user is a librarian -->
+         @if (isLibrarian) {
+            <button [routerLink]="['/librarian-dashboard']" class="librarian-dashboard-btn">Librarian Dashboard</button>
+         }
+         <button (click)="viewReservations()">My Reservations</button>
+         <button (click)="viewCheckouts()">My Checkouts</button>
+         <button (click)="viewAccount()">My Account</button>
+         <button (click)="logout()" class="logout-btn">Logout</button>
+      </div>
+   </div>
    <div class="home-search">
+      <h1>Arbor Library</h1>
+      <h2>
+         Explore Our Collection of 
+         @if (total > -1) {
+            <span class="book-count">{{ total }}</span>
+         }
+         Books
+      </h2>
       <app-search-bar
          [isHomePage]="isHomePage"
          [isBookSearch]="isBookSearch"
@@ -18,20 +30,20 @@
          (itemSelected)="onItemSelected($event)"
       ></app-search-bar>
    </div>
-      <div class="home-modal">
-         <app-modal
-            [isHomePage]="isHomePage"
-            [isBookDetailsModal]="isBookDetailsModal"
-            [isMyReservationsModal]="isMyReservationsModal"
-            [isMyAccountModal]="isMyAccountModal"
-            [isMyCheckoutsModal]="isMyCheckoutsModal"
-            [showModal]="showModal"
-            [modalTitle]="modalTitle"
-            [bookDetails]="bookDetails"
-            [reservations]="reservations"
-            [userDetails]="userDetails"
-            [checkouts]="checkouts"
-            (closeModal)="closeModal()">
-         </app-modal>
-      </div>
+   <div class="home-modal">
+      <app-modal
+         [isHomePage]="isHomePage"
+         [isBookDetailsModal]="isBookDetailsModal"
+         [isMyReservationsModal]="isMyReservationsModal"
+         [isMyAccountModal]="isMyAccountModal"
+         [isMyCheckoutsModal]="isMyCheckoutsModal"
+         [showModal]="showModal"
+         [modalTitle]="modalTitle"
+         [bookDetails]="bookDetails"
+         [reservations]="reservations"
+         [userDetails]="userDetails"
+         [checkouts]="checkouts"
+         (closeModal)="closeModal()">
+      </app-modal>
+   </div>
 </div>

@@ -1,12 +1,19 @@
-<button [routerLink]="['/home']">Return Home</button>
-<!-- Display Librarian Dashboard links only if the user is a librarian -->
-@if (isLibrarian) {
-    <button [routerLink]="['in']">Check In</button>
-    <button [routerLink]="['out']">Check Out</button>
-    <button [routerLink]="['manage-inventory']">Manage Inventory</button>
-    <button [routerLink]="['manage-users']">Manage Users</button>
-    <button [routerLink]="['cancel-reservations']">Cancel Reservations</button>
-    <button [routerLink]="['reports']">Reports</button>
-}
+<div class="librarian-dashboard-container">
+    <div class="home-btn-container">
+        <button [routerLink]="['/home']" class="home-btn">Return Home</button>
+        <span class="banner-title"><h1>Librarian Dashboard</h1></span>
+    </div>
+    <!-- Display Librarian Dashboard links only if the user is a librarian -->
+    @if (isLibrarian) {
+        <div class="tabs">
+            <button [routerLink]="['in']">Check In</button>
+            <button [routerLink]="['out']">Check Out</button>
+            <button [routerLink]="['manage-inventory']">Manage Inventory</button>
+            <button [routerLink]="['manage-users']">Manage Users</button>
+            <button [routerLink]="['cancel-reservations']">Cancel Reservations</button>
+            <button [routerLink]="['reports']">Reports</button>
+        </div>
+    }
 
-<router-outlet></router-outlet>
+    <router-outlet></router-outlet>
+</div>

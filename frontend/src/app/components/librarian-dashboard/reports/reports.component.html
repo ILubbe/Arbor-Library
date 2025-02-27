@@ -1,68 +1,71 @@
-<div class="reservations-container">
+<div class="reports-container">
     <h3>Generate A Report</h3>
-    <label for="model"><b>Get Report On: </b></label>
-    @if (modelOptions.length > 0) {
-        <select [(ngModel)]="selectedModel" class="model-select">
-        <option value="">-- Select Model --</option>
-        @for (model of modelOptions; track model) {
-            <option [value]="model">{{ model }}</option>
-        } @empty {
-            <option>No models available</option>
-        }
-        </select>
-    }
-
-    @if (perPageOptions.length > 0) {
-        <label for="perPage"><b>Results/Page: </b></label>
-        <select [(ngModel)]="selectedPerPage" class="per-page-select">
-        @for (perPage of perPageOptions; track perPage) {
-            <option [value]="perPage">{{ perPage }}</option>
-        } @empty {
-            <option>No per-page options available</option>
-        }
-        </select>
-    }
-
-    <button (click)="generateReport()" [disabled]="!selectedModel" class="generate-button">Go!</button>
-    @if (total > 0) {
-        <div>
-            <div class="results-info">
-                <p>Found {{ total }} Results</p>
-                <p>Page {{ page }} of {{ totalPages }}</p>
-            </div>
-            <div class="pagination">
-                <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
-                <button (click)="changePage(page + 1)" [disabled]="page * selectedPerPage >= total">Next</button>
-            </div>
-        </div>  
-    }
-    
-    @if (response) {
-        <table class="report-table">
-            <thead class="report-head">
-                <tr>
-                    @for (key of tableHeaders; track key) {
-                        <th>
-                            {{ camelCaseToTitleCase(key) }}
-                            <!-- Don't show sort button for Genres, cant sort these -->
-                            @if (key !== 'genres') { 
-                                <button (click)="sort(key)" class="sort-button">Sort</button>
-                            }
-                        </th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @for (row of response; track row) {
-                    <tr>
-                        @for (key of tableHeaders; track key) {
-                        <td>
-                            {{ row[key] }}
-                        </td>
-                        }
-                    </tr>
+    <div class="form-container">
+        <div class="generate-container">
+            <label for="model"><h3>Get Report On: </h3></label>
+            @if (modelOptions.length > 0) {
+                <select [(ngModel)]="selectedModel" class="model-select">
+                <option value="">-- Select Model --</option>
+                @for (model of modelOptions; track model) {
+                    <option [value]="model">{{ model }}</option>
+                } @empty {
+                    <option>No models available</option>
                 }
-            </tbody>
-        </table>
-    }
+                </select>
+            }
+
+            @if (perPageOptions.length > 0) {
+                <label for="perPage"><h3>Results/Page: </h3></label>
+                <select [(ngModel)]="selectedPerPage" class="per-page-select">
+                @for (perPage of perPageOptions; track perPage) {
+                    <option [value]="perPage">{{ perPage }}</option>
+                } @empty {
+                    <option>No per-page options available</option>
+                }
+                </select>
+            }
+            <button (click)="generateReport()" [disabled]="!selectedModel" class="generate-button">Go!</button>
+            @if (total > 0) {
+                <div>
+                    <div class="results-info">
+                        <p>Found {{ total }} Results</p>
+                        <p>Page {{ page }} of {{ totalPages }}</p>
+                    </div>
+                    <div class="pagination">
+                        <button (click)="changePage(page - 1)" [disabled]="page <= 1">Prev</button>
+                        <button (click)="changePage(page + 1)" [disabled]="page * selectedPerPage >= total">Next</button>
+                    </div>
+                </div>  
+            }
+            
+            @if (response) {
+                <table class="report-table">
+                    <thead class="report-head">
+                        <tr>
+                            @for (key of tableHeaders; track key) {
+                                <th>
+                                    {{ camelCaseToTitleCase(key) }}
+                                    <!-- Don't show sort button for Genres, cant sort these -->
+                                    @if (key !== 'genres') { 
+                                        <button (click)="sort(key)" class="sort-button">&#x21C5;</button>
+                                    }
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="report-rows">
+                        @for (row of response; track row) {
+                            <tr>
+                                @for (key of tableHeaders; track key) {
+                                <td>
+                                    {{ row[key] }}
+                                </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
 </div>

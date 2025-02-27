@@ -1,10 +1,18 @@
 <div class="sign-up-container">
+    <h1>Arbor Library</h1>
     <h2>Create An Account</h2>
     @if (errorMessage) {
         <div NgIf="errorMessage" class="error-message" style="color: red; font-size: 14px;">
-            {{ errorMessage }}
+            @if (isArray(errorMessage)) {
+                @for (error of errorMessage; track error) {
+                    <p>{{ error }}</p>
+                }
+            } @else {
+                <p>{{ errorMessage }}</p>
+            }
         </div>
     }
+
     <form (ngSubmit)="onSubmit()">
         <div>
             <label for="email">Email</label>
@@ -26,8 +34,12 @@
             <label for="lastName">Last Name</label>
             <input type="text" id="lastName" [(ngModel)]="lastName" name="lastName" placeholder="Doe" required/>
         </div>
-        <button type="submit">Submit</button>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+        <p>Already have an account?</p>
+        <div>
+            <button [routerLink]="['/login']" class="login-btn">Login</button>
+        </div>
     </form>
-    <p>Already have an account?</p>
-    <button [routerLink]="['/login']">Login</button>
 </div>

@@ -12,7 +12,8 @@
   
 .modal-content {
     position: relative;
-    background-color: #fff;
+    color: black;
+    background-color: #ddd;
     border-radius: 8px;
     width: 80%;
     max-width: 600px;
@@ -37,7 +38,70 @@
     overflow-y: auto;
     padding-right: 10px;
 }
-  
-.reserve-btn {
-    margin-top: 10px;
+
+.btn-cluster {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    button {
+        border: 1px solid #fff;
+        background-color: limegreen;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .del-btn {
+        background-color: red;
+    }
+
+    #associate-genres-btn {
+        background-color: teal;
+    }
+}
+
+select {
+    border: 1px solid #fff;
+    background-color: teal;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 8px;
+    cursor: pointer; 
+}
+
+.pagination {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    button {
+        border: 1px solid #fff;
+        background-color: teal;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 8px;
+        cursor: pointer; 
+    }
+}
+
+
+.pagination {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+
+    button {
+        background-color: teal;
+    }
+
+    button:disabled {
+        background-color: #888;
+    }
 }

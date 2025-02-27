@@ -10,7 +10,7 @@
                     <p><b>Author:</b> {{ bookDetails.author }}</p>
                     <p><b>First Publish Year:</b> {{ bookDetails.firstPublishYear }}</p>
                     <p><b>Genres:</b> {{ bookDetails.genres.join(', ')}}</p>
-                    <button (click)="createMyReservation(bookDetails.id)">Reserve Now!</button>
+                    <span class="btn-cluster"><button (click)="createMyReservation(bookDetails.id)" class="eas-btn">Reserve Now!</button></span>
                 </div>
             }
             @if (isHomePage && isMyAccountModal && !isEditMode) {
@@ -19,9 +19,9 @@
                     <p><b>Role:</b> {{ userDetails.role }}</p>
                     <p><b>First Name:</b> {{ userDetails.firstName }}</p>
                     <p><b>Last Name:</b> {{ userDetails.lastName}}</p>
-                    <span>
-                        <button (click)="editMyAccount()">Edit Account</button>
-                        <button (click)="deleteMyAccount()">Delete Account</button>
+                    <span class="btn-cluster">
+                        <button (click)="editMyAccount()" class="eas-btn">Edit Account</button>
+                        <button (click)="deleteMyAccount()" class="del-btn">Delete Account</button>
                     </span>
                 </div>
             } 
@@ -46,10 +46,10 @@
                         <input type="password" id="password" [(ngModel)]="passwordConfirmation" name="passwordConfirmation" required>
                     </p>
               
-                    <div class="button-group">
-                        <button type="button" (click)="saveMyAccount()">Save</button>
-                        <button type="button" (click)="cancelMyAccountEdit()">Cancel</button>
-                    </div>
+                    <span class= "btn-cluster">
+                        <button (click)="saveMyAccount()" class="eas-btn">Save</button>
+                        <button (click)="cancelMyAccountEdit()" class="del-btn">Cancel</button>
+                    </span>
                 </form>
             }
             @if (isHomePage && isMyReservationsModal) {
@@ -63,7 +63,7 @@
                             <p><b>Reserved At:</b> {{ reservation.reservedAt }}</p>
                             <p><b>Expires At:</b> {{ reservation.expiresAt }}</p>
                             @if (reservation.status == "active" || reservation.status == "waiting") {
-                                <button (click)="cancelMyReservation(reservation.id)">Cancel Reservation</button>
+                                <span class="btn-cluster"><button (click)="cancelMyReservation(reservation.id)" class="del-btn">Cancel Reservation</button></span>
                             }
                             <br>
                         </li>
@@ -124,7 +124,7 @@
                     <p>
                         <label for="genres"><b>Genres: </b></label>
                         @if (!showGenres) {
-                            <button type="button" (click)="getGenres()">Associate Genres</button>
+                            <span class="btn-cluster"><button (click)="getGenres()" class="eas-btn" id="associate-genres-btn">Associate Genres</button></span>
                         }
                         <div>
                             @if (showGenres) {
@@ -139,15 +139,15 @@
                                     </label>
                                 }
 
-                                <div class="button-group">
-                                    <button type="button" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
-                                    <button type="button" (click)="nextPage()" [disabled]="currentPage * perPage >= allGenres.length">Next</button>
+                                <div class="pagination">
+                                    <button (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+                                    <button (click)="nextPage()" [disabled]="currentPage * perPage >= allGenres.length">Next</button>
                                     <p> Page {{ currentPage }} of {{ totalPages }}</p>
                                 </div>
 
-                                <div class="button-group">
-                                    <button type="button" (click)="saveGenreSelection()">Save Genres</button>
-                                    <button type="button" (click)="closeGenres()">Cancel</button>
+                                <div class="btn-cluster">
+                                    <button (click)="saveGenreSelection()" class="eas-btn">Save Genres</button>
+                                    <button (click)="closeGenres()" class="del-btn">Cancel</button>
                                 </div>
                             }
                         </div>
@@ -162,9 +162,9 @@
                         </select>
                     </p>
               
-                    <div class="button-group">
-                        <button type="button" (click)="saveBook()">Save</button>
-                        <button type="button" (click)="close()">Cancel</button>
+                    <div class="btn-cluster">
+                        <button (click)="saveBook()" class="eas-btn">Save</button>
+                        <button (click)="close()" class="del-btn">Cancel</button>
                     </div>
                 </form>
             }
@@ -190,9 +190,9 @@
                         </select>
                     </p>
 
-                    <div class="button-group">
-                        <button type="button" (click)="saveBook()">Add Book</button>
-                        <button type="button" (click)="close()">Cancel</button>
+                    <div class="btn-cluster">
+                        <button (click)="saveBook()" class="eas-btn">Add Book</button>
+                        <button (click)="close()" class="del-btn">Cancel</button>
                     </div>
                 </form>
             }
@@ -201,9 +201,9 @@
                     <label for="Genre Name"><b>Genre Name: </b></label>
                     <input type="text" id="genreName" [(ngModel)]="genreName" name="genreName" required>
                 </p>
-                <div class="button-group">
-                    <button type="button" (click)="saveGenre()">Add Genre</button>
-                    <button type="button" (click)="close()">Cancel</button>
+                <div class="btn-cluster">
+                    <button (click)="saveGenre()" class="eas-btn">Add Genre</button>
+                    <button (click)="close()" class="del-btn">Cancel</button>
                 </div>
             }
         </div>
