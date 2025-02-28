@@ -77,32 +77,3 @@ def create_genre():
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
     return jsonify({"message": f"Genre {genre} added!"}), 201
-
-""" # delete a genre by id
-@genres_bp.route("/<int:genre_id>", methods=["DELETE"], strict_slashes=False)
-@jwt_required()
-@role_required('librarian')
-def delete_genre(genre_id):
-    genre = Genre.query.get(genre_id)
-
-    if not genre:
-        return jsonify({"message": "Genre not found"}), 404
-    try:
-        db.session.delete(genre)
-        db.session.commit()
-    except Exception as e:
-        return jsonify({"message": "Something went wrong, please try again"}), 500
-
-    return jsonify({"message": "Genre deleted successfully"}), 200 """
-
-
-""" # get a genre by id
-@genres_bp.route("/<int:genre_id>", methods=["GET"])
-@jwt_required()
-def get_genre_by_id(genre_id):
-    genre = Genre.query.get(genre_id)
-
-    if genre is None:
-        return jsonify({"message": "Genre not found"}), 404
-    
-    return jsonify({"genre": genre.serialize()}) """
