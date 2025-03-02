@@ -13,7 +13,7 @@ books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres'
 @role_required('librarian')
 def get_genres_by_book(book_id):
     # ensure the book exists
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
@@ -47,18 +47,18 @@ def associate_book_to_genre():
     genre_id = request.json.get("genreId")
 
     # ensure book and genre actually exist, and book isn't already associated to the genre
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
-    genre = Genre.query.get(genre_id)
+    genre = Genre.query.session.get(Genre, genre_id)
     if not genre:
         return jsonify({"message": "Genre not found"}), 404
 
     # Check if the book is already associated with the genre
     existing_association = Book_Genre.query.filter_by(book_id=book_id, genre_id=genre_id).first()
     if existing_association:
-        return jsonify({"message": "Book is already associated with this genre"}), 400
+        return jsonify({"message": "Book is already associated with this genre"}), 200
 
 
     # create new association
@@ -88,11 +88,11 @@ def associate_book_to_genre():
 @jwt_required()
 @role_required('librarian')
 def delete_book_genre_association(book_id, genre_id):
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
-    genre = Genre.query.get(genre_id)
+    genre = Genre.query.session.get(Genre, genre_id)
     if not genre:
         return jsonify({"message": "Genre not found"}), 404
 
@@ -106,4 +106,4 @@ def delete_book_genre_association(book_id, genre_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "Book-Genre association deleted successfully"}), 200
+    return jsonify({"message": "Book-Genre association deleted successfully"}), 201

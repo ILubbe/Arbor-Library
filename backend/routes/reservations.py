@@ -45,7 +45,7 @@ def get_my_reservations():
 
     reservations_by_user = Reservation.query.filter_by(user_id=user.id).all()
     if not reservations_by_user:
-        return jsonify({"message": "You have no reservations"}), 404
+        return jsonify({"reservations": []}), 200
 
     json_reservations = list(map(lambda x: x.serialize(), reservations_by_user))
     
@@ -57,7 +57,7 @@ def get_my_reservations():
 @jwt_required()
 def create_my_reservation():
     current_user = get_jwt_identity()
-    user = User.query.filter_by(id=current_user).first()
+    user = User.query.session.get(User, current_user)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -75,7 +75,7 @@ def create_my_reservation():
     # convert json keys to valid db columns
     book_id = request.json.get("bookId")
 
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
@@ -126,7 +126,7 @@ def create_my_reservation():
 @jwt_required()
 def cancel_my_reservation(reservation_id):
     current_user = get_jwt_identity()
-    user = User.query.filter_by(id=current_user).first()
+    user = User.query.session.get(User, current_user)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -140,14 +140,14 @@ def cancel_my_reservation(reservation_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "Your reservation was deleted successfully"}), 200
+    return jsonify({"message": "Your reservation was deleted successfully"}), 201
 
 # delete (cancel) a reservation by id
 @reservations_bp.route("/<int:reservation_id>", methods=["DELETE"], strict_slashes=False)
 @jwt_required()
 @role_required('librarian')
 def delete_reservation(reservation_id):
-    reservation = Reservation.query.get(reservation_id)
+    reservation = Reservation.query.session.get(Reservation, reservation_id)
 
     if not reservation:
         return jsonify({"message": "Reservation not found"}), 404
@@ -157,4 +157,4 @@ def delete_reservation(reservation_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "Reservation deleted successfully"}), 200
+    return jsonify({"message": "Reservation deleted successfully"}), 201

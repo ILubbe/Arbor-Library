@@ -68,7 +68,7 @@ def search():
     field = request.args.get('field') # optional
 
     if not model:
-        return jsonify({"message": "Model is required in search"}), 400
+        return jsonify({"message": "Model and query is required in search"}), 400
 
     if field:
         field = field.replace("-", "_").lower() # change field from URL friendly to DB friendly

@@ -55,28 +55,31 @@ def check_if_refresh_token_is_revoked(jwt_header, jwt_payload):
 @login_bp.route('/refresh', methods=["POST"], strict_slashes=False)
 @jwt_required(refresh=True)
 def refresh():
+    # get refresh token's identifier
     current_user = get_jwt_identity()
     current_refresh_token_jti = get_jwt()['jti']
+
+    # set token as revoked with ttl of 30 days in redis
     r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
 
-    user = User.query.get(current_user)
+    user = User.query.session.get(User, current_user)
     new_access_token = create_access_token(identity=current_user, additional_claims={"role": user.role})
     new_refresh_token = create_refresh_token(identity=current_user)
 
-    return jsonify(accessToken=new_access_token, refreshToken=new_refresh_token), 200
+    return jsonify(accessToken=new_access_token, refreshToken=new_refresh_token), 201
 
 # revokes a refresh token
 @login_bp.route('/logout', methods=["POST"], strict_slashes=False)
 @jwt_required(refresh=True)
 def logout():
     # get refresh token's identifier
+    current_user = get_jwt_identity()
     current_refresh_token_jti = get_jwt()['jti']
 
     # set token as revoked with ttl of 30 days in redis
     r.setex(current_refresh_token_jti, 60 * 60 * 24 * 30, "revoked")
 
-    current_user = get_jwt_identity()
-    user = User.query.get(current_user)
+    user = User.query.session.get(User, current_user)
     print(f"{user.email} (id: {user.id}) has logged out")
 
-    return jsonify({"message": "Successfully logged out, please close your browser"}), 200
+    return jsonify({"message": "Successfully logged out, please close your browser"}), 201

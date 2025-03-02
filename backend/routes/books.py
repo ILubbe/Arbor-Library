@@ -39,7 +39,7 @@ def get_books():
 @books_bp.route("/<int:book_id>", methods=["GET"])
 @jwt_required()
 def get_book_by_id(book_id):
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
 
     if book is None:
         return jsonify({"message": "Book not found"}), 404
@@ -107,7 +107,7 @@ def create_book():
 @jwt_required()
 @role_required('librarian')
 def delete_book(book_id):
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
 
     if not book:
         return jsonify({"message": "Book not found"}), 404
@@ -117,14 +117,14 @@ def delete_book(book_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "Book deleted successfully"}), 200
+    return jsonify({"message": "Book deleted successfully"}), 201
 
 # update a book's info
 @books_bp.route("/<int:book_id>", methods=["PUT"], strict_slashes=False)
 @jwt_required()
 @role_required('librarian')
 def change_book_info(book_id):
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 

@@ -57,11 +57,11 @@ def create_checkout():
     book_id = request.json.get("bookId")
 
     # ensure an active checkout doesn't already exist for this user & book, ensure the book and user exists
-    user = User.query.get(user_id)
+    user = User.query.session.get(User, user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    book = Book.query.get(book_id)
+    book = Book.query.session.get(Book, book_id)
     if not book:
         return jsonify({"message": "Book not found"}), 404
 
@@ -100,12 +100,12 @@ def create_checkout():
 @jwt_required()
 @role_required('librarian')
 def check_in_book(checkout_id):
-    checkout = Checkout.query.get(checkout_id)
+    checkout = Checkout.query.session.get(Checkout, checkout_id)
     if not checkout:
         return jsonify({"message": "Checkout record not found"}), 404
     
     if checkout.returned == True:
-        return jsonify({"message": "Book already checked in"}), 400
+        return jsonify({"message": "Book already checked in"}), 200
 
     # this promotes a waiting reservation to active
     book_id = checkout.book_id
@@ -131,13 +131,13 @@ def check_in_book(checkout_id):
 @jwt_required()
 def get_my_checkouts():
     current_user = get_jwt_identity()
-    user = User.query.filter_by(id=current_user).first()
+    user = User.query.session.get(User, current_user)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
     checkouts_by_user = Checkout.query.filter_by(user_id=user.id).all()
     if not checkouts_by_user:
-        return jsonify({"message": "You have no checkouts"}), 404
+        return jsonify({"checkouts": []}), 200
 
     json_checkouts = list(map(lambda x: x.serialize(), checkouts_by_user))
     

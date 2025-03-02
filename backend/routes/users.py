@@ -41,7 +41,7 @@ def get_users():
 @jwt_required()
 @role_required('librarian')
 def get_user_by_id(user_id):
-    user = User.query.get(user_id)
+    user = User.query.session.get(User, user_id)
 
     if not user:
         return jsonify({"message": "User not found"}), 404
@@ -131,7 +131,7 @@ def create_user():
 @jwt_required()
 @role_required('librarian')
 def delete_user(user_id):
-    user = User.query.get(user_id)
+    user = User.query.session.get(User, user_id)
 
     if not user:
         return jsonify({"message": "User not found"}), 404
@@ -141,7 +141,7 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "User deleted successfully"}), 200
+    return jsonify({"message": "User deleted successfully"}), 201
 
 # delete yourself
 @users_bp.route("/profile", methods=["DELETE"], strict_slashes=False)
@@ -157,14 +157,14 @@ def delete_profile():
     except Exception as e:
         return jsonify({"message": "Something went wrong, please try again"}), 500
 
-    return jsonify({"message": "User deleted successfully"}), 200
+    return jsonify({"message": "User deleted successfully"}), 201
 
 # update a user's role, change from patron to librarian or librarian to patron (toggle)
 @users_bp.route("/<int:user_id>", methods=["PATCH"], strict_slashes=False)
 @jwt_required()
 @role_required('librarian')
 def change_user_role(user_id):
-    user = User.query.get(user_id)
+    user = User.query.session.get(User, user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -187,7 +187,7 @@ def change_user_role(user_id):
 @jwt_required()
 def change_profile_info():
     current_user = get_jwt_identity()
-    user = User.query.filter_by(id=current_user).first()
+    user = User.query.session.get(User, current_user)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
