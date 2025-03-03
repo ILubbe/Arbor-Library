@@ -29,24 +29,24 @@ if __name__ == '__main__':
         try:
             with app.app_context():
                 app.es.ping()
-                print('Seed: Connected to ElasticSearch!')
+                print('Connected to ElasticSearch!')
                 db.create_all()
-                print('Seed: Connected to MariaDB, schema exists!')
+                print('Connected to MariaDB, schema exists!')
                 r.ping()
-                print('Seed: Connected to Redis!')
+                print('Connected to Redis!')
                 # can toggle off seedping by setting BOOTSTRAP env var to FALSE
-                seed = os.getenv('BOOTSTRAP', 'TRUE').upper() in ['TRUE', '1']
+                seed = os.getenv('SEED', 'TRUE').upper() in ['TRUE', '1']
                 if seed:
                     create_default_admin_user()
                     # can set how many books to pull in
-                    db_book_count = int(os.getenv('DB_BOOK_COUNT', 8145))
+                    db_book_count = int(os.getenv('SEED_BOOK_COUNT', 8145))
                     fetch_and_populate_books(db_book_count)
                 break
-        except:
+        except Exception as e:
             retries += 1
-            print(f"Seed: Waiting for database, redis, and elasticsearch connections. Attmept {retries} of {max_retries}.")
+            print(f"Seed: Waiting for database, redis, and elasticsearch connections. Attmept {retries} of {max_retries}. {e}")
             if retries < max_retries:
                 time.sleep(delay)
             else:
                 print('Seed: start up failure')
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

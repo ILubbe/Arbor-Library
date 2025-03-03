@@ -58,7 +58,7 @@ def fetch_and_populate_books(max_books):
             "philosophy"
         ]
 
-        base_url = "https://openlibrary.org"
+        base_url = "https://openlibrary.org" # openlibrary.org
         conditions = ["new", "good", "fair", "poor", "unknown"]
         
         # openlibrary.org has a limit of 1000 books per request.

@@ -1,0 +1,89 @@
+services:
+  mariadb:
+    image: mariadb:11.6.2
+    container_name: arbor-lwa-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: "arbor"
+      MARIADB_DATABASE: "arbor"
+      MARIADB_USER: "arbor"
+      MARIADB_PASSWORD: "arbor"
+    ports:
+      - "3306:3306"
+    networks:
+      - arbor-lwa-network
+
+  elasticsearch:
+    image: docker.io/library/elasticsearch:8.17.1
+    container_name: arbor-lwa-elasticsearch
+    restart: unless-stopped
+    environment:
+      discovery.type: "single-node"
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+    networks:
+      - arbor-lwa-network
+
+  redis:
+    image: redis:7.4.2
+    container_name: arbor-lwa-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - arbor-lwa-network
+
+  backend:
+    build:
+      context: ../../backend
+    image: arbor-lwa-backend
+    container_name: arbor-lwa-backend
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+      - elasticsearch
+      - redis
+    environment:
+      DB_USER: "arbor"
+      DB_PASSWORD: "arbor"
+      DB_HOST: "arbor-lwa-mariadb"
+      DB_PORT: "3306"
+      DB_NAME: "arbor"
+      REDIS_HOST: "arbor-lwa-redis"
+      REDIS_PORT: "6379"
+      ELASTICSEARCH_HOST: "arbor-lwa-elasticsearch"
+      ELASTICSEARCH_PORT: "9200"
+      JWT_SECRET_KEY: "arbor1234567890arbor1234567890arbor1234567890"
+      SEED_BOOK_COUNT: "200"
+    healthcheck:
+      # seeding the database could take a while
+      test: ["CMD", "sh", "-c", "until curl localhost:5000; do sleep 10; done;"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    ports:
+      - "5000:5000"
+    networks:
+      - arbor-lwa-network
+    command: >
+      /bin/sh -c "sleep 30 && python app.py"
+
+  frontend:
+    build:
+      context: ../../frontend
+    image: arbor-lwa-frontend
+    container_name: arbor-lwa-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    networks:
+      - arbor-lwa-network
+
+networks:
+  arbor-lwa-network:
+    driver: bridge
