@@ -27,8 +27,7 @@
 - **Description:** Relational database management system for persistant storage of structured data.
 - **Responsibilities:**
     - CRUD operations on structured data tables.
-    
-**Class Diagram:**
+    - **Class Diagram:**
 ![image](images/class-diagram.png)
 
 #### Search Engine Container
