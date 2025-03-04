@@ -36,6 +36,7 @@
                         <button (click)="changePage(page + 1)" [disabled]="page * selectedPerPage >= total">Next</button>
                     </div>
                 </div>  
+                <h3>Report generated at: {{ reportStamp }}</h3>
             }
             
             @if (response) {

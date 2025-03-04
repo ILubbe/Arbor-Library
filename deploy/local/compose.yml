@@ -56,13 +56,6 @@ services:
       ELASTICSEARCH_PORT: "9200"
       JWT_SECRET_KEY: "arbor1234567890arbor1234567890arbor1234567890"
       SEED_BOOK_COUNT: "200"
-    healthcheck:
-      # seeding the database could take a while
-      test: ["CMD", "sh", "-c", "until curl localhost:5000; do sleep 10; done;"]
-      interval: 30s
-      retries: 5
-      start_period: 10s
-      timeout: 10s
     ports:
       - "5000:5000"
     networks:
@@ -77,8 +70,7 @@ services:
     container_name: arbor-lwa-frontend
     restart: unless-stopped
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     ports:
       - "8080:80"
     networks:

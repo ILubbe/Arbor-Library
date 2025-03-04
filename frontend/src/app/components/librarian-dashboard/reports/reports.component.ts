@@ -32,6 +32,7 @@ export class ReportsComponent {
   perPageOptions: number[] = [10, 25, 50, 100, 250, 500, 1000]
   selectedPerPage: number = 25;
   totalPages: number = 1;
+  reportStamp: string = '';
   service!: ReportService;
 
   constructor(
@@ -43,6 +44,8 @@ export class ReportsComponent {
     ) {}
   
   generateReport(selectedColumn?: string) {
+    // report time stamp
+    this.reportStamp = new Date().toUTCString();
     if (this.selectedModel) {
       // ensure order is always 'asc' and col is always 'id' when changing models
       if (this.selectedModel !== this.previousSelectedModel) {
@@ -85,7 +88,7 @@ export class ReportsComponent {
   }
 
   sort(selectedColumn: string) {
-    this.changePage(1);
+    this.page = 1;
     this.order = this.order === 'asc' ? 'desc' : 'asc'; // toggle order
     this.generateReport(selectedColumn);
   }
