@@ -38,7 +38,7 @@
 
 #### Cache Container
 - **Tools/Frameworks:** Redis
-- **Description:** An in-memory cache to store quickly store and provide frequently accessed data.
+- **Description:** An in-memory cache to quickly store and provide frequently accessed data.
 - **Responsibilties:**
     - Quickly stores and provides revoked JSON Web Tokens to the backend, used in authentication.
     - Offloads read/write operations from the database.
