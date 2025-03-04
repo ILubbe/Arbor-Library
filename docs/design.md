@@ -28,7 +28,7 @@
 - **Responsibilities:**
     - CRUD operations on structured data tables.
     - **Class Diagram:**
-![image](images/class-diagram.png)
+    - ![image](images/class-diagram.png)
 
 #### Search Engine Container
 - **Tools/Frameworks:** ElasticSearch
