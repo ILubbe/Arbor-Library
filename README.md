@@ -1,13 +1,15 @@
 # Arbor Library Web Application
 
 ## Summary
-This Web Application was built for a fictional library "Arbor Library". It consists of 5 components:
+This Web Application was built for the fictional "Arbor Library".
 
-- A frontend container, a UI built with Angular, and served with Nginx.
-- A backend container, built with the Flask Python Framework, responsible for core business logic.
-- A database container, which utilizes MariaDB, to store User, Book, Reservation, Checkout, and Genre tables.
-- A search engine container, which utilizes ElasticSearch to provide a word search to users in the UI.
-- A cache container, which utilizes Redis to store revoked JSON web tokens once a user logs out or refreshes their page.
+It consists of 5 components:
+
+- Frontend container, a UI built with Angular, and served with Nginx for user interaction.
+- Backend Container: Built with the Flask Python Framework, responsible for core business logic.
+- Database Container: Utilizes MariaDB to store data that is important to the Library's operation.
+- Search Engine Container: Utilizes ElasticSearch to provide a word search for end users in the UI.
+- Cache Container: Utilizes Redis to store authorization/authentication tokens
 
 ## 📖 Documentation
 
