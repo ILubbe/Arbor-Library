@@ -7,7 +7,7 @@
 ### Sign Up
 - Click **"Sign Up"** button.
 
-  <img src="images/user_guide/blank_login.png" height="200"
+  <img src="images/user_guide/blank_login.png" height="200"/>
 
 - Input email, password, password confirmation, first name, and last name. Submit.
 
