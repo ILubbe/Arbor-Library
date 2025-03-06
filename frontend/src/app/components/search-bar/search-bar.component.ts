@@ -273,6 +273,7 @@ export class SearchBarComponent {
       // send userId to checkout search if on check in page
       if (this.isCheckinPage) {
         this.isUserSearch = false;
+        this.isReservationsSearch = false;
         this.isCheckoutSearch = true;
         this.selectedModel = 'Checkout';
         this.selectedField = 'user-id';
@@ -280,6 +281,7 @@ export class SearchBarComponent {
         this.onQueryChange(this.query);
       } else if (this.isReservationsPage) {
         this.isUserSearch = false;
+        this.isCheckoutSearch = false;
         this.isReservationsSearch = true;
         this.selectedModel = 'Reservation';
         this.selectedField = 'user-id';
@@ -294,6 +296,7 @@ export class SearchBarComponent {
       // send bookId to checkout search if on check in page
       if (this.isCheckinPage) {
         this.isBookSearch = false;
+        this.isReservationsSearch = false;
         this.isCheckoutSearch = true;
         this.selectedModel = 'Checkout';
         this.selectedField = 'book-id';
@@ -301,8 +304,9 @@ export class SearchBarComponent {
         this.onQueryChange(this.query);
       } else if (this.isReservationsPage) {
         this.isBookSearch = false;
+        this.isCheckoutSearch = false;
         this.isReservationsSearch = true;
-        this.selectedModel = 'Checkout';
+        this.selectedModel = 'Reservation';
         this.selectedField = 'book-id';
         this.query = this.bookId;
         this.onQueryChange(this.query);

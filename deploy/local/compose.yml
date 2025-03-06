@@ -55,7 +55,7 @@ services:
       ELASTICSEARCH_HOST: "arbor-lwa-elasticsearch"
       ELASTICSEARCH_PORT: "9200"
       JWT_SECRET_KEY: "arbor1234567890arbor1234567890arbor1234567890"
-      SEED_BOOK_COUNT: "200"
+      SEED_BOOK_COUNT: "16221"
     ports:
       - "5000:5000"
     networks:
