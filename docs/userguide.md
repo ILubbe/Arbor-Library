@@ -46,10 +46,10 @@
     - To view/cancel your reservations, click **"My Reservations"**
     - To view your checked out books, click **"My Checkouts"**
     - To view, edit, or delete your account, click **"My Account"**
-  <p align="center">
-    <img src="images/user_guide/my_reservations.png" width="400" height="400"/>
-    <img src="images/user_guide/my_checkouts.png" width="400" height="400"/>
-    <img src="images/user_guide/my_account.png" width="400" height="400"/>
+  <p align="center" height="400">
+    <img src="images/user_guide/my_reservations.png" width="400"/>
+    <img src="images/user_guide/my_checkouts.png" width="400"/>
+    <img src="images/user_guide/my_account.png" width="400"/>
   </p>
 
 
