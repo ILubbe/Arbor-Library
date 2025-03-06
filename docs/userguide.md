@@ -5,9 +5,9 @@
 ## Patron Guide
 
 ### Sign Up
-- Click "Sign Up" button.
+- Click **"Sign Up"** button.
 
-  ![image](images/user_guide/blank_login.png)
+  <img src="images/user_guide/blank_login.png" height="200"
 
 - Input email, password, password confirmation, first name, and last name. Submit.
 
@@ -26,7 +26,7 @@
 
   ![image](images/user_guide/patron_home_search.png)
 
-- Click the "View Details" button next to a search result to view more details, and "Reserve Now!" to reserve the title to check out later in person.
+- Click the **"View Details"** button under a search result to view more details, and **"Reserve Now!"** to reserve the title to check out later in person.
 
   ![image](images/user_guide/patron_home_book_details.png)
 
