@@ -39,7 +39,7 @@
 - Click the **"View Details"** button under a search result to view more details, and **"Reserve Now!"** to reserve the title to check out later in person.
 
   <p align="center">
-    <img src="images/user_guide/patron_home_book_details.png" width="300"/>
+    <img src="images/user_guide/patron_home_book_details.png" width="400"/>
   </p>
 
 - On the home page navbar:
@@ -47,9 +47,9 @@
     - To view your checked out books, click **"My Checkouts"**
     - To view, edit, or delete your account, click **"My Account"**
   <p align="center">
-    <img src="images/user_guide/my_reservations.png" width="300"/>
-    <img src="images/user_guide/my_checkouts.png" width="300"/>
-    <img src="images/user_guide/my_account.png" width="300"/>
+    <img src="images/user_guide/my_reservations.png" width="400" height="400"/>
+    <img src="images/user_guide/my_checkouts.png" width="400" height="400"/>
+    <img src="images/user_guide/my_account.png" width="400" height="400"/>
   </p>
 
 
