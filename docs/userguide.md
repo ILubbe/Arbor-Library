@@ -112,7 +112,7 @@
 - Check out a book out by entering a _User ID_ and _Book ID_, or by searching for a User and a Book to select them.
 
   <p>
-    <img src="images/user_guide/checkout.png" width="400"/>
+    <img src="images/user_guide/checkout.png" width="1000"/>
   </p>
   <br>
 
@@ -195,3 +195,9 @@
 **NOTE:** Librarian's may also simply enter the _Reservation ID_, if on hand, and click the **Cancel Reservation** button to accomplish the same task as above.
 
 ### Generate Reports
+- Generate a report on Users, Books, Genres, Checkouts, and Reservations.
+- To begin:
+  - Select a category for your report with the **Get Report On** Dropdown.
+  - Optionally, select a number of results to see per page.
+  - Click **Go!**
+  - After the report is generated, you may sort the results by column, and navigate to various pages of the returned data.
