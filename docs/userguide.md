@@ -200,4 +200,10 @@
   - Select a category for your report with the **Get Report On** Dropdown.
   - Optionally, select a number of results to see per page.
   - Click **Go!**
-  - After the report is generated, you may sort the results by column, and navigate to various pages of the returned data.
+
+- After the report is generated, you may sort the results by column, and navigate to various pages of the returned data.
+
+  <p>
+    <img src="images/user_guide/reports.png" width="400"/>
+  </p>
+  <br>
