@@ -204,6 +204,6 @@
 - After the report is generated, you may sort the results by column, and navigate to various pages of the returned data.
 
   <p>
-    <img src="images/user_guide/reports.png" width="400"/>
+    <img src="images/user_guide/reports.png" width="1000"/>
   </p>
   <br>
