@@ -39,6 +39,39 @@ It consists of 5 components:
         - **_This is sample data_**
         - The larger the count, the longer the backend container takes to begin accepting API requests.
 
+### AWS Deployment (ECS Fargate)
+- Log in to AWS, and grant a user the following permissions (attach policies):
+    - AmazonEC2ContainerRegistryFullAccess
+    - AmazonECS_FullAccess
+    - AmazonRoute53FullAccess
+    - AmazonVPCFullAccess
+    - AWSCertificateManagerFullAccess
+    - AWSCloudFormationFullAccess
+    - AWSCloudMapFullAccess
+    - CloudWatchLogsFullAccess
+    - ElasticLoadBalancingFullAccess
+    - IAMFullAccess
+
+- Generate an access key for this user
+
+- Set needed AWS account env variables
+    - export AWS_ACCESS_KEY_ID="_your key id_"
+    - export AWS_SECRET_ACCESS_KEY="_your secret key_"
+
+- Change directory to ./deploy/terraform
+
+- Ininitalize Terraform and planning
+    - terraform init
+    - terraform plan
+
+- Deploy
+    - terraform apply
+
+- Stop
+    - terraform destroy
+
+- Reach the UI at https://arbor-library.click
+
 ### Important Maintence Notes
 - The Default Admin's credentials are as follows. **Please Change The Password!**
     - Email: _defaultadmin@arbor-library.click_
