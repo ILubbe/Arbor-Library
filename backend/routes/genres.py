@@ -6,7 +6,7 @@ from utils.general_utils import *
 from utils.rbac_decorators import *
 
 # define blueprint
-genres_bp = Blueprint('genres', __name__, url_prefix='/genres')
+genres_bp = Blueprint('genres', __name__, url_prefix='/api/genres')
 
 # read all genres
 @genres_bp.route("/", methods=["GET"], strict_slashes=False)

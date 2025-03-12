@@ -1,4 +1,4 @@
-librarian_email = "defaultadmin@arborlibrary.com"
+librarian_email = "defaultadmin@arbor-library.click"
 librarian_password = "admin"
 patron_email = "test@test.com"
 patron_password = "1qa2ws!QA@WS"
@@ -25,7 +25,7 @@ login_test_cases = [
     ("", "", 400),
     ("", "Password123!@#", 400),
     ("test@fake.com", "", 400),
-    ("defaultadmin@arborlibrary.com", "not-a-password", 401),
+    ("defaultadmin@arbor-library.click", "not-a-password", 401),
     ("a" * 999, "a" * 999, 401)
 ]
 

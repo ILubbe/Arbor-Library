@@ -1,7 +1,7 @@
 services:
   mariadb:
-    image: mariadb:11.6.2
-    container_name: arbor-lwa-mariadb
+    image: docker.io/library/mariadb:11.6.2
+    container_name: mariadb.arbor-lwa.local
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: "arbor"
@@ -15,7 +15,7 @@ services:
 
   elasticsearch:
     image: docker.io/library/elasticsearch:8.17.1
-    container_name: arbor-lwa-elasticsearch
+    container_name: elasticsearch.arbor-lwa.local
     restart: unless-stopped
     environment:
       discovery.type: "single-node"
@@ -26,8 +26,8 @@ services:
       - arbor-lwa-network
 
   redis:
-    image: redis:7.4.2
-    container_name: arbor-lwa-redis
+    image: docker.io/library/redis:7.4.2
+    container_name: redis.arbor-lwa.local
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -38,7 +38,7 @@ services:
     build:
       context: ../../backend
     image: arbor-lwa-backend
-    container_name: arbor-lwa-backend
+    container_name: backend.arbor-lwa.local
     restart: unless-stopped
     depends_on:
       - mariadb
@@ -47,15 +47,15 @@ services:
     environment:
       DB_USER: "arbor"
       DB_PASSWORD: "arbor"
-      DB_HOST: "arbor-lwa-mariadb"
+      DB_HOST: "mariadb.arbor-lwa.local"
       DB_PORT: "3306"
       DB_NAME: "arbor"
-      REDIS_HOST: "arbor-lwa-redis"
+      REDIS_HOST: "redis.arbor-lwa.local"
       REDIS_PORT: "6379"
-      ELASTICSEARCH_HOST: "arbor-lwa-elasticsearch"
+      ELASTICSEARCH_HOST: "elasticsearch.arbor-lwa.local"
       ELASTICSEARCH_PORT: "9200"
       JWT_SECRET_KEY: "arbor1234567890arbor1234567890arbor1234567890"
-      SEED_BOOK_COUNT: "16221"
+      SEED_BOOK_COUNT: "221"
     ports:
       - "5000:5000"
     networks:
@@ -67,7 +67,7 @@ services:
     build:
       context: ../../frontend
     image: arbor-lwa-frontend
-    container_name: arbor-lwa-frontend
+    container_name: frontend.arbor-lwa.local
     restart: unless-stopped
     depends_on:
       - backend
@@ -75,6 +75,8 @@ services:
       - "8080:80"
     networks:
       - arbor-lwa-network
+    command: >
+      /bin/sh -c "nginx -g 'daemon off;'"
 
 networks:
   arbor-lwa-network:

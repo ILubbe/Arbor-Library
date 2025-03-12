@@ -10,7 +10,7 @@ def create_default_admin_user():
         print(f"Seed: users table in database is empty, creating the default admin user")
         default_admin = User(
             role = 'librarian',
-            email = 'defaultadmin@arborlibrary.com',
+            email = 'defaultadmin@arbor-library.click',
             password_hash = hash_salt_password('admin'),
             first_name = 'default',
             last_name = 'admin',

@@ -7,7 +7,7 @@ from search import *
 from utils.rbac_decorators import *
 
 # define blueprint
-search_bp = Blueprint('search', __name__, url_prefix='/search')
+search_bp = Blueprint('search', __name__, url_prefix='/api/search')
 
 @jwt_required()
 def check_index_exists(model):

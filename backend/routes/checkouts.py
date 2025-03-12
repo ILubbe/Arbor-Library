@@ -7,7 +7,7 @@ from utils.general_utils import *
 from utils.rbac_decorators import *
 
 # define blueprint
-checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/checkouts')
+checkouts_bp = Blueprint('checkouts', __name__, url_prefix='/api/checkouts')
 
 # get all checkouts
 @checkouts_bp.route("/", methods=["GET"], strict_slashes=False)

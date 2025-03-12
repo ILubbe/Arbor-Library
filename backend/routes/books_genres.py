@@ -5,7 +5,7 @@ from utils.general_utils import *
 from utils.rbac_decorators import *
 
 # define blueprint
-books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/books-genres')
+books_genres_bp = Blueprint('books_genres', __name__, url_prefix='/api/books-genres')
 
 # read genre id(s) by book-id
 @books_genres_bp.route("/genres-by-book/<int:book_id>", methods=["GET"], strict_slashes=False)

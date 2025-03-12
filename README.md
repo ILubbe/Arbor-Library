@@ -41,7 +41,7 @@ It consists of 5 components:
 
 ### Important Maintence Notes
 - The Default Admin's credentials are as follows. **Please Change The Password!**
-    - Email: _defaultadmin@arborlibrary.com_
+    - Email: _defaultadmin@arbor-library.click_
     - Password: _admin_
 
 _Version 1.0.3_

@@ -8,7 +8,7 @@ from utils.rbac_decorators import *
 
 
 # define blueprint
-users_bp = Blueprint('users', __name__, url_prefix='/users')
+users_bp = Blueprint('users', __name__, url_prefix='/api/users')
 
 # get all users
 @users_bp.route("/", methods=["GET"], strict_slashes=False)

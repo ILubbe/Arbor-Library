@@ -6,7 +6,7 @@ from config import bcrypt, r, jwt
 from utils.general_utils import check_required_fields
 
 # define blueprint
-login_bp = Blueprint('login', __name__, url_prefix='/')
+login_bp = Blueprint('login', __name__, url_prefix='/api')
 
 @login_bp.route('/login', methods=["POST"], strict_slashes=False)
 def login():

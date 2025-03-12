@@ -6,7 +6,7 @@ from utils.general_utils import *
 from utils.rbac_decorators import *
 
 # define blueprint
-reservations_bp = Blueprint('reservations', __name__, url_prefix='/reservations')
+reservations_bp = Blueprint('reservations', __name__, url_prefix='/api/reservations')
 
 # get all reservations
 @reservations_bp.route("/", methods=["GET"], strict_slashes=False)

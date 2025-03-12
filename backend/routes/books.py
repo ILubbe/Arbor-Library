@@ -8,7 +8,7 @@ from utils.rbac_decorators import *
 from config import app
 
 # define blueprint
-books_bp = Blueprint('books', __name__, url_prefix='/books')
+books_bp = Blueprint('books', __name__, url_prefix='/api/books')
 
 # get all books
 @books_bp.route("/", methods=["GET"], strict_slashes=False)
