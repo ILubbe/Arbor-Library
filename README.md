@@ -9,14 +9,14 @@ It consists of 5 components:
 - **Backend Container:** Built with the Flask Python Framework, responsible for core business logic.
 - **Database Container:** Utilizes MariaDB to store data that is important to the Library's operation.
 - **Search Engine Container:** Utilizes ElasticSearch to provide a word search for end users in the UI.
-- **Cache Container:** Utilizes Redis to store authorization/authentication tokens
+- **Cache Container:** Utilizes Redis to store authorization/authentication tokens.
 
 ## 📖 Documentation
 
 - **[User Guide](docs/userguide.md)** – Learn how to use the application.
 - **[Design Document](docs/design.md)** – Understand the technical design and architecture.
 
-## Deployment and Important Maintenance Notes
+## 🚀 Deployment and Important Maintenance Notes
 - Clone the repository at https://gitlab.com/wgu-gitlab-environment/student-repos/ilubbe2/d424-software-engineering-capstone.git
 - Install Docker Engine and Compose.
 
