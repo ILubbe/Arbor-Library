@@ -17,7 +17,6 @@ It consists of 5 components:
 - **[Design Document](docs/design.md)** – Understand the technical design and architecture.
 
 ## 🚀 Deployment and Important Maintenance Notes
-- Clone the repository at https://gitlab.com/wgu-gitlab-environment/student-repos/ilubbe2/d424-software-engineering-capstone.git
 - Install Docker Engine and Compose.
 
 ### Local Deployment
